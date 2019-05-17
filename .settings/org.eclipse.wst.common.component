@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="winnerbook">
+        <wb-resource deploy-path="/" source-path="/target/m2e-jee/web-resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/base"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/uc"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/busRead"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/api"/>
+        <property name="java-output-path" value="/winnerbook/WebRoot/WEB-INF/classes"/>
+        <property name="context-root" value="/"/>
+    </wb-module>
+</project-modules>

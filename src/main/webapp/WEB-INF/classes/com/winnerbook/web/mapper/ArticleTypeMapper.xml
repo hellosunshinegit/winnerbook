@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ArticleTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.web.dto.ArticleType" >
+    <id column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="type_status" property="typeStatus" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select type_id, type_name, type_status, create_date, create_user_id, create_user_name
+  	from web_article_type where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id = #{sessionUser.adminId})
+  	</if>
+  	<if test="typeName != null and typeName  != '' "> and type_name like '%${typeName}%' </if>
+	order by type_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from web_article_type where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id = #{sessionUser.adminId})
+  	</if>
+  	<if test="typeName != null and typeName  != '' "> and type_name like '%${typeName}%' </if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    type_id, type_name, type_status
+    from web_article_type
+    where type_id = #{typeId,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" parameterType="com.winnerbook.web.dto.ArticleType" >
+    insert into web_article_type (type_name, type_status, 
+      create_date, create_user_id, create_user_name
+      )
+    values (#{typeName,jdbcType=VARCHAR}, #{typeStatus,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.web.dto.ArticleType" >
+    update web_article_type
+    set type_name = #{typeName,jdbcType=VARCHAR},
+      type_status = #{typeStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where type_id = #{typeId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findArticleType" parameterType="hashmap" resultMap="BaseResultMap">
+  	select type_id typeId, type_name typeName from web_article_type where type_status=1
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id = #{sessionUser.adminId})
+  	</if>
+  </select>
+</mapper>

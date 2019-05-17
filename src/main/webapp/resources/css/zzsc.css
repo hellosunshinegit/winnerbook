@@ -1,0 +1,7 @@
+.menu_list{width:185px;}
+.menu_head{width:132px;height:40px;line-height:40px;padding-left:34px;font-size:14px;color:#a6ad99;cursor:pointer;position:relative;background:#001529;margin:0;background:url(../images/pro_left.png) center right no-repeat;}
+.menu_head p:hover{color: #fff;}
+.menu_list .current{background:#001529;color: #fff;background:url(../images/pro_down.png) center right no-repeat;}
+.menu_body{width:223px;height:auto;overflow:hidden;line-height:38px;backguound:#fff;}
+.menu_body a{display:block;width:223px;height:38px;line-height:38px;padding-left:38px;color:#777777;background:#fff;text-decoration:none;border-bottom:1px solid #e1e1e1;}
+.menu_body a:hover{text-decoration:none;}

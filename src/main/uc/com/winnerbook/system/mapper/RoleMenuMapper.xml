@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="RoleMenuMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.RoleMenu" >
+    <id column="rm_id" property="rmId" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="menu_id" property="menuId" jdbcType="INTEGER" />
+    <result column="rm_createdate" property="rmCreatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="rmId" parameterType="com.winnerbook.system.dto.RoleMenu">
+    insert into uc_role_menu (RM_ID,ROLE_ID,MENU_ID,RM_CREATEDATE)
+    values (#{rmId,jdbcType=INTEGER},#{roleId,jdbcType=INTEGER}, #{menuId,jdbcType=INTEGER}, 
+      #{rmCreatedate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <select id="findRoleById" parameterType="hashmap" resultMap="BaseResultMap">
+	select * from uc_role_menu t
+	<where>
+		<if test="roleId != null">and t.ROLE_ID = #{roleId} </if>
+	</where>
+  </select>
+  
+  <delete id="deleteByRoleId">
+  	delete from uc_role_menu WHERE ROLE_ID = #{roleId} 
+  </delete>
+    
+  <!-- 查询角色下是否有权限 -->
+  <select id="roleIsMenu" resultType="java.lang.Integer">
+  	select count(menu_id) from uc_role_menu t where t.role_id = #{roleId}
+  </select>
+  
+  <!-- 批量insert角色对应的权限，在insert用户的时候，如果是企业管理员，则创建企业用户，并赋予企业用户权限 -->
+  <insert id="insertBathRoleMenu" parameterType="list">
+  	insert into uc_role_menu (ROLE_ID,MENU_ID,RM_CREATEDATE)
+    values
+    <foreach collection="list" item="item" separator=",">
+    	(#{item.roleId},#{item.menuId},#{item.rmCreatedate})
+    </foreach>
+  </insert>
+  
+</mapper>

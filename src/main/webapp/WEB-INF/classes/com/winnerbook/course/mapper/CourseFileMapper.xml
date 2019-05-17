@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CourseFileMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.CourseFile" >
+    <id column="file_id" property="fileId" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="file_title" property="fileTitle" jdbcType="VARCHAR" />
+    <result column="file_name" property="fileName" jdbcType="VARCHAR" />
+    <result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+    <result column="file_type" property="fileType" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="findCourseFileByCourseId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select file_id, course_id, file_title, file_name, file_url, file_type,create_date,create_user_id,create_user_name
+    from bus_course_file
+    where course_id = #{courseId,jdbcType=INTEGER} order by file_type asc
+  </select>
+  
+  <select id="findCourseFileByFileId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select file_id, course_id, file_title, file_name, file_url, file_type
+    from bus_course_file
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 删除 -->
+  <delete id="deleteByFileId" parameterType="hashmap">
+  	delete from bus_course_file where course_id = #{courseId} and file_id=#{fileId}
+  </delete>
+  
+  <!-- 批量插入数据 -->
+  <insert id="insert" parameterType="list" >
+    insert into bus_course_file (course_id, file_title, file_name, file_url, file_type, 
+      create_date, create_user_id, create_user_name)
+    values 
+    <foreach collection="courseFileList" item="course" separator=",">
+      (#{course.courseId}, #{course.fileTitle}, 
+      #{course.fileName}, #{course.fileUrl}, #{course.fileType}, 
+      #{course.createDate}, #{course.createUserId}, #{course.createUserName}
+      )
+    </foreach>
+    ;
+  </insert>
+</mapper>

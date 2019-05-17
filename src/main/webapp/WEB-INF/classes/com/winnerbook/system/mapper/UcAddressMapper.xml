@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UcAddressMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.UcAddress" >
+    <id column="address_id" property="addressId" jdbcType="INTEGER" />
+    <result column="address_parent_id" property="addressParentId" jdbcType="INTEGER" />
+    <result column="address_name" property="addressName" jdbcType="VARCHAR" />
+    <result column="address_statue" property="addressStatue" jdbcType="VARCHAR" />
+    <result column="address_create_date" property="addressCreateDate" jdbcType="TIMESTAMP" />
+    <result column="address_update_date" property="addressUpdateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="addressId" parameterType="com.winnerbook.system.dto.UcAddress">
+    insert into uc_address (address_parent_id,address_name,address_statue,address_create_date)
+    values (#{addressParentId,jdbcType=VARCHAR},#{addressName,jdbcType=VARCHAR},
+    #{addressStatue,jdbcType=VARCHAR},#{addressCreateDate,jdbcType=TIMESTAMP})
+  </insert>
+ 
+  <update id="update" parameterType="com.winnerbook.system.dto.UcAddress" >
+    update uc_address
+    set 
+      <if test="addressParentId != null or addressParentId != ''">address_parent_id = #{addressParentId,jdbcType=INTEGER},</if>
+      <if test="addressName != null or addressName != ''">address_name = #{addressName,jdbcType=VARCHAR},</if>
+      <if test="addressStatue != null or addressStatue != ''">address_statue = #{addressStatue,jdbcType=VARCHAR},</if>
+      <if test="addressUpdateDate != null or addressUpdateDate != ''">address_update_date = #{addressUpdateDate,jdbcType=TIMESTAMP}</if>
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findById" parameterType="hashmap" resultMap="BaseResultMap">
+	select * from uc_address t
+	<where>
+		<if test="addressId != null">and t.address_id = #{addressId} </if>
+	</where>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_address
+	<where>
+		<if test="addressName != null and addressName  != '' ">and address_name like '%${addressName}%' </if>
+	</where>
+  </select>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from uc_address t where 1=1
+	 <if test="addressName != null and addressName  != '' "> and address_name like '%${addressName}%' </if>
+	 order by t.address_id asc limit ${start},${limit}
+  </select>
+  
+  <delete id="delete">
+  	delete from uc_address where address_id = #{addressId} 
+  </delete>
+  
+  <!-- 查询parentid为0的数据 -->
+  <select id="findAddressOneLevel" parameterType="hashmap" resultMap="BaseResultMap">
+  	select t.* from uc_address t where t.address_parent_id=0
+  </select>
+  <!-- 根据parentid查询 -->
+  <select id="findAddressByParentId" parameterType="hashmap" resultMap="BaseResultMap">
+  	select t.* from uc_address t where address_statue=1
+  	<if test="addressId!=null and addressId  != '' ">
+  		and t.address_parent_id=#{addressId}
+  	</if>
+  </select>
+ 
+</mapper>

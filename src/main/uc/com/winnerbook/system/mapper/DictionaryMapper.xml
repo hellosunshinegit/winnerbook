@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="DictionaryMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.Dictionary" >
+    <id column="dic_id" property="dicId" jdbcType="INTEGER" />
+    <result column="dic_itemcode" property="dicItemcode" jdbcType="VARCHAR" />
+    <result column="dic_itemcodename" property="dicItemcodename" jdbcType="VARCHAR" />
+    <result column="dic_itemname" property="dicItemname" jdbcType="VARCHAR"/>
+    <result column="dic_itemvalue" property="dicItemvalue" jdbcType="VARCHAR" />
+    <result column="dic_itemsort" property="dicItemsort" jdbcType="VARCHAR" />
+    <result column="dic_createdate" property="dicCreatedate" jdbcType="TIMESTAMP" />
+    <result column="dic_updatedate" property="dicUpdatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="dicId" parameterType="com.winnerbook.system.dto.Dictionary">
+    insert into uc_dictionary (DIC_ITEMCODE, DIC_ITEMCODENAME, 
+      DIC_ITEMNAME, DIC_ITEMVALUE, DIC_ITEMSORT,DIC_CREATEDATE)
+    values (#{dicItemcode,jdbcType=VARCHAR}, #{dicItemcodename,jdbcType=VARCHAR}, 
+      #{dicItemname,jdbcType=VARCHAR}, #{dicItemvalue,jdbcType=VARCHAR}, #{dicItemsort,jdbcType=VARCHAR},
+      #{dicCreatedate,jdbcType=TIMESTAMP})
+  </insert>
+ 
+  <update id="update" parameterType="com.winnerbook.system.dto.Dictionary" >
+    update uc_dictionary
+    set 
+      DIC_ITEMCODE = #{dicItemcode,jdbcType=VARCHAR},
+      DIC_ITEMCODENAME = #{dicItemcodename,jdbcType=VARCHAR},
+      DIC_ITEMNAME = #{dicItemname,jdbcType=VARCHAR},
+      DIC_ITEMVALUE = #{dicItemvalue,jdbcType=VARCHAR},
+      DIC_ITEMSORT = #{dicItemsort,jdbcType=VARCHAR},
+      DIC_UPDATEDATE = #{dicUpdatedate,jdbcType=TIMESTAMP}
+    where DIC_ID = #{dicId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findById" parameterType="hashmap" resultMap="BaseResultMap">
+	select * from uc_dictionary t
+	<where>
+		<if test="dicId != null">and t.DIC_ID = #{dicId} </if>
+	</where>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_dictionary 
+	<where>
+		<if test="dicItemcode != null and dicItemcode  != '' ">and dic_itemcode like '%${dicItemcode}%' </if>
+		<if test="dicItemcodename != null and dicItemcodename  != '' ">and dic_itemcodename like '%${dicItemcodename}%' </if>
+	</where>
+  </select>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+	 select * from uc_dictionary where 1=1 
+	 <if test="dicItemcode != null and dicItemcode  != '' ">and dic_itemcode like '%${dicItemcode}%' </if>
+	<if test="dicItemcodename != null and dicItemcodename  != '' ">and dic_itemcodename like '%${dicItemcodename}%' </if>
+	order by DIC_ID desc limit ${start},${limit}
+  </select>
+  
+  <delete id="delete">
+  	delete from uc_dictionary  WHERE DIC_ID = #{dicId} 
+  </delete>
+  
+  <select id="getDictionariesByCode" parameterType="string" resultMap="BaseResultMap">
+  	select * from uc_dictionary where dic_itemcode = #{dicCode}
+  </select>
+</mapper>

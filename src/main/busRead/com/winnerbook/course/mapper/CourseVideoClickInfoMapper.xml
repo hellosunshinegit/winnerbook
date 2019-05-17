@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CourseVideoClickInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.CourseVideoClickInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="course_file_id" property="courseFileId" jdbcType="INTEGER" />
+    <result column="file_type" property="fileType" jdbcType="VARCHAR" />
+    <result column="ip_addres" property="ipAddres" jdbcType="VARCHAR" />
+    <result column="info_des" property="infoDes" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, course_id, course_file_id, file_type, ip_addres, info_des, create_date, 
+    create_user_id, create_user_name
+  </sql>
+  
+  <insert id="insert" parameterType="com.winnerbook.course.dto.CourseVideoClickInfo" >
+    insert into bus_course_video_click_info (user_id, course_id, 
+      course_file_id, file_type, ip_addres, 
+      info_des, create_date)
+    values (#{userId,jdbcType=INTEGER}, #{courseId,jdbcType=INTEGER}, 
+      #{courseFileId,jdbcType=INTEGER}, #{fileType,jdbcType=VARCHAR}, #{ipAddres,jdbcType=VARCHAR}, 
+      #{infoDes,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+</mapper>

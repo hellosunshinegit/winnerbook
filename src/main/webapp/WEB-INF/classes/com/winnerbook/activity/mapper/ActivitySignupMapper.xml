@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ActivitySignupMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.activity.dto.ActivitySignup" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="bus_id" property="busId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+    <result column="activity_title" property="activityTitle" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, bus_id, user_id, activity_id, activity_title, user_name, phone, create_date, 
+    create_user_id, create_user_name
+  </sql>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select id, bus_id, user_id, activity_id, activity_title, user_name, phone, create_date, 
+    create_user_id, create_user_name
+  	from bus_activity_signup where 1=1 
+  	<if test="activityId != null and activityId  != '' "> and activity_id = #{activityId} </if>
+  	<if test="userName != null and userName  != '' "> and user_name like '%${userName}%' </if>
+  	<if test="phone != null and phone  != '' "> and phone like '%${phone}%' </if>
+	order by id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_activity_signup where 1=1 
+  	<if test="activityId != null and activityId  != '' "> and activity_id = #{activityId} </if>
+  	<if test="userName != null and userName  != '' "> and user_name like '%${userName}%' </if>
+  	<if test="phone != null and phone  != '' "> and phone like '%${phone}%' </if>
+  </select>
+  
+  
+    <!-- web使用 -->
+  <insert id="insert" parameterType="com.winnerbook.activity.dto.ActivitySignup" useGeneratedKeys="true" keyProperty="id">
+    insert into bus_activity_signup (bus_id, 
+      user_id, activity_id, activity_title, 
+      user_name, phone, create_date, 
+      create_user_id, create_user_name)
+    values (#{busId,jdbcType=INTEGER},
+      #{userId,jdbcType=INTEGER}, #{activityId,jdbcType=INTEGER}, #{activityTitle,jdbcType=VARCHAR}, 
+      #{userName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 查询是否重复报名 -->
+  <select id="isRepeatSingup" parameterType="hashmap" resultType="hashmap">
+	select * from bus_activity_signup where bus_id = #{busId} and user_id = #{userId} and activity_id = #{activityId}
+  </select>
+  
+  <select id="getActivitySignups" parameterType="hashmap" resultType="hashmap">
+  	select  s.id,activity_id activityId, user_name userName, phone,DATE_FORMAT(s.create_date,'%Y-%m-%d') createDate,
+	title, img_url img, start_date startDate,start_date_time startDateTime, end_date endDate, end_date_time endDateTime,address
+  	from bus_activity_signup s left join bus_activity a on s.activity_id=a.id where 1=1
+  	 <if test="userId != null and userId  != '' "> and s.create_user_id = #{userId} </if>
+  	 order by s.id desc
+  	 <if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <select id="getActivitySignupCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) 
+  	from bus_activity_signup where 1=1
+  	 <if test="userId != null and userId  != '' "> and create_user_id = #{userId} </if>
+ </select>
+  
+</mapper>

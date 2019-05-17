@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BlockMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.web.dto.Block" >
+    <id column="block_id" property="blockId" jdbcType="INTEGER" />
+    <result column="block_name" property="blockName" jdbcType="VARCHAR" />
+    <result column="block_img_url" property="blockImgUrl" jdbcType="VARCHAR" />
+    <result column="block_type" property="blockType" jdbcType="VARCHAR" />
+    <result column="block_status" property="blockStatus" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select block_id, block_name, block_img_url, block_type, block_status, create_date, create_user_id, 
+    create_user_name
+  	from web_block where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="blockName != null and blockName  != '' "> and block_name like '%${blockName}%' </if>
+	order by block_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from web_block where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="blockName != null and blockName  != '' "> and block_name like '%${blockName}%' </if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    block_id, block_name, block_img_url, block_type, block_status
+    from web_block
+    where block_id = #{blockId,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" parameterType="com.winnerbook.web.dto.Block" >
+    insert into web_block (block_name, block_img_url, 
+      block_type, block_status, create_date, 
+      create_user_id, create_user_name)
+    values (#{blockName,jdbcType=VARCHAR}, #{blockImgUrl,jdbcType=VARCHAR}, 
+      #{blockType,jdbcType=VARCHAR}, #{blockStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.web.dto.Block" >
+    update web_block
+    set block_name = #{blockName,jdbcType=VARCHAR},
+      block_img_url = #{blockImgUrl,jdbcType=VARCHAR},
+      block_type = #{blockType,jdbcType=VARCHAR},
+      block_status = #{blockStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where block_id = #{blockId,jdbcType=INTEGER}
+  </update>
+  
+   <!-- 查询版块标签  -->
+  <select id="getBlockList" parameterType="hashmap" resultMap="BaseResultMap">
+  	select block_id blockId, block_name blockName from web_block where block_status=1
+  </select>
+  
+  <!-- web端使用  模板目前是固定的由admin添加 -->
+  <select id="getBlocks" parameterType="hashmap" resultType="hashmap">
+  	select block_id blockId, block_name blockName, block_img_url blockImgUrl
+  	from web_block where block_status=1 
+  	<if test="busId != null and busId  != '' "> and create_user_id=#{busId} </if>
+  	<if test="blockType != null and blockType  != '' "> and block_type in(0,${blockType}) </if> <!-- 版块类型 0:全部  1:h5  2:pc -->
+	order by block_id asc 
+  </select>
+  
+</mapper>

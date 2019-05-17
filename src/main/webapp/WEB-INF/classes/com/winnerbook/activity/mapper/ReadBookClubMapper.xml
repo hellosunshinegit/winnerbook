@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ReadBookClubMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.activity.dto.ReadBookClub" >
+    <id column="club_id" property="clubId" jdbcType="INTEGER" />
+    <result column="club_title" property="clubTitle" jdbcType="VARCHAR" />
+    <result column="club_img" property="clubImg" jdbcType="VARCHAR" />
+    <result column="club_date" property="clubDate" jdbcType="VARCHAR" />
+    <result column="club_place" property="clubPlace" jdbcType="VARCHAR" />
+    <result column="club_main_guest" property="clubMainGuest" jdbcType="VARCHAR" />
+    <result column="club_main_guest_book" property="clubMainGuestBook" jdbcType="VARCHAR" />
+    <result column="club_main_guest_introduce" property="clubMainGuestIntroduce" jdbcType="VARCHAR" />
+    <result column="club_presenter" property="clubPresenter" jdbcType="VARCHAR" />
+    <result column="club_des" property="clubDes" jdbcType="VARCHAR" />
+    <result column="club_status" property="clubStatus" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select club_id, club_title, club_img,club_date, club_place, club_main_guest, club_main_guest_book,
+    club_presenter, club_status, create_date, create_user_id, create_user_name
+  	from read_book_club where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="clubTitle != null and clubTitle  != '' "> and club_title like '%${clubTitle}%' </if>
+	order by club_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from read_book_club where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="clubTitle != null and clubTitle  != '' "> and club_title like '%${clubTitle}%' </if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+     club_id, club_title, club_img,club_date, club_place, club_main_guest, club_main_guest_book, club_main_guest_introduce,
+     club_presenter,club_des,club_status
+    from read_book_club
+    where club_id = #{clubId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from read_book_club
+    where club_id = #{clubId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.winnerbook.activity.dto.ReadBookClub" >
+    insert into read_book_club (club_title,club_img, club_date, 
+      club_place, club_main_guest, club_main_guest_book, club_main_guest_introduce,
+      club_presenter, club_des,club_status,create_date, 
+      create_user_id, create_user_name
+      )
+    values ( #{clubTitle,jdbcType=VARCHAR}, #{clubImg,jdbcType=VARCHAR},#{clubDate,jdbcType=VARCHAR}, 
+      #{clubPlace,jdbcType=VARCHAR}, #{clubMainGuest,jdbcType=VARCHAR}, #{clubMainGuestBook,jdbcType=VARCHAR}, #{clubMainGuestIntroduce,jdbcType=VARCHAR}, 
+      #{clubPresenter,jdbcType=VARCHAR}, #{clubDes,jdbcType=VARCHAR}, #{clubStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
+      )
+  </insert>
+ 
+  <update id="update" parameterType="com.winnerbook.activity.dto.ReadBookClub" >
+    update read_book_club
+    set 
+      club_title = #{clubTitle,jdbcType=VARCHAR},
+      club_img = #{clubImg,jdbcType=VARCHAR},
+      club_date = #{clubDate,jdbcType=VARCHAR},
+      club_place = #{clubPlace,jdbcType=VARCHAR},
+      club_main_guest = #{clubMainGuest,jdbcType=VARCHAR},
+      club_main_guest_book = #{clubMainGuestBook,jdbcType=VARCHAR},
+      club_main_guest_introduce = #{clubMainGuestIntroduce,jdbcType=VARCHAR},
+      club_presenter = #{clubPresenter,jdbcType=VARCHAR},
+      club_des = #{clubDes,jdbcType=VARCHAR},
+      club_status = #{clubStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where club_id = #{clubId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- web使用 -->
+  <select id="getBookClubs" parameterType="hashmap" resultType="hashmap">
+  	select club_id id, club_title title, club_img img,DATE_FORMAT(create_date,'%Y-%m-%d') createDate
+  	from read_book_club where club_status=1 
+  	 <if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if>
+  	 order by club_id desc
+  	 <if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <select id="getBookClubsCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) 
+  	from read_book_club where club_status=1 
+  	 <if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if>
+ </select>
+   <!-- 详情 -->
+   <select id="getReadBookClubDetail" parameterType="hashmap" resultType="hashmap">
+  	select club_id id, club_title title,club_des detail,club_img img,DATE_FORMAT(create_date,'%Y-%m-%d') createDate
+  	from read_book_club where club_id=#{id}
+  </select>	
+ 
+  
+  
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="StudentRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.StudentRecord" >
+    <id column="record_id" property="recordId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="course_file_id" property="courseFileId" jdbcType="INTEGER" />
+    <result column="course_file_name" property="courseFileName" jdbcType="INTEGER" />
+    <result column="record_des" property="recordDes" jdbcType="VARCHAR" />
+    <result column="is_end" property="isEnd" jdbcType="VARCHAR" />
+    <result column="record_type" property="recordType" jdbcType="VARCHAR" />
+    <result column="record_source" property="recordSource" jdbcType="VARCHAR" />
+    <result column="look_time" property="lookTime" jdbcType="VARCHAR" />
+    <result column="total_time" property="totalTime" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select  record_id, user_id, user_name,course_id, course_name,record_des,is_end,record_type, total_time,create_date, create_user_id, create_user_name
+  	from bus_student_record where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="userName != null and userName  != '' "> and user_name like '%${userName}%' </if>
+  	<if test="courseName != null and courseName  != '' "> and course_name like '%${courseName}%' </if>
+	order by record_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_student_record where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    record_id, user_id, user_name,course_id, course_name, record_des, is_end,record_type, total_time,create_date, create_user_id, create_user_name
+    from bus_student_record
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from bus_student_record
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.winnerbook.course.dto.StudentRecord" useGeneratedKeys="true" keyProperty="recordId">
+    insert into bus_student_record (user_id, user_name,course_id, course_name,course_file_id,course_file_name,
+      record_des, is_end,record_type,record_source,look_time,total_time,create_date, create_user_id, 
+      create_user_name)
+    values (#{userId,jdbcType=INTEGER},#{userName,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER}, #{courseName,jdbcType=VARCHAR}, #{courseFileId,jdbcType=INTEGER},#{courseFileName,jdbcType=VARCHAR},
+      #{recordDes,jdbcType=VARCHAR},#{isEnd,jdbcType=VARCHAR},#{recordType,jdbcType=VARCHAR}, #{recordSource,jdbcType=VARCHAR},#{lookTime,jdbcType=VARCHAR},#{totalTime,jdbcType=VARCHAR},
+      #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.course.dto.StudentRecord">
+    update bus_student_record
+    set
+      look_time = #{lookTime,jdbcType=VARCHAR},
+      record_des = #{recordDes,jdbcType=VARCHAR},
+      is_end = #{isEnd,jdbcType=VARCHAR},
+      look_time = #{lookTime,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- web端 -->
+  <select id="getStudentRecords" parameterType="hashmap" resultType="hashmap">
+  	select record_id recordId,course_id courseId,course_name courseName,record_des recordDes,DATE_FORMAT(create_date,'%Y-%m-%d') createDate,is_end isEnd,
+  	record_type recordType,course_file_name courseFileName,total_time totalTime
+  	from bus_student_record where create_user_id=#{userId}
+  	order by record_id desc
+  	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <select id="getStudentRecordsCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(1) from bus_student_record where create_user_id=#{userId}
+  </select>
+ 
+</mapper>

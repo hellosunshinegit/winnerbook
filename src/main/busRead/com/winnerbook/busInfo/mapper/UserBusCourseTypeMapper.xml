@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UserBusCourseTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.busInfo.dto.UserBusCourseType" >
+    <id column="bct_id" property="bctId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="course_type_id" property="courseTypeId" jdbcType="INTEGER" />
+    <result column="bus_create_date" property="busCreateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <insert id="insert" parameterType="list" >
+    insert into uc_user_bus_course_type (user_id, course_type_id, bus_create_date)
+    values 
+    <foreach collection="list" item="item" separator=",">
+	    (#{item.userId,jdbcType=INTEGER},#{item.courseTypeId,jdbcType=INTEGER}, #{item.busCreateDate,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+  
+  <delete id="delete" parameterType="hashmap">
+  	delete from uc_user_bus_course_type where user_id=#{userId}
+  </delete>
+  
+  <select id="findByUserId" parameterType="hashmap" resultMap="BaseResultMap">
+  	select user_id, course_type_id from uc_user_bus_course_type where user_id=#{userId}
+  </select>
+  
+</mapper>

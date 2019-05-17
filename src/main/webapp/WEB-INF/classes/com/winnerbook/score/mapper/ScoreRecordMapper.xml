@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ScoreRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.score.dto.ScoreRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="bus_id" property="busId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="main_id" property="mainId" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="sourse" property="sourse" jdbcType="VARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, bus_id,user_id, score, sourse, remarks, create_date, create_user_id, create_user_name
+  </sql>
+  
+  <insert id="insert" parameterType="com.winnerbook.score.dto.ScoreRecord" useGeneratedKeys="true" keyProperty="id">
+    insert into bus_score_record (bus_id, user_id,main_id, score, 
+      sourse, remarks, create_date, 
+      create_user_id, create_user_name)
+    values (#{busId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER}, #{mainId,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, 
+      #{sourse,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- findById -->
+  <select id="findById" parameterType="hashmap" resultMap="BaseResultMap">
+  	select id, user_id, score, sourse, remarks, create_date, create_user_id, create_user_name from bus_score_record where id=#{id}
+  </select>	
+ 
+  <!-- 更新 -->
+  <update id="update" parameterType="com.winnerbook.score.dto.ScoreRecord">
+    update bus_score_record
+    set 
+      score = #{score,jdbcType=INTEGER},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id}
+  </update>
+ 
+</mapper>

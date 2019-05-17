@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UcSystemCodeCacheMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.UcSystemCodeCache" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="list_sql" property="listSql" jdbcType="VARCHAR" />
+    <result column="is_cached" property="isCached" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="findCodeByCodeName" parameterType="hashmap" resultMap="BaseResultMap">
+  	select t.code,t.list_sql,t.is_Cached from uc_system_code_cache t where t.code=#{code}
+  </select>
+  
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ActivityMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.activity.dto.Activity" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+    <result column="start_date" property="startDate" jdbcType="VARCHAR" />
+    <result column="start_date_time" property="startDateTime" jdbcType="VARCHAR" />
+    <result column="end_date" property="endDate" jdbcType="VARCHAR" />
+    <result column="end_date_time" property="endDateTime" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="detail_address" property="detailAddress" jdbcType="VARCHAR" />
+    <result column="lng_lat" property="lngLat" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select id, title, img_url, start_date,start_date_time, end_date, end_date_time,address,detail_address, status, create_date, create_user_id, create_user_name
+  	from bus_activity where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="title != null and title  != '' "> and title like '%${title}%' </if>
+	order by id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_activity where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+	<if test="title != null and title  != '' "> and title like '%${title}%' </if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, title, img_url,start_date,start_date_time, end_date, end_date_time,province,city,address,detail_address,lng_lat,end_date, content, status
+    from bus_activity
+    where id = #{id}
+  </select>
+  
+  <insert id="insert" parameterType="com.winnerbook.activity.dto.Activity" >
+    insert into bus_activity (title, img_url, start_date , start_date_time, end_date, end_date_time,province,city,address,detail_address,lng_lat,
+      status, create_date, create_user_id, 
+      create_user_name, content
+      )
+    values (#{title,jdbcType=VARCHAR}, #{imgUrl,jdbcType=VARCHAR}, #{startDate,jdbcType=VARCHAR}, #{startDateTime,jdbcType=VARCHAR},
+    	#{endDate,jdbcType=VARCHAR}, #{endDateTime,jdbcType=VARCHAR},
+    	#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{detailAddress,jdbcType=VARCHAR},#{lngLat,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, 
+        #{createUserName,jdbcType=VARCHAR},#{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.activity.dto.Activity" >
+    update bus_activity
+    set title = #{title,jdbcType=VARCHAR},
+      img_url = #{imgUrl,jdbcType=VARCHAR},
+      start_date = #{startDate,jdbcType=VARCHAR},
+      start_date_time = #{startDateTime,jdbcType=VARCHAR},
+      end_date = #{endDate,jdbcType=VARCHAR},
+      end_date_time = #{endDateTime,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      detail_address = #{detailAddress,jdbcType=VARCHAR},
+      lng_lat = #{lngLat,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- web使用 -->
+  <select id="getActivitys" parameterType="hashmap" resultType="hashmap">
+  	select id, title, img_url img,start_date startDate,start_date_time startDateTime,end_date endDate,end_date_time endDateTime,province,city,address,detail_address detailAddress,lng_lat lngLat,DATE_FORMAT(create_date,'%Y-%m-%d') createDate
+  	from bus_activity where status=1
+  	 <if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if>
+  	 order by start_date desc
+  	 <if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <select id="getActivitysCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) 
+  	from bus_activity where status=1 
+  	 <if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if>
+ </select>
+   <!-- 详情 -->
+   <select id="getActivityDetail" parameterType="hashmap" resultType="hashmap">
+  	select id, title,content detail,img_url img,start_date startDate,start_date_time startDateTime,end_date endDate,end_date_time endDateTime,province,city,address,detail_address detailAddress,lng_lat lngLat,DATE_FORMAT(create_date,'%Y-%m-%d') createDate
+  	from bus_activity where id=#{id}
+  </select>	
+  
+  
+</mapper>

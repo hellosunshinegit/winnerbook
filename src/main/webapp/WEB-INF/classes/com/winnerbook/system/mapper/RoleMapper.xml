@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.Role" >
+    <id column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="role_desc" property="roleDesc" jdbcType="VARCHAR" />
+    <result column="role_status" property="roleStatus" jdbcType="VARCHAR"/>
+    <result column="role_createdate" property="roleCreatedate" jdbcType="TIMESTAMP" />
+    <result column="role_create_user_id" property="roleCreateUserId" jdbcType="INTEGER" />
+    <result column="role_create_user_name" property="roleCreateUserName" jdbcType="VARCHAR" />
+    <result column="role_updatedate" property="roleUpdatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="roleId" parameterType="com.winnerbook.system.dto.Role">
+    insert into uc_role (ROLE_NAME, ROLE_DESC, 
+      ROLE_STATUS, ROLE_CREATEDATE,role_create_user_id,role_create_user_name)
+    values (#{roleName,jdbcType=VARCHAR}, #{roleDesc,jdbcType=VARCHAR}, 
+      #{roleStatus,jdbcType=VARCHAR}, #{roleCreatedate,jdbcType=TIMESTAMP},
+      #{roleCreateUserId,jdbcType=INTEGER},#{roleCreateUserName,jdbcType=VARCHAR})
+  </insert>
+ 
+  <update id="update" parameterType="com.winnerbook.system.dto.Role" >
+    update uc_role
+    set 
+      ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      ROLE_DESC = #{roleDesc,jdbcType=VARCHAR},
+      ROLE_STATUS = #{roleStatus,jdbcType=VARCHAR},
+      ROLE_UPDATEDATE = #{roleUpdatedate,jdbcType=TIMESTAMP}
+    where ROLE_ID = #{roleId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="findById" parameterType="hashmap" resultMap="BaseResultMap">
+	select * from uc_role t
+	<where>
+		<if test="roleId != null">and t.ROLE_ID = #{roleId} </if>
+	</where>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_role where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
+	  	and FIND_IN_SET(role_create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+	<if test="roleName != null and roleName  != '' ">and ROLE_NAME like '%${roleName}%' </if>
+  </select>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from uc_role where 1=1 
+	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
+	  	and FIND_IN_SET(role_create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+	<if test="roleName != null and roleName  != '' "> and ROLE_NAME like '%${roleName}%' </if>
+	order by role_id asc limit ${start},${limit}
+  </select>
+  
+  <delete id="delete">
+  	delete from uc_role WHERE ROLE_ID = #{roleId}
+  </delete>
+  
+  <select id="findAllRole" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from uc_role t where role_status=1
+  	<!-- <if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据)
+  		and FIND_IN_SET(role_create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if> -->
+  </select>
+  
+   
+</mapper>

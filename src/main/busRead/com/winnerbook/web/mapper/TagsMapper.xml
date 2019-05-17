@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="TagsMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.web.dto.Tags" >
+    <id column="tag_id" property="tagId" jdbcType="INTEGER" />
+    <result column="tag_name" property="tagName" jdbcType="VARCHAR" />
+    <result column="tag_status" property="tagStatus" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select tag_id, tag_name, tag_status, create_date, create_user_id, create_user_name
+  	from web_tags where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id = #{sessionUser.adminId})
+  	</if>
+  	<if test="tagName != null and tagName  != '' "> and tag_name like '%${tagName}%' </if>
+	order by tag_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from web_tags where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id = #{sessionUser.adminId})
+  	</if>
+  	<if test="tagName != null and tagName  != '' "> and tag_name like '%${tagName}%' </if>
+  </select>
+
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    tag_id, tag_name, tag_status
+    from web_tags
+    where tag_id = #{tagId,jdbcType=INTEGER}
+  </select>
+ 
+  <insert id="insert" parameterType="com.winnerbook.web.dto.Tags" >
+    insert into web_tags (tag_name, tag_status, 
+      create_date, create_user_id, create_user_name
+      )
+    values (#{tagName,jdbcType=VARCHAR}, #{tagStatus,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.web.dto.Tags" >
+    update web_tags
+    set tag_name = #{tagName,jdbcType=VARCHAR},
+      tag_status = #{tagStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where tag_id = #{tagId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 查询tags标签  -->
+  <select id="getTagsList" parameterType="hashmap" resultMap="BaseResultMap">
+  	select tag_id tagId, tag_name tagName from web_tags where tag_status=1
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id = #{sessionUser.adminId})
+  	</if>
+  </select>
+  
+  <select id="tagsCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from web_tags where tag_status=1 
+  	<if test="sessionUser!=null">
+	  	and create_user_id=#{sessionUser.userId}
+  	</if>
+  </select>
+  
+</mapper>

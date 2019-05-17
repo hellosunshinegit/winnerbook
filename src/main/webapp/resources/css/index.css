@@ -1,0 +1,55 @@
+@charset "utf-8";
+/* 名称：模块、大型页面私有样式表 */
+/* 功能：某一类页面或某一个大型页面私有使用 */
+/* 作者: H.yIng */
+/* Email: hyingreborn@qq.com */
+/* 更新时间: 2013-05-11 */
+
+/* Temp */
+html,body { overflow: hidden; /*background: url(../images/bgl.jpg) top left repeat*/;}
+
+.header {height: 60px; /* background: url(../new_images/header_bg.jpg) top center repeat-x; */ position: relative; color:#fff; /* border-bottom: 1px solid #dddddd; */ background: #001529;}
+.header a { color:#fff;}
+.header a:hover {text-decoration:none;}
+.header img{ float: left; margin: 16px 0 0 20px}
+.header .logo {position:absolute; top:0px; left:0px;font-size: 19px;margin-top:17px;margin-left:20px;}
+.header .user { text-align:right; margin-right:20px; line-height:25px; height:25px; padding:12px 0px 13px;font-size: 13px;}
+.header .user .name { color:#a2c912; font-weight:bold;}
+.header .nav { text-align:right; margin-right:20px;}
+.header .nav ul { float:right; height:40px; list-style:none; margin:0px; padding:0px;}
+.header .nav ul li { list-style:none; margin:0px; padding:0px; float:left;padding-right:2px; height:40px;}
+.header .nav ul li a { line-height:40px; height:40px; display:inline-block;_zoom:1;_display:inline; padding:0px 30px; font-size:14px;}
+.header .nav ul li a:hover {border-bottom:3px solid #45a0f3;/* background:url(../images/header_nav_hover.jpg) top center no-repeat;*/}
+.header .nav ul li.act {}
+.header .nav ul li.act a {color:#fff; font-weight:bold;border-bottom:3px solid #45a0f3;}
+.header .nav ul li:last-child { background:none; padding-right:0px;}
+
+
+.article { position:relative;}
+.sidebar { position:absolute; top:0px; left:0px; width:200px; height:100%; background:#f9f9f9; overflow:hidden;}
+.sidebar.off { left:-172px;}
+
+.sidebar .swich { width:8px; height:auto; height:100%; position:absolute; top:0px; right:0px; display:block;}
+.sidebar .swich a { background:#e8eef1 url(../images/side_switch.gif) center center no-repeat; display:block; height:100%;}
+.sidebar .swich a:hover { background:#cbd8de url(../images/side_switch.gif) center center no-repeat;}
+.sidebar .sidenav { width:200px; height:auto; height:100%; overflow:hidden; overflow-y:auto;}
+
+.sidebar .sidenav .nav2 { display:none;}
+.sidebar .sidenav .nav2.act { display:block; width:auto; width:100%;}
+.sidebar .sidenav .nav2.act dl p:hover{color: #fff;}
+.sidebar .sidenav dl {  list-style:none; margin:0px; padding:0px;}
+.sidebar .sidenav dl { display:block; list-style:none; margin:0px; padding:0px;}
+.sidebar .sidenav dt {list-style:none; margin:0px; padding:0px;height:45px; font-weight:bold; font-size:14px; color:#004593; line-height:45px; padding-left:10px;background:url(../new_images/side_arrow.png) 130px center no-repeat;border-bottom: 1px solid #dddddd;
+border-top: 1px solid #fff; }
+.sidebar .sidenav dd { padding:0px; margin:0px; list-style:none;}
+.sidebar .sidenav dd ul { display:block;}
+.sidebar .sidenav dd ul li { display:block; clear:both; text-align:left;}
+.sidebar .sidenav dd ul li a { display:block; border-bottom:1px solid #000c17; height:40px; line-height:40px; padding-left:48px;background: #000c17;color: #a6ad99;}
+.sidebar .sidenav dd ul li a:hover {text-decoration:none;color: #fff;}
+.sidebar .sidenav dd ul li.act a { background:#1890ff; color:#fff;height: 35px;}
+
+.article .main { margin-left:180px; overflow:hidden;}
+.article .main.noside { margin-left:0px;}
+.article .main.sideoff { margin-left:8px;}
+
+.footer { background:url(../images/footer_bg.jpg) top center repeat-x; height:30px; text-align:center; line-height:30px;}

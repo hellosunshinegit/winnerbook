@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BookListTypeClickInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.book.dto.BookListTypeClickInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="book_list_type_id" property="bookListTypeId" jdbcType="INTEGER" />
+    <result column="book_list_type_name" property="bookListTypeName" jdbcType="VARCHAR" />
+    <result column="ip_addres" property="ipAddres" jdbcType="VARCHAR" />
+    <result column="info_des" property="infoDes" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+ 
+  <insert id="insert" parameterType="com.winnerbook.book.dto.BookListTypeClickInfo" >
+    insert into bus_book_list_type_click_info (user_id, book_list_type_id, 
+      book_list_type_name, ip_addres, info_des, 
+      create_date
+      )
+    values (#{userId,jdbcType=INTEGER}, #{bookListTypeId,jdbcType=INTEGER}, 
+      #{bookListTypeName,jdbcType=VARCHAR}, #{ipAddres,jdbcType=VARCHAR}, #{infoDes,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+</mapper>

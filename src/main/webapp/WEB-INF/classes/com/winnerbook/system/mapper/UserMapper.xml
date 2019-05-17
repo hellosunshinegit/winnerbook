@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UserMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.User" >
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_parent_id" property="userParentId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_password" property="userPassword" jdbcType="VARCHAR" />
+    <result column="user_unit_name" property="userUnitName" jdbcType="VARCHAR" />
+    <result column="user_login_count" property="userLoginCount" jdbcType="VARCHAR" />
+    <result column="user_last_login_date" property="userLastLoginDate" jdbcType="TIMESTAMP" />
+    <result column="user_statue" property="userStatue" jdbcType="VARCHAR" />
+    <result column="is_business_admin" property="isBusinessAdmin" jdbcType="VARCHAR" />
+    <result column="source_type" property="sourceType" jdbcType="VARCHAR" />
+    <result column="is_admin" property="isAdmin" jdbcType="VARCHAR" />
+    <result column="belong_bus_user_id" property="belongBusUserId" jdbcType="INTEGER" />
+    <result column="department" property="department" jdbcType="VARCHAR" />
+    <result column="is_depart_leader" property="isDepartLeader" jdbcType="VARCHAR" />
+    <result column="is_company_leader" property="isCompanyLeader" jdbcType="VARCHAR" />
+    <result column="user_create_date" property="userCreateDate" jdbcType="TIMESTAMP" />
+    <result column="user_create_user_id" property="userCreateUserId" jdbcType="INTEGER" />
+    <result column="user_create_user_name" property="userCreateUserName" jdbcType="VARCHAR" />
+    <result column="user_update_date" property="userUpdateDate" jdbcType="TIMESTAMP" />
+    <result column="user_update_user_id" property="userUpdateUserId" jdbcType="INTEGER" />
+    <result column="user_update_user_name" property="userUpdateUserName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <select id="findUserByUserName" parameterType="hashmap" resultType="hashmap">
+	select a.user_id userId,a.user_unit_name userName,belong_bus_user_id busId,b.user_unit_name busName from (
+	(select user_id,user_unit_name,belong_bus_user_id from uc_user WHERE user_name = #{userName}) a
+	left join 
+	(select user_id,user_unit_name from uc_user where user_id in (select belong_bus_user_id from uc_user WHERE user_name = #{userName}))
+	b on a.belong_bus_user_id=b.user_id) 
+	
+  </select>
+  
+    <select id="findUserById" parameterType="hashmap" resultMap="BaseResultMap">
+	select * from uc_user t
+	<where>
+		<if test="userId != null">and t.user_id = #{userId} </if>
+	</where>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_user where FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId}))
+ 	<if test="userStatue != null and userStatue  != '' ">and USER_STATUE = '${userStatue}' </if>
+	<if test="userName != null and userName  != '' ">and USER_NAME like '%${userName}%' </if>
+  </select>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+	 SELECT * FROM uc_user where FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId}))
+	 <if test="userStatue != null and userStatue  != '' ">and USER_STATUE = '${userStatue}' </if>
+	 <if test="userName != null and userName  != '' ">and USER_NAME like '%${userName}%' </if>
+	  order by user_id desc 
+	 <if test="limit != null and limit != ''">
+		limit ${start},${limit} 
+	 </if>
+  </select>
+  
+   <delete id="delete">
+  	delete from uc_user WHERE USER_ID = #{userId} 
+  </delete>
+  
+  <update id="update" parameterType="com.winnerbook.system.dto.User" >
+    update uc_user
+    set
+      <if test="userName != null and userName != '' ">USER_NAME = #{userName,jdbcType=VARCHAR},</if>
+      <if test="userUnitName != null and userUnitName != '' ">USER_UNIT_NAME = #{userUnitName,jdbcType=VARCHAR},</if>
+      <if test="userParentId != null and userParentId != '' ">USER_PARENT_ID = #{userParentId,jdbcType=INTEGER},</if>
+      <if test="userStatue != null and userStatue != '' ">USER_STATUE = #{userStatue,jdbcType=VARCHAR},</if>
+      <if test="isBusinessAdmin != null and isBusinessAdmin != '' ">is_business_admin = #{isBusinessAdmin,jdbcType=VARCHAR},</if>
+      <if test="userPassword != null and userPassword != '' ">USER_PASSWORD = #{userPassword,jdbcType=VARCHAR},</if>
+      <if test="department != null and department != '' ">department = #{department,jdbcType=VARCHAR},</if>
+      <if test="isDepartLeader != null and isDepartLeader != '' ">is_depart_leader = #{isDepartLeader,jdbcType=VARCHAR},</if>
+      user_update_date = NOW(),
+      <if test="userUpdateUserId != null and userUpdateUserId != '' ">user_update_user_id = #{userUpdateUserId,jdbcType=INTEGER},</if>
+      <if test="userUpdateUserName != null and userUpdateUserName != '' ">user_update_user_name = #{userUpdateUserName,jdbcType=VARCHAR}</if>
+    where USER_ID = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="userId" parameterType="com.winnerbook.system.dto.User">
+    insert into uc_user (user_name,user_unit_name,user_parent_id,user_statue,is_business_admin,department,is_depart_leader,
+    	user_create_date,user_create_user_id,user_create_user_name,user_password,belong_bus_user_id)
+    values (#{userName,jdbcType=VARCHAR}, #{userUnitName,jdbcType=VARCHAR}, #{userParentId,jdbcType=INTEGER},
+    		#{userStatue,jdbcType=VARCHAR},#{isBusinessAdmin,jdbcType=VARCHAR},
+    		#{department,jdbcType=VARCHAR},#{isDepartLeader,jdbcType=VARCHAR},
+    		#{userCreateDate,jdbcType=TIMESTAMP},#{userCreateUserId,jdbcType=INTEGER},#{userCreateUserName,jdbcType=VARCHAR},#{userPassword,jdbcType=VARCHAR},
+    		#{belongBusUserId,jdbcType=VARCHAR})
+  </insert>
+  <!--修改密码  -->
+  <update id="updateUserPassword" parameterType="com.winnerbook.system.dto.User" >
+    update uc_user
+    set
+      USER_PASSWORD = #{userPassword,jdbcType=VARCHAR}
+      
+    where USER_ID = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  <!--重置密码  -->
+  <update id="resetPassword" parameterType="com.winnerbook.system.dto.User" >
+    update uc_user
+    set
+      USER_PASSWORD = #{userPassword,jdbcType=VARCHAR}
+      
+    where USER_ID = #{userId,jdbcType=INTEGER}
+  </update>
+  <!-- 分配角色  -->
+  <update id="userRole" parameterType="com.winnerbook.system.dto.Role" >
+    update uc_user_role
+    set
+      ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    where USER_ID = #{userId,jdbcType=INTEGER}
+      
+  </update>
+  <!-- 通过organId查询是否有对应的用户 -->
+  <select id="findUserByUcOrganIds" parameterType="hashmap" resultMap="BaseResultMap">
+  	select t.* from uc_user t where t.organ_id in (${organIds})
+  </select>
+  
+  <!-- 验证userName -->
+  <select id="checkUserName"  resultMap="BaseResultMap">
+  	select t.* from uc_user t where t.user_name = #{userName}
+  	<if test="userId != null and userId != '' ">
+  		and t.user_id!=#{userId}
+  	</if>
+  	<if test="belongBusUserId != null and belongBusUserId != '' ">
+  		and t.belong_bus_user_id = #{belongBusUserId}
+  	</if>
+  </select>
+  
+  <select id="checkPhone"  resultMap="BaseResultMap">
+  	select t.* from uc_user t where t.user_contact_mobile = #{phone}
+  	<if test="userId != null and userId != '' ">
+  		and t.user_id!=#{userId}
+  	</if>
+  </select>
+  
+  <!-- 导入 -->
+  <insert id="importUser" parameterType="hashmap" useGeneratedKeys="true" keyProperty="userId" >
+  	insert into uc_user(user_parent_id,user_name,user_password,user_unit_name,source_type,department,is_depart_leader,is_company_leader,user_create_date,user_create_user_id,user_create_user_name,belong_bus_user_id) values
+  	(#{userParentId},#{userName},#{userPassword},#{userUnitName},#{sourceType},#{department},#{isDepartLeader},#{isCompanyLeader},#{userCreateDate},#{userCreateUserId},#{userCreateUserName},#{belongBusUserId})
+  </insert>
+  
+  <!-- 获取超级管理员 -->
+  <select id="getAdmin" resultMap="BaseResultMap">
+  	select user_id,user_name from uc_user where is_admin=1
+  </select>
+  
+  <!-- 根据当前登录人查询他的企业管理员 目前只支持三级    以后再改。。。-->
+  <select id="getBusinessAdmin" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from uc_user where user_id = (select user_parent_id from uc_user where user_id = #{userId} and user_parent_id!=#{adminId}) and is_business_admin=1
+  </select>
+  
+  <update id="updateBelongBusUser" parameterType="hashmap" >
+  	update uc_user set belong_bus_user_id=#{belongBusUserId} where user_id=#{userId}
+  </update>
+  
+  <!-- 查询该企业下的用户 -->
+  <select id="getUserByBusinessId" parameterType="hashmap" resultType="hashmap">
+  	  select user_name userName from uc_user where 1=1 
+  	  <if test="sessionUser != null and sessionUser.isBusinessAdmin == '1'.toString()">
+	  	 and FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId}))
+  	  </if>
+  </select>
+  
+ <select id="getUserByUserBus" parameterType="hashmap" resultMap="BaseResultMap">
+ 	select * from uc_user where user_id=#{userId} and belong_bus_user_id=#{busId}
+ </select>
+ 
+ <!-- 查询该企业下是否有此手机号 -->
+  <select id="isExistsByBusId" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from uc_user where belong_bus_user_id=#{busId} and user_name = #{phone} 
+  </select>
+  
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UserRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.UserRole" >
+    <id column="UR_ID" property="urId" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="ROLE_ID" property="roleId" jdbcType="INTEGER" />
+    <result column="UR_CREATEDATE" property="urCreatedate" jdbcType="TIMESTAMP" />
+    <result column="UR_UPDATEDATE" property="urUpdatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="RoleBaseResultMap" type="com.winnerbook.system.dto.Role" >
+   	<id column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="role_desc" property="roleDesc" jdbcType="VARCHAR" />
+    <result column="role_status" property="roleStatus" jdbcType="VARCHAR"/>
+    <result column="role_createdate" property="roleCreatedate" jdbcType="TIMESTAMP" />
+    <result column="role_create_user_id" property="roleCreateUserId" jdbcType="INTEGER" />
+    <result column="role_create_user_name" property="roleCreateUserName" jdbcType="VARCHAR" />
+    <result column="role_updatedate" property="roleUpdatedate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="urId" parameterType="com.winnerbook.system.dto.UserRole">
+    insert into uc_user_role (UR_ID,USER_ID,ROLE_ID,UR_CREATEDATE)
+    values (#{urId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
+      #{urCreatedate,jdbcType=TIMESTAMP})
+  </insert>
+   
+  <select id="findUserById" parameterType="hashmap" resultMap="BaseResultMap">
+	select * from uc_user_role t
+	<where>
+		<if test="userId != null">and t.USER_ID = #{userId} </if>
+	</where>
+  </select>
+  
+  <select id="findUserById1" parameterType="hashmap" resultMap="BaseResultMap">
+	select * from uc_user_role t
+	<where>
+		<if test="userId != null">and t.USER_ID = #{userId} </if>
+	</where>
+  </select>
+  
+  <update id="update">
+  	update uc_user_role
+    set 
+      ROLE_ID = #{roleId,jdbcType=INTEGER},
+      UR_UPDATEDATE = #{urUpdatedate,jdbcType=TIMESTAMP}
+    where USER_ID = #{userId,jdbcType=INTEGER}
+  </update>
+  
+   <!-- 查询所有角色 -->
+   <select id="findAllRole" parameterType="hashmap" resultMap="RoleBaseResultMap">
+  	select t.* from uc_role t where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
+  		and FIND_IN_SET(t.role_create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	order by t.role_id
+  </select> 
+    
+  <!-- 查询用户下是否有角色 -->
+  <select id="roleIsUser" resultType="java.lang.Integer">
+  	select count(role_id) from uc_user_role t where t.user_id = #{userId}
+  </select>
+  
+  <!-- 通过用户id查 角色-->
+   <select id="findRoleById" parameterType="hashmap" resultMap="BaseResultMap">
+	select * from uc_user_role t
+	<where>
+		<if test="userId != null">and t.USER_ID = #{userId} </if>
+	</where>
+  </select>
+  
+  <insert id="insertBathUserRole" parameterType="list" >
+  	insert into uc_user_role (USER_ID,ROLE_ID,UR_CREATEDATE)
+    values 
+    <foreach collection="list" item="item" separator=",">
+      (#{item.userId},#{item.roleId},#{item.urCreatedate})
+    </foreach>
+   
+  </insert>
+</mapper>

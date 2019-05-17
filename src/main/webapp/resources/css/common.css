@@ -1,0 +1,188 @@
+@charset "utf-8";
+/* 名称：项目公用样式表 */
+/* 功能：公用布局、组件样式 */
+/* 作者: H.yIng */
+/* Email: hyingreborn@qq.com */
+/* 更新时间: 2012-12-19 */
+
+/* Common */
+::-webkit-scrollbar { width:8px;height:10px; background:#f20; }
+::-webkit-scrollbar-button:vertical { display:none;}
+::-webkit-scrollbar-track:vertical { background-color:black;}
+::-webkit-scrollbar-track-piece { background:#f2f2f2;}
+::-webkit-scrollbar-thumb:vertical { background-color:#8E8E8E; border-radius:1px;}
+::-webkit-scrollbar-thumb:vertical:hover { background-color:#146891;}
+::-webkit-scrollbar-corner:vertical { background-color:#535353;}
+::-webkit-scrollbar-resizer:vertical { background-color:#f30;}
+::-moz-selection{color:#fff;color:rgba(255,255,255,0.85);background:#689c38;}
+::selection{color:#fff;color:rgba(255,255,255,0.85);background:#689c38;}
+body{
+	background:#f0f2f5;padding-top: 13px;
+}
+body,button,input,select,textarea { font:12px/1.5 verdana,arial,tahoma,'微软雅黑',\5b8b\4f53; color:#333;}
+a { color:#333;}
+a:hover { color:#3a7ec1;}
+
+/* Layout */
+.page_title { height:40px; background: #fff;}
+.page_title h5 { color:#1890ff; font-weight:bold; line-height:40px; margin:0px; padding:0px; padding-left:35px;}
+
+.page_main { overflow:auto;padding: 10px;font-size: 13px;background: #fff;height: 80%;}
+.page_main .btn_area { padding:10px 10px 0px;}
+.page_main .btn_area .btn { margin-right:10px;}
+
+
+/* 表单 */
+.form_main { padding:20px;}
+.form_main dl{*zoom:1; padding-bottom:10px;}
+.form_main dl:before,.form_main dl:after{display:table;content:"";}
+.form_main dl:after{clear:both;}
+.form_main dt { width:110px; text-align:right; float:left; line-height:30px; padding-right:10px;}
+.form_main dt i { font-weight:bold; line-height:30px; color:#f30; margin-right:5px;}
+.form_main dd { margin-left:130px;}
+.form_main dd small { color:#999; line-height:25px; font-size:12px;}
+.form_main input[type="text"],.form_main input[type="password"] { width:300px;}
+.form_main input.w80 { width:80px;}
+.form_main input.w400 { width:400px;}
+.form_main select { }
+.form_main select option { }
+.form_main textarea { width:480px; height:60px;}
+.form_main label { padding-left:5px;}
+.form_main label input { margin-right:5px;}
+.form_main dd .dd_radio{height: 30px;line-height: 30px;}
+.dd_radio{height: 30px;line-height: 30px;}
+.checkboxcss{width: 15px;height: 15px;}
+
+
+/* 数据列表 */
+.data_list { padding:0px 0 0 20px;background:#f9f9f9;}
+.data_list table { width:100%;}
+.data_list table tr {border-bottom:1px solid #eee;}	
+.data_list table tr.even { background:#fff;}
+.data_list table tr:hover { background:#D9E7FB;}
+.data_list table th,.data_list table td { text-align:left; padding:6px 5px;}
+.data_list table th {}
+.data_list table td {height: 30px;line-height: 30px;}
+.data_list table thead {}
+.data_list table thead tr {border-bottom:1px solid #ccc;}
+.data_list table .check { width:25px; text-align:center;}
+.data_list table td.ctl a { color:#146891;}
+.data_list table td.ctl a:hover { color:#689c38; text-decoration:none;}
+
+/* 数据列表搜索 */
+.data_search { padding:5px 10px 10px 0; border-bottom:1px solid #eee;}
+.data_search dl{*zoom:1; padding:5px 0; float:left; overflow:hidden;}
+.data_search dl:before,.data_search dl:after{display:table;content:"";}
+.data_search dl:after{clear:both;}
+.data_search dt { float:left; line-height:30px; width:100px; text-align:right;}
+.data_search dd { float:left;overflow-x:hidden;}/*width:150px;*/
+.data_search input[type=text] { width:130px;}
+.data_search input[type=text].w80 { width:70px;}
+.data_search dd .btn { margin-left:15px;}
+
+.data_search dl.block { width:100%; text-align:center; display:block;}
+.data_search dl.block dt { display:none;}
+.data_search dl.block dd { display:block; width:100%;}
+
+.data_search dd label { margin-right:10px; line-height:30px;}
+/* 翻页 */
+.pagination { padding:10px 10px 0px;float: right;}
+.pagination strong { padding:0px 2px;}
+.pagination-info { float:left;}
+.pagination-pages { float:right;}
+.pagination-page { float:left; padding-top:4px;}
+.pagination-page a { float:left;margin-right: 3px; padding: 1px 9px;color: #999;height: 23px; line-height: 23px; border-radius: 2px; text-decoration: none;}
+.pagination-page a:hover { padding: 0px 8px; border: 1px solid #eee; background-color: #eee; color: #666; text-decoration: none;}
+.pagination-page span.cur { padding: 0px 8px; border: 1px solid #146891; background-color: #146891; color: #fff; margin-right: 3px; float: left; height: 23px; line-height: 23px; border-radius: 2px;}
+.pagination-page span.point { padding: 1px 6px; float: left;height: 23px; line-height: 23px;}
+.pagination-count { float:left; padding-left:10px; line-height:30px;}
+.pagination-form { float:left; padding-left:10px; line-height:30px;}
+.pagination-form input { width:20px; margin:0px 3px;}
+.pagination-form .btn { margin-left:5px;}
+.pagination .current { background:#1890ff; display:block; padding:0px 6px; font-weight:bold;color: #fff;}
+.pagination .pageinfo{ color:#555;border:none;background-color:white;font-weight:bold;}
+.pagination ul li { float:left; border:1px solid #C8C8C8; height:30px; line-height:30px; margin:0px 3px;padding:0px 2px;background:#DBE3E6;}
+.pagination ul li a, .pageinfo { display:block; padding:0px 6px; background:#DBE3E6;}
+.pagination #toPage{border:1px solid #C8C8C8;width:30px;height:20px; line-height:20px;}
+.pagination #btn_toPage{width:40px;height:30px; line-height:30px;border: 0px;background: #1890ff;color: #fff;border-radius:5px;}
+.pagination ul li.disabled{background-color:white;color:gray;}
+.pagination ul li.shenglie{border:none;background-color:white;color:black;}
+
+/* tree管理 */
+.tree_manager { padding:20px; background:#fff;}
+.tree_manager .col { width:50%; float:left; overflow:hidden;}
+.tree_manager .col.lf { width:30%;}
+.tree_manager .col.rt { width:70%; overflow-y:auto;}
+.tree_manager .btngroup { padding-bottom:10px;}
+.tree_manager .btngroup .btn { margin-right:10px;}
+
+.tree_manager .form_main {}
+.tree_manager .form_main dt { text-align:left; display:block; width:100%; float:none;}
+.tree_manager .form_main dd { float:none; display:block; margin-left:0px;}
+.tree_manager .form_main textarea { width:100%;}
+.tree_manager .form_main .w80 { width:80px;}
+
+/* 添加文章2 */
+.info_add2 {}
+.info_add2 .page_tab { padding:0px 10px; border-bottom:1px solid #ccc; height:39px;}
+.info_add2 .page_tab .tabs { float:left; padding-top:6px;}
+.info_add2 .page_tab .tabs li { float:left; border:1px solid #ccc; border-radius:3px; border-bottom:0px; margin-right:5px;}
+.info_add2 .page_tab .tabs li a { padding:0px 13px; line-height:32px; background:#fff; display:block;}
+.info_add2 .page_tab .tabs li.act { border-bottom:1px solid #fff;}
+.info_add2 .page_tab .tabs li.act a { font-weight:bold;}
+.info_add2 .page_tab .add_page { float:left; padding-top:4px; padding-left:10px;}
+.info_add2 .page_tab .add_page .btn {}
+.info_add2 .page_cont { overflow:auto;}
+
+/* 图片维护 */
+.pic_list { padding:10px; margin-left:-20px;}
+.pic_list .col { width:120px; float:left; background:#fff; text-align:center; margin-left:20px; position:relative; margin-bottom:10px;}
+.pic_list .col .img { width:120px; height:120px; margin:0px auto; background:#c39;}
+.pic_list .col img {  width:120px; height:120px;}
+.pic_list .col .name { height:30px; text-align:left; position:relative; background:#fff;}
+.pic_list .col .name.edit {}
+.pic_list .col .name.edit .rename { display:block;}
+.pic_list .col .rename { text-align:left; display:none; position:absolute; top:0px; left:0px;}
+.pic_list .col .rename input { width:105px;}
+.pic_list .col .name p { line-height:30px;}
+.pic_list .col .name p.hover { background:#ffc;}
+
+.pic_list .col .ctl { position:absolute; height:22px; top:0px; left:0px; right:0px; background:none;}
+.pic_list .col .ctl .check { float:left; text-align:left; padding-left:5px;}
+.pic_list .col .ctl .delete { width:60px; float:right; text-align:right;}
+.pic_list .col .ctl .delete a { width:34px; height:34px; overflow:hidden; background:url(list_close.png) 0px 0px no-repeat; text-indent:-999em; position:absolute; top:-14px; right:-14px; display:none;}
+.pic_list .col .ctl .delete a.act { display:block;}
+
+/* 添加文章 附件 */
+.file_list { padding:5px 0px;}
+.file_list li { line-height:25px; display:block; padding-left:5px;}
+.file_list li:hover { background:#f2f2f2;}
+.file_list li a { padding:5px 0px; padding-left:20px; background:url(doctype_none.png) center left no-repeat;}
+.file_list li .delete { display:none; margin-left:10px; padding-left:0px; background:none;}
+
+/* Responsive Style */
+/* For 1200px Grid */
+
+/* 通用统计表格 */
+.tablist{width:100%; border:1px #ccc solid;margin-top:15px;}
+.tablist td{ background-color:#FFFFFF;padding:5px; line-height:30px; border-bottom:1px #d5d5d5 solid;}
+/* For 960px Grid */
+@media only screen and (min-width: 960px) and (max-width: 1199px) {
+
+	
+/* For 720px Grid */
+@media only screen and (min-width: 720px) and (max-width: 959px) {
+
+
+/* For 320px Grid */
+@media only screen and (min-width: 320px) and (max-width: 719px) {
+
+
+/* Page Style [For Less than 320px] */	
+@media only screen and (max-width: 319px) {
+	
+.upload_file_css{
+	height:20px;
+}
+
+	

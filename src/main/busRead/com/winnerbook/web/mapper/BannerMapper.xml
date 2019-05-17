@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BannerMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.web.dto.Banner" >
+    <id column="banner_id" property="bannerId" jdbcType="INTEGER" />
+    <result column="banner_title" property="bannerTitle" jdbcType="VARCHAR" />
+    <result column="banner_url" property="bannerUrl" jdbcType="VARCHAR" />
+    <result column="banner_type" property="bannerType" jdbcType="VARCHAR" />
+    <result column="banner_click_url" property="bannerClickUrl" jdbcType="VARCHAR" />
+    <result column="banner_status" property="bannerStatus" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select  banner_id, banner_title, banner_url, banner_type,banner_click_url, banner_status, create_date, create_user_id, 
+    create_user_name
+  	from web_banner where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="bannerTitle != null and bannerTitle  != '' "> and banner_title like '%${bannerTitle}%' </if>
+	order by banner_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from web_banner where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="bannerTitle != null and bannerTitle  != '' "> and banner_title like '%${bannerTitle}%' </if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    banner_id, banner_title, banner_url, banner_type, banner_click_url,banner_status
+    from web_banner
+    where banner_id = #{bannerId,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="com.winnerbook.web.dto.Banner" >
+    insert into web_banner (banner_title, banner_url, 
+      banner_type,banner_click_url, banner_status, create_date, 
+      create_user_id, create_user_name)
+    values (#{bannerTitle,jdbcType=VARCHAR}, #{bannerUrl,jdbcType=VARCHAR}, 
+      #{bannerType,jdbcType=VARCHAR}, #{bannerClickUrl,jdbcType=VARCHAR}, #{bannerStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.web.dto.Banner" >
+    update web_banner
+    set banner_title = #{bannerTitle,jdbcType=VARCHAR},
+      banner_url = #{bannerUrl,jdbcType=VARCHAR},
+      banner_type = #{bannerType,jdbcType=VARCHAR},
+      banner_status = #{bannerStatus,jdbcType=VARCHAR},
+      banner_click_url = #{bannerClickUrl,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where banner_id = #{bannerId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- banner图  web端使用sql -->
+  <select id="getBannerList" parameterType="hashmap" resultType="hashmap">
+  	select  banner_id bannerId, banner_title bannerTitle, banner_url bannerUrl, banner_type bannerType,banner_click_url bannerClickUrl from web_banner where banner_status=1 
+  	<if test="bannerType != null and bannerType  != '' "> and banner_type = #{bannerType} </if>
+  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if>
+  	order by banner_id desc
+  </select>
+  
+</mapper>

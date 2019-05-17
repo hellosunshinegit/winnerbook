@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ReadThoughtMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.ReadThought" >
+    <id column="thought_id" property="thoughtId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="VARCHAR" />
+    <result column="course_name" property="courseName" jdbcType="VARCHAR" />
+    <result column="thought_url" property="thoughtUrl" jdbcType="VARCHAR" />
+    <result column="thought_filename" property="thoughtFilename" jdbcType="VARCHAR" />
+    <result column="book_list_id" property="bookListId" jdbcType="INTEGER" />
+    <result column="book_list_name" property="bookListName" jdbcType="VARCHAR" />
+    <result column="thought_title" property="thoughtTitle" jdbcType="VARCHAR" />
+    <result column="thought_des" property="thoughtDes" jdbcType="LONGVARCHAR" />
+    <result column="is_open" property="isOpen" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from (
+  	select  thought_id, user_id, course_id,course_name, thought_url,thought_filename, book_list_name,thought_title,thought_des,is_open,create_date, create_user_id, create_user_name
+  	from bus_read_thought where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		union
+	  	select thought_id, user_id, course_id,course_name, thought_url,thought_filename, book_list_name,thought_title,thought_des,is_open,create_date, create_user_id, create_user_name
+		from bus_read_thought where is_open=1 and FIND_IN_SET(create_user_id,(select GROUP_CONCAT(user_id) from uc_user where belong_bus_user_id=#{sessionUser.belongBusUserId} and user_id!=#{sessionUser.userId}))
+  	</if>
+  	) a
+	order by thought_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select COUNT(*) from (
+		select  thought_id from bus_read_thought where 1=1 
+		<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  			and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+			union
+			select thought_id from bus_read_thought where is_open=1 and FIND_IN_SET(create_user_id,(select GROUP_CONCAT(user_id) from uc_user where belong_bus_user_id=#{sessionUser.belongBusUserId} and user_id!=#{sessionUser.userId}))
+  		</if>
+	) a
+  </select>
+
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    thought_id, user_id, course_id,course_name, thought_url, thought_filename,book_list_id,book_list_name,thought_title,thought_des,is_open,create_date, create_user_id, create_user_name
+    from bus_read_thought
+    where thought_id = #{thoughtId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="delete" parameterType="hashmap" >
+    delete from bus_read_thought
+    where thought_id = #{thoughtId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="com.winnerbook.course.dto.ReadThought" useGeneratedKeys="true" keyProperty="thoughtId">
+    insert into bus_read_thought (user_id, course_id, course_name,
+      thought_url, thought_filename,book_list_id,book_list_name,is_open,create_date, create_user_id, 
+      create_user_name, thought_des,thought_title)
+    values (#{userId,jdbcType=INTEGER}, #{courseId,jdbcType=VARCHAR}, #{courseName,jdbcType=VARCHAR}, 
+      #{thoughtUrl,jdbcType=VARCHAR},  #{thoughtFilename,jdbcType=VARCHAR},#{bookListId,jdbcType=INTEGER}, #{bookListName,jdbcType=VARCHAR}, 
+      #{isOpen,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, 
+      #{createUserName,jdbcType=VARCHAR}, #{thoughtDes,jdbcType=LONGVARCHAR},#{thoughtTitle,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.course.dto.ReadThought" >
+    update bus_read_thought
+    set user_id = #{userId,jdbcType=INTEGER},
+      course_id = #{courseId,jdbcType=VARCHAR},
+      course_name = #{courseName,jdbcType=VARCHAR},
+      thought_url = #{thoughtUrl,jdbcType=VARCHAR},
+      thought_filename = #{thoughtFilename,jdbcType=VARCHAR},
+      book_list_id = #{bookListId,jdbcType=INTEGER},
+      book_list_name = #{bookListName,jdbcType=VARCHAR},
+      is_open = #{isOpen,jdbcType=VARCHAR},
+      thought_des = #{thoughtDes,jdbcType=LONGVARCHAR},
+      update_date =  #{updateDate,jdbcType=TIMESTAMP},
+      thought_title = #{thoughtTitle,jdbcType=VARCHAR}
+    where thought_id = #{thoughtId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 首页查看读后感 -->
+  <select id="getReadThoughts" parameterType="hashmap" resultType="hashmap">
+  	select rt.thought_id id,rt.course_name courseName,rt.book_list_name  bookName,rt.thought_title title,bl.book_img img,rt.course_id courseId,DATE_FORMAT(rt.create_date,'%Y-%m-%d') createDate
+		from bus_read_thought rt
+    	left join bus_book_list bl on rt.book_list_id=bl.book_id
+ 	where rt.is_open=1 and FIND_IN_SET(rt.create_user_id,(select GROUP_CONCAT(user_id) from uc_user where belong_bus_user_id=#{busId}))
+ 	order by thought_id desc
+ 	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  
+  <select id="getReadThoughtsCount" parameterType="hashmap" resultType="java.lang.Integer">
+	select count(1) from bus_read_thought rt
+	 where rt.is_open=1 and FIND_IN_SET(rt.create_user_id,(select GROUP_CONCAT(user_id) from uc_user where belong_bus_user_id=#{busId}))
+  </select>
+  
+   <!-- 详情 -->
+   <select id="getReadThoughtsDetail" parameterType="hashmap" resultType="hashmap">
+	select thought_id id,book_list_id bookListId, book_list_name bookListName ,thought_title title,thought_des detail,l.book_img img,DATE_FORMAT(t.create_date,'%Y-%m-%d') createDate
+  	from bus_read_thought t left join bus_book_list l on t.book_list_id=l.book_id
+  	where thought_id=#{id}
+  </select>	
+  
+  <!-- 我的读后感 -->
+  <select id="getReadThoughtUser" parameterType="hashmap" resultType="hashmap">
+	select thought_id id,course_name courseName,rt.book_list_name bookName,thought_title title,bl.book_img img,rt.is_open
+  	from bus_read_thought rt
+    left join bus_book_list bl on rt.book_list_id=bl.book_id
+  	where 1=1 and rt.create_user_id = #{userId}
+  	order by thought_id desc
+  	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <!-- 总数 -->	
+  <select id="getReadThoughtUserCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(1) from bus_read_thought where 1=1 and create_user_id = #{userId}
+  </select>
+ 
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="DefaultParamterMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.DefaultParamter" >
+    <id column="dp_id" property="dpId" jdbcType="INTEGER" />
+    <result column="bus_admin_role_id" property="busAdminRoleId" jdbcType="VARCHAR" />
+    <result column="bus_user_role_name" property="busUserRoleName" jdbcType="VARCHAR" />
+    <result column="bus_user_menu_ids" property="busUserMenuIds" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="findDefaultParamter" resultMap="BaseResultMap" >
+    select dp_id, bus_admin_role_id, bus_user_role_name, bus_user_menu_ids
+    from uc_default_paramter
+  </select>
+  
+  <insert id="insertDefaultBusRole" parameterType="hashmap">
+  	insert uc_default_bus_role(bus_admin_id,bus_user_role_id) values(#{busAdminId},#{busUserRoleId})
+  </insert>
+  
+  <select id="getDefaultBusRoleByBusId" parameterType="hashmap" resultType="hashmap">
+  	select bus_admin_id busAdminId,bus_user_role_id busUserRoleId from uc_default_bus_role where bus_admin_id=#{busAdminId}
+  </select>
+ 
+</mapper>

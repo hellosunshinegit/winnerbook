@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="QrcodeMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.share.dto.Qrcode" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="INTEGER" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="img" property="img" jdbcType="VARCHAR" />
+    <result column="forward_url" property="forwardUrl" jdbcType="VARCHAR" />
+    <result column="scan_count" property="scanCount" jdbcType="INTEGER" />
+    <result column="qrcode_url" property="qrcodeUrl" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name,img, address, forward_url, scan_count,qrcode_url, status,create_date, create_user_id, create_user_name,update_date
+  </sql>
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_qrcode
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from bus_qrcode where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+	<if test="name != null and name  != '' "> and name like '%${name}%' </if>
+	order by create_date desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_qrcode where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+	<if test="name != null and name  != '' "> and name like '%${name}%' </if>
+  </select>
+  
+  <insert id="insert" parameterType="com.winnerbook.share.dto.Qrcode"  useGeneratedKeys="true" keyProperty="id">
+    insert into bus_qrcode (name, img,address, 
+      forward_url, scan_count, qrcode_url,status,create_date, 
+      create_user_id, create_user_name)
+    values (#{name,jdbcType=INTEGER}, #{img,jdbcType=INTEGER},#{address,jdbcType=VARCHAR}, 
+      #{forwardUrl,jdbcType=VARCHAR}, #{scanCount,jdbcType=INTEGER},#{qrcodeUrl,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+       #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateQrcodeUrl" parameterType="hashmap">
+  	update bus_qrcode set qrcode_url=#{qrcodeUrl},update_date=NOW() where id=#{id}
+  </update>
+  
+  <update id="updateScanCount" parameterType="hashmap">
+  	update bus_qrcode set scan_count=scan_count+1,update_date=NOW() where id=#{id}
+  </update>
+  
+  <update id="update" parameterType="com.winnerbook.share.dto.Qrcode" >
+    update bus_qrcode
+    set name = #{name,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      forward_url = #{forwardUrl,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.web.dto.Article" >
+    <id column="article_id" property="articleId" jdbcType="INTEGER" />
+    <result column="article_type_id" property="articleTypeId" jdbcType="INTEGER" />
+    <result column="article_tags" property="articleTags" jdbcType="VARCHAR" />
+    <result column="article_channel" property="articleChannel" jdbcType="VARCHAR" />
+    <result column="article_title" property="articleTitle" jdbcType="VARCHAR" />
+    <result column="article_img" property="articleImg" jdbcType="VARCHAR" />
+    <result column="article_author" property="articleAuthor" jdbcType="VARCHAR" />
+    <result column="article_des" property="articleDes" jdbcType="VARCHAR" />
+    <result column="article_content" property="articleContent" jdbcType="LONGVARCHAR" />
+    <result column="article_status" property="articleStatus" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select article_id, article_type_id, article_tags, article_channel, article_title, article_img,
+    article_author, article_des, article_content, article_status, create_date, create_user_id, create_user_name
+  	from web_article where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or (create_user_id = #{sessionUser.adminId} and article_status=2))
+  	</if>
+  	<if test="articleTitle != null and articleTitle  != '' "> and article_title like '%${articleTitle}%' </if>
+	order by article_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from web_article where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or (create_user_id = #{sessionUser.adminId} and article_status=2))
+  	</if>
+  	<if test="articleTitle != null and articleTitle  != '' "> and article_title like '%${articleTitle}%' </if>
+  </select>
+ 
+  <select id="findById" resultType="hashmap" parameterType="java.lang.Integer" >
+    select 
+     article_id articleId, article_type_id articleTypeId, article_tags articleTags, article_channel articleChannel, article_title articleTitle, article_img articleImg,
+    article_author articleAuthor, article_des articleDes, article_content articleContent, article_status articleStatus,
+    (select GROUP_CONCAT(tag_id) from web_article_tag where article_id=#{articleId}) articleTagIds,
+	(select GROUP_CONCAT(block_id) from web_article_block where article_id=#{articleId}) blockStr
+    from web_article
+    where article_id = #{articleId,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" parameterType="com.winnerbook.web.dto.Article" keyProperty="articleId" useGeneratedKeys="true">
+    insert into web_article (article_type_id, article_tags, 
+      article_channel, article_title, article_img,
+      article_author, article_des, article_content, article_status, 
+      create_date, create_user_id, create_user_name
+      )
+    values (#{articleTypeId,jdbcType=INTEGER}, #{articleTags,jdbcType=VARCHAR}, 
+      #{articleChannel,jdbcType=INTEGER}, #{articleTitle,jdbcType=VARCHAR}, #{articleImg,jdbcType=VARCHAR}, 
+      #{articleAuthor,jdbcType=VARCHAR}, #{articleDes,jdbcType=VARCHAR}, #{articleContent,jdbcType=LONGVARCHAR},
+      #{articleStatus,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.web.dto.Article" >
+    update web_article
+    set article_type_id = #{articleTypeId,jdbcType=INTEGER},
+      article_tags = #{articleTags,jdbcType=VARCHAR},
+      article_channel = #{articleChannel,jdbcType=VARCHAR},
+      article_title = #{articleTitle,jdbcType=VARCHAR},
+      article_img = #{articleImg,jdbcType=VARCHAR},
+      article_author = #{articleAuthor,jdbcType=VARCHAR},
+      article_des = #{articleDes,jdbcType=VARCHAR},
+      article_content = #{articleContent,jdbcType=LONGVARCHAR},
+      article_status = #{articleStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where article_id = #{articleId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新状态 -->
+  <update id="updateStatus" parameterType="hashmap">
+  	update web_article set article_status=#{articleStatus},update_date=#{updateDate} where article_id = #{articleId}
+  </update>
+  
+  <!-- web端使用 -->
+  <select id="getArticles" parameterType="hashmap" resultType="hashmap">
+  	select article_id articleId, article_tags articleTags, article_title articleTitle, article_img articleImg ,article_author articleAuthor, article_des articleDes
+  	from web_article where article_status=2 
+  	<if test="type != null and type  != '' "> and article_channel in (0,${type}) </if><!-- 推送频道  0 全部 1:h5  2:pc -->
+  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if><!-- 企业用户id -->
+  	<if test="blockId != null and blockId  != '' "> 
+		and article_id in (select article_id from web_article_block where block_id=#{blockId})
+	</if>
+  	order by article_id desc
+  	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  
+   <select id="getArticlesCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*)
+  	from web_article where article_status=2
+    <if test="type != null and type  != '' "> and article_channel in (0,${type}) </if><!-- 推送频道  0 全部 1:h5  2:pc -->
+  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if><!-- 企业用户id -->
+  	<if test="blockId != null and blockId  != '' "> 
+		and article_id in (select article_id from web_article_block where block_id=#{blockId})
+	</if>
+  </select>
+
+  <select id="getArticleDetail" parameterType="hashmap" resultType="hashmap">
+  	select article_id articleId, article_tags articleTags, article_title articleTitle, article_author articleAuthor, 
+  	article_des articleDes,article_content articleContent,DATE_FORMAT(create_date,'%Y-%m-%d') createDate
+  	from web_article where article_id=#{articleId}
+  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if><!-- 企业用户id -->
+  </select>	
+
+</mapper>

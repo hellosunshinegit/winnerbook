@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.0" xmlns="http://java.sun.com/xml/ns/j2ee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+ <display-name>Expend Tag</display-name>
+ <tlib-version>1.1</tlib-version>
+ <short-name>exp</short-name>
+ <uri>/exp-tags</uri>
+ 
+<tag>
+    <description><![CDATA[Render a select element]]></description>
+    <name>select</name>
+    <tag-class>com.winnerbook.base.commons.taglibs.ExpSelectTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description><![CDATA[The css class to use for element]]></description>
+      <name>cssClass</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[style.]]></description>
+      <name>style</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Set the html disabled attribute on rendered html element]]></description>
+      <name>disabled</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[ Key for first item in list. Must not be empty! '-1' and '' is correct, '' is bad.]]></description>
+      <name>headerKey</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Value expression for first item in list]]></description>
+      <name>headerValue</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[HTML id attribute]]></description>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[The name to set for element]]></description>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Set the html onchange attribute on rendered html element]]></description>
+      <name>onChange</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Preset the value of input element.]]></description>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[code.]]></description>
+      <name>code</name>
+      <required>true</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[params.]]></description>
+      <name>params</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[dataType.]]></description>
+      <name>dataType</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[requireMsg.]]></description>
+      <name>requireMsg</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+     <attribute>
+      <description><![CDATA[require.]]></description>
+      <name>require</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+  </tag>
+  
+<tag>
+<description><![CDATA[Render a import label]]></description>
+    <name>code</name>
+    <tag-class>com.winnerbook.base.commons.taglibs.ExpDictionaryTag</tag-class>
+    <body-content>JSP</body-content>
+     <attribute>
+      <name>value</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>code</name>
+      <required>true</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>    
+</tag>
+<tag>
+    <description><![CDATA[Render a list of checkboxes]]></description>
+    <name>checkboxlist</name>
+    <tag-class>com.winnerbook.base.commons.taglibs.ExpCheckboxListTag</tag-class>
+    <body-content>JSP</body-content>
+        <attribute>
+      <description><![CDATA[Set the html disabled attribute on rendered html element]]></description>
+      <name>disabled</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[The name to set for element]]></description>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Set the html onchange attribute on rendered html element]]></description>
+      <name>onChange</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Set the html onclick attribute on rendered html element]]></description>
+      <name>onClick</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Preset the value of input element.]]></description>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[colCount.]]></description>
+      <name>colCount</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[code.]]></description>
+      <name>code</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[params.]]></description>
+      <name>params</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+   <tag>
+    <description><![CDATA[Render a tree]]></description>
+    <name>tree</name>
+    <tag-class>com.winnerbook.base.commons.taglibs.ExpTreeTag</tag-class>
+    <body-content>JSP</body-content>
+     <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>code</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>params</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>expendLevel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>onClick</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>checkStyle</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>chkboxType</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>style</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>rootNodeId</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>rootNodeName</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+</tag>
+
+<tag>
+    <description><![CDATA[Render a treeSelect]]></description>
+    <name>treeSelect</name>
+    <tag-class>com.winnerbook.base.commons.taglibs.ExpTreeSelectTag</tag-class>
+    <body-content>JSP</body-content>
+     <attribute>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>code</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>params</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>expendLevel</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>onClick</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>checkStyle</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>chkboxType</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>style</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>rootNodeId</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>rootNodeName</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[dataType.]]></description>
+      <name>dataType</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[msg.]]></description>
+      <name>msg</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[name.]]></description>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+</tag>
+
+<tag>
+<description><![CDATA[Render a operate button or link]]></description>
+    <name>operate</name>
+    <tag-class>com.minxinloan.web.views.tags.ExpOperateTag</tag-class>
+    <body-content>JSP</body-content>
+     <attribute>
+      <name>moduleId</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>type</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>preParams</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>afterParams</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>colId</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>operateTab</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+</tag>
+  
+</taglib>

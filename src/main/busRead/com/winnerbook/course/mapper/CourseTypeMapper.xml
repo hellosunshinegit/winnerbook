@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CourseTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.CourseType" >
+    <id column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="type_desc" property="typeDesc" jdbcType="VARCHAR" />
+    <result column="type_status" property="typeStatus" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+   <sql id="Base_Column_List" >
+    type_id, type_name, type_desc, type_status, create_date, create_user_id, create_user_name, 
+    update_date
+  </sql>
+  
+   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from bus_course_type where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id = #{sessionUser.adminId})
+  	</if>
+	<if test="typeName != null and typeName  != '' "> and type_name like '%${typeName}%' </if>
+	order by type_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_course_type where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id = #{sessionUser.adminId})
+  	</if>
+	<if test="typeName != null and typeName  != '' "> and type_name like '%${typeName}%' </if>
+  </select>
+ 
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_course_type
+    where type_id = #{typeId,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" parameterType="com.winnerbook.course.dto.CourseType" >
+    insert into bus_course_type (type_name, type_desc, 
+      type_status, create_date, create_user_id, create_user_name)
+    values (#{typeName,jdbcType=VARCHAR}, #{typeDesc,jdbcType=VARCHAR}, 
+      #{typeStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.course.dto.CourseType" >
+    update bus_course_type
+    set type_name = #{typeName,jdbcType=VARCHAR},
+      type_desc = #{typeDesc,jdbcType=VARCHAR},
+      type_status = #{typeStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where type_id = #{typeId,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from bus_course_type
+    where type_id = #{typeId,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 获取所有课程列表 -->
+  <select id="getCourseTypeAll"  parameterType="hashmap" resultType="com.winnerbook.course.dto.CourseType">
+  	select type_id typeId, type_name typeName from bus_course_type where type_status=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和管理员赋给他的课程类型-->
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or FIND_IN_SET(type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=#{sessionUser.userId})))
+  	</if>
+  </select>
+  
+</mapper>

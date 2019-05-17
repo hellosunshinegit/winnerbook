@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CourseCommentMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.CourseComment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="course_id" property="courseId" jdbcType="INTEGER" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, course_id, comment, status, create_date, create_user_id, create_user_name
+  </sql>
+  
+  <!-- 手机端查看列表 -->
+  <select id="getCourseCommnets" parameterType="hashmap" resultType="hashmap">
+  	select id commentId, user_id userId, course_id courseId, comment, status, DATE_FORMAT(create_date,'%m-%d %H:%i:%s')  createDate, create_user_id createUserId, create_user_name createUserName
+  	from bus_course_comment where status=1
+  	<if test="courseId != null and courseId  != '' "> and course_id = #{courseId}</if>
+  	<if test="userId != null and userId  != '' "> and user_id = #{userId}</if>
+  	order by create_date desc
+    <if test="start != null "> limit ${start},${limit} </if>
+  </select>
+   <select id="getCourseCommnetsCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*)
+  	from bus_course_comment
+  	where status=1
+    <if test="courseId != null and courseId  != '' "> and course_id = #{courseId}</if>
+  	<if test="userId != null and userId  != '' "> and user_id = #{userId}</if>
+  </select>
+  
+ 
+  <insert id="insertCourseComment" parameterType="com.winnerbook.course.dto.CourseComment" useGeneratedKeys="true" keyProperty="id">
+    insert into bus_course_comment (user_id, course_id, 
+      comment, status, create_date, 
+      create_user_id, create_user_name)
+    values (#{userId,jdbcType=INTEGER}, #{courseId,jdbcType=INTEGER}, 
+      #{comment,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+  </insert>
+ 
+</mapper>

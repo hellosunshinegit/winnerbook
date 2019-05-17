@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UcSystemLogRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.UcSystemLogRecord" >
+    <id column="log_id" property="logId" jdbcType="BIGINT" />
+    <result column="log_des" property="logDes" jdbcType="VARCHAR" />
+    <result column="log_ip" property="logIp" jdbcType="VARCHAR" />
+    <result column="log_type" property="logType" jdbcType="VARCHAR" />
+    <result column="log_source" property="logSource" jdbcType="VARCHAR" />
+    <result column="log_create_date" property="logCreateDate" jdbcType="TIMESTAMP" />
+    <result column="log_create_user_id" property="logCreateUserId" jdbcType="BIGINT" />
+    <result column="log_create_user_name" property="logCreateUserName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <insert id="insert"  parameterType="com.winnerbook.system.dto.UcSystemLogRecord" >
+    insert into uc_system_log_record (log_id,log_des, log_ip, 
+      log_type,log_source, log_create_date, log_create_user_id, 
+      log_create_user_name)
+    values (#{logId,jdbcType=BIGINT},#{logDes,jdbcType=VARCHAR}, #{logIp,jdbcType=VARCHAR}, 
+      #{logType,jdbcType=VARCHAR},#{logSource,jdbcType=VARCHAR}, #{logCreateDate,jdbcType=TIMESTAMP}, #{logCreateUserId,jdbcType=INTEGER}, 
+      #{logCreateUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_system_log_record where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(log_create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+	<if test="logSourse != null and logSourse  != '' ">and log_source = #{logSourse} </if>
+	<if test="logType != null and logType  != '' ">and log_type = #{logType} </if>
+	<if test="starttime!=null and starttime!=''"> and log_create_date >='${starttime} 00:00:00'</if>
+ 	<if test="endtime!=null and endtime!=''">  and log_create_date &lt;='${endtime} 23:59:59'</if>
+  </select>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+	  select * from uc_system_log_record t where 1=1
+	  <if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(log_create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	 <if test="logSourse != null and logSourse  != '' ">and log_source = #{logSourse} </if>
+	 <if test="logType != null and logType  != '' ">and t.log_type = #{logType} </if>
+	 <if test="starttime!=null and starttime!=''"> and log_create_date >='${starttime} 00:00:00'</if>
+ 	<if test="endtime!=null and endtime!=''">  and log_create_date &lt;='${endtime} 23:59:59'</if>
+	 order by t.log_id desc limit ${start},${limit} 
+  </select>
+  
+</mapper>

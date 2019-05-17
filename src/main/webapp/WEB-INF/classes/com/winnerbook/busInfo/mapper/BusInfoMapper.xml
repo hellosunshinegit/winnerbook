@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BusInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.busInfo.dto.BusInfo" >
+    <id column="bu_id" property="buId" jdbcType="INTEGER" />
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="bus_name" property="busName" jdbcType="VARCHAR" />
+    <result column="bus_logo" property="busLogo" jdbcType="VARCHAR" />
+    <result column="bus_province" property="busProvince" jdbcType="VARCHAR" />
+    <result column="bus_city" property="busCity" jdbcType="VARCHAR" />
+    <result column="bus_county" property="busCounty" jdbcType="VARCHAR" />
+    <result column="bus_address" property="busAddress" jdbcType="VARCHAR" />
+    <result column="bus_industry" property="busIndustry" jdbcType="VARCHAR" />
+    <result column="bus_des" property="busDes" jdbcType="VARCHAR" />
+    <result column="bus_detail" property="busDetail" jdbcType="LONGVARCHAR" />
+    <result column="bus_create_date" property="busCreateDate" jdbcType="TIMESTAMP" />
+    <result column="bus_update_date" property="busUpdateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+   <!-- 用户企业列表 -->
+  <resultMap id="BaseResultUserMap" type="com.winnerbook.busInfo.dto.UserBusInfo" >
+  	<id column="bu_id" property="buId" jdbcType="INTEGER" />
+    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_unit_name" property="userUnitName" jdbcType="VARCHAR" />
+    <result column="bus_name" property="busName" jdbcType="VARCHAR" />
+    <result column="bus_logo" property="busLogo" jdbcType="VARCHAR" />
+    <result column="bus_province" property="busProvince" jdbcType="VARCHAR" />
+    <result column="bus_city" property="busCity" jdbcType="VARCHAR" />
+    <result column="bus_county" property="busCounty" jdbcType="VARCHAR" />
+    <result column="bus_address" property="busAddress" jdbcType="VARCHAR" />
+    <result column="bus_industry" property="busIndustry" jdbcType="VARCHAR" />
+    <result column="bus_des" property="busDes" jdbcType="VARCHAR" />
+    <result column="bus_detail" property="busDetail" jdbcType="LONGVARCHAR" />
+    <result column="bus_create_date" property="busCreateDate" jdbcType="TIMESTAMP" />
+    <result column="bus_update_date" property="busUpdateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <!-- 查询企业信息 -->
+   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultUserMap">
+  	select ub.bu_id,u.user_id,u.user_name,ub.bus_name,ub.bus_logo,ub.bus_industry,ub.bus_des from uc_user u
+	left join uc_user_bus_info ub on u.user_id=ub.user_id where u.is_business_admin=1
+	<if test="busName != null and busName  != '' "> and ub.bus_name like '%${busName}%' </if>
+	order by user_id desc limit ${start},${limit}
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_user u
+	left join uc_user_bus_info ub on u.user_id=ub.user_id where u.is_business_admin=1
+	<where>
+		<if test="busName != null and busName  != '' "> and ub.bus_name like '%${busName}%' </if>
+	</where>
+  </select>
+  
+  <!-- 根据id查询信息 -->
+  <select id="findBusInfoByuserId" parameterType="hashmap" resultMap="BaseResultUserMap">
+	select ub.bu_id,u.user_id,u.user_name,u.user_unit_name,ub.bus_name,ub.bus_logo,ub.bus_province,ub.bus_city,ub.bus_county,ub.bus_address,ub.bus_industry,
+	ub.bus_des,ub.bus_detail from 
+	uc_user u left join uc_user_bus_info ub on u.user_id=ub.user_id where u.user_id=#{userId} 
+  </select>
+
+  <insert id="insert" parameterType="com.winnerbook.busInfo.dto.BusInfo" >
+    insert into uc_user_bus_info (user_id, bus_name, bus_logo, bus_province,bus_city,bus_county,bus_address,bus_industry,
+      bus_des, bus_detail, bus_create_date)
+    values (#{userId,jdbcType=INTEGER}, #{busName,jdbcType=VARCHAR}, #{busLogo,jdbcType=VARCHAR}, 
+      #{busProvince,jdbcType=VARCHAR},#{busCity,jdbcType=VARCHAR},#{busCounty,jdbcType=VARCHAR},
+      #{busAddress,jdbcType=VARCHAR},#{busIndustry,jdbcType=VARCHAR},
+      #{busDes,jdbcType=VARCHAR},#{busDetail,jdbcType=LONGVARCHAR},NOW())
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.busInfo.dto.BusInfo" >
+    update uc_user_bus_info
+    set bus_name = #{busName,jdbcType=VARCHAR},
+      bus_logo = #{busLogo,jdbcType=VARCHAR},
+      bus_province = #{busProvince,jdbcType=VARCHAR},
+      bus_city = #{busCity,jdbcType=VARCHAR},
+      bus_county = #{busCounty,jdbcType=VARCHAR},
+      bus_address = #{busAddress,jdbcType=VARCHAR},
+      bus_industry = #{busIndustry,jdbcType=VARCHAR},
+      bus_des = #{busDes,jdbcType=LONGVARCHAR},
+      bus_detail = #{busDetail,jdbcType=VARCHAR},
+      bus_update_date = NOW()
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 查询是企业管理员的用户-->
+  <select id="findBusUserName" resultType="com.winnerbook.system.dto.User">
+  	select user_id userId,user_name userName,user_unit_name userUnitName from uc_user where user_statue=1 and is_business_admin=1 and user_id not in 
+	(select distinct user_id from uc_user_bus_info)
+  </select>
+  
+  <!-- 用户id查询企业信息是否新增 -->
+  <select id="findBusInfoById" resultType="Integer">
+  	select count(*) from uc_user_bus_info where user_id=#{userId}
+  </select>
+  
+</mapper>

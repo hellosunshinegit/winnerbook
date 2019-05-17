@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="StudentReportMapper" >
+
+  <!-- 包括当前时间的前7天 -->
+  <sql id="date_sql">
+    SELECT
+	adddate(DATE_SUB(CURDATE(), INTERVAL 6 DAY), numlist.id) date
+	FROM
+	(
+	SELECT
+	n1.i + n10.i * 10 + n100.i * 100 AS id
+	FROM
+	num n1
+	CROSS JOIN num AS n10
+	CROSS JOIN num AS n100
+	) AS numlist
+	WHERE
+	adddate(DATE_SUB(CURDATE(), INTERVAL 6 DAY), numlist.id) &lt;= date_add(DATE_SUB(CURDATE(), INTERVAL 6 DAY),INTERVAL 6 DAY)
+  </sql>
+
+  <!-- 我的学习报告 -->
+  <select id="getMyReport" parameterType="hashmap" resultType="hashmap">
+  	select * from 
+	(
+	(select IF(sum(look_time) is null,0,sum(look_time)) studentSecond from bus_student_record where 1=1  
+	<if test="userId != null and userId  != '' "> and user_id = #{userId} </if>
+	<if test="busId != null and busId  != '' "> and user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) </if>
+	) a,
+	(select IF(count(*) is null,0,count(*)) readThougthCount from bus_read_thought where 1=1
+	<if test="userId != null and userId  != '' "> and user_id = #{userId} </if>
+	<if test="busId != null and busId  != '' "> and user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) </if>
+	) b,
+	(select IF(count(*) is null,0,count(*)) commentCount from bus_course_comment where 1=1 
+	<if test="userId != null and userId  != '' "> and user_id = #{userId} </if>
+	<if test="busId != null and busId  != '' "> and user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) </if>
+	) c,
+	(select IF(sum(score) is null,0,sum(score)) studentScore from bus_score_record where 1=1 
+	<if test="userId != null and userId  != '' "> and user_id = #{userId} </if>
+	<if test="busId != null and busId  != '' "> and user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) </if>
+	) d,
+	(select IF(count(*) is null,0,count(*)) userCount from uc_user where 1=1
+	<if test="userId != null and userId  != '' "> and user_id = #{userId} </if>
+	<if test="busId != null and busId  != '' "> and user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) </if>
+	) e
+	)
+  </select>
+  
+  <!-- 近7天学习时长 -->
+  <select id="getStudentRecord7" parameterType="hashmap" resultType="hashmap">
+  	select DATE_FORMAT(date,'%m/%d') date,if(studentSecond is null,0,studentSecond) studentSecond from (
+	<include refid="date_sql"></include>
+	) a 
+	left join 
+	(select sum(look_time) studentSecond,DATE_FORMAT(create_date,'%Y-%m-%d') create_date  from bus_student_record where 1=1
+	<if test="userId != null and userId  != '' "> and user_id = #{userId} </if>
+	<if test="busId != null and busId  != '' "> and user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) </if>
+	and DATE_FORMAT(create_date,'%Y-%m-%d') &lt;= CURDATE() and DATE_FORMAT(create_date,'%Y-%m-%d')>=DATE_SUB(CURDATE(), INTERVAL 6 DAY) 
+	group by DATE_FORMAT(create_date,'%Y-%m-%d')) b on a.date=b.create_date
+	order by a.date asc
+  </select>
+  
+  <!-- 近7天的读后感 -->
+  <select id="getReadThought7" parameterType="hashmap" resultType="hashmap">
+  	select DATE_FORMAT(date,'%m/%d') date,if(readThoughtCount is null,0,readThoughtCount) readThoughtCount from (
+	<include refid="date_sql"></include>) a 
+	left join 
+	(select count(1) readThoughtCount,DATE_FORMAT(create_date,'%Y-%m-%d') create_date from bus_read_thought where 1=1
+	<if test="userId != null and userId  != '' "> and user_id = #{userId} </if>
+	<if test="busId != null and busId  != '' "> and user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) </if>
+	and DATE_FORMAT(create_date,'%Y-%m-%d') &lt;=CURDATE() and DATE_FORMAT(create_date,'%Y-%m-%d')>=DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+	group by DATE_FORMAT(create_date,'%Y-%m-%d')) b on a.date=b.create_date
+	order by a.date asc
+  </select>
+  
+  <!-- 近7天的发表评论 -->
+  <select id="getCourseComment7" parameterType="hashmap" resultType="hashmap">
+  	SELECT DATE_FORMAT(date,'%m/%d') date,if(commentCount is null,0,commentCount) commentCount from (
+	<include refid="date_sql"></include>) a 
+	left join 
+	(select count(1) commentCount,DATE_FORMAT(create_date,'%Y-%m-%d') create_date from bus_course_comment where 1=1
+	<if test="userId != null and userId  != '' "> and user_id = #{userId} </if>
+	<if test="busId != null and busId  != '' "> and user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) </if>
+	and DATE_FORMAT(create_date,'%Y-%m-%d') &lt;= CURDATE() and DATE_FORMAT(create_date,'%Y-%m-%d')>=DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+	group by DATE_FORMAT(create_date,'%Y-%m-%d')) b on a.date=b.create_date
+	order by a.date asc
+  </select>
+  
+   <!-- 获取企业里的个人排名 -->
+  <select id="getBusRanks" parameterType="hashmap" resultType="hashmap">
+	select a.*,@rownum := @rownum + 1 AS rank from 
+	(SELECT @rownum := 0) r,
+	(select a.user_id userId,a.user_unit_name userName,IF(b.sumScore is null,0,b.sumScore) sumScore from 
+	(select user_id,user_unit_name from uc_user where user_id in (select user_id from uc_user where belong_bus_user_id=#{busId})) a left join 
+	(select user_id,sum(score) sumScore from bus_score_record where user_id in (select user_id from uc_user where belong_bus_user_id=#{busId}) group by user_id) b
+	on a.user_id=b.user_id 
+	order by sumScore desc,user_unit_name asc) a
+	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  
+  <!-- 获取总数 -->
+  <select id="getBusRanksCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_user where user_id in (select user_id from uc_user where belong_bus_user_id=#{busId})
+  </select>
+  
+  <select id="getAllBusRanks" parameterType="hashmap" resultType="hashmap">
+  	select a.*,@rownum := @rownum + 1 AS rank from 
+	(SELECT @rownum := 0) r,
+	(select busId,busName,if(busScore is null,0,busScore) busScore from 
+	(select u.user_id busId,if(ubi.bus_name!='',ubi.bus_name,u.user_unit_name) busName from uc_user u left join uc_user_bus_info ubi on u.user_id=ubi.user_id where is_business_admin=1) a
+	LEFT JOIN
+	(select bus_id,sum(score) busScore from bus_score_record where bus_id!=0 GROUP BY bus_id) b 
+	on a.busId=b.bus_id 
+	order by busScore desc,busName desc) a
+	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  
+  <!-- 获取总数 -->
+  <select id="getAllBusRanksCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_user where is_business_admin=1
+  </select>
+  
+</mapper>

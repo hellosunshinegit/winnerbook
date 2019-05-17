@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NewsMapper">
+  <resultMap id="BaseResultMap" type="com.winnerbook.web.dto.News">
+    <id column="new_id" jdbcType="INTEGER" property="newId" />
+    <result column="new_title" jdbcType="VARCHAR" property="newTitle" />
+    <result column="new_img" jdbcType="VARCHAR" property="newImg" />
+    <result column="new_author" jdbcType="VARCHAR" property="newAuthor" />
+    <result column="new_channel" jdbcType="VARCHAR" property="newChannel" />
+    <result column="new_des" jdbcType="VARCHAR" property="newDes" />
+    <result column="new_content" jdbcType="LONGVARCHAR" property="newContent" />
+    <result column="new_status" jdbcType="VARCHAR" property="newStatus" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    new_id, new_title,new_img, new_author, new_channel, new_des,new_content, new_status, create_date, create_user_id, 
+    create_user_name, update_date
+  </sql>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/>
+  	from web_news where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="newTitle != null and newTitle  != '' "> and new_title like '%${newTitle}%' </if>
+	order by new_id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from web_news where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="newTitle != null and newTitle  != '' "> and new_title like '%${newTitle}%' </if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List"/>
+    from web_news
+    where new_id = #{newId,jdbcType=INTEGER}
+   </select>
+  
+  <insert id="insert" parameterType="com.winnerbook.web.dto.News">
+    insert into web_news (new_title,new_img, new_author, 
+      new_channel, new_des, new_status, 
+      create_date, create_user_id, create_user_name, 
+      update_date, new_content)
+    values (#{newTitle,jdbcType=VARCHAR},#{newImg,jdbcType=VARCHAR}, #{newAuthor,jdbcType=VARCHAR}, 
+      #{newChannel,jdbcType=VARCHAR}, #{newDes,jdbcType=VARCHAR}, #{newStatus,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{newContent,jdbcType=LONGVARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.web.dto.News">
+    update web_news
+    set new_title = #{newTitle,jdbcType=VARCHAR},
+      new_img = #{newImg,jdbcType=VARCHAR},
+      new_author = #{newAuthor,jdbcType=VARCHAR},
+      new_channel = #{newChannel,jdbcType=VARCHAR},
+      new_des = #{newDes,jdbcType=VARCHAR},
+      new_content = #{newContent,jdbcType=LONGVARCHAR},
+      new_status = #{newStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where new_id = #{newId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更细状态 -->
+  <update id="updateStatus" parameterType="hashmap">
+  	update web_news set new_status=#{newStatus},update_date=NOW() where new_id=#{newId}
+  </update>
+  
+   <!-- web端使用sql  企业风采 -->
+  <select id="getNewsList" parameterType="hashmap" resultType="hashmap">
+  	select new_id id, new_title title, new_img img,DATE_FORMAT(create_date,'%Y-%m-%d') createDate from web_news where new_status=2
+  	<if test="channelType != null and channelType  != '' "> and new_channel = #{channelType} </if>
+  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if>
+  	order by new_id desc
+  	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <select id="getNewsCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from web_news where new_status=2
+    <if test="channelType != null and channelType  != '' "> and new_channel = #{channelType} </if>
+  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if>
+  </select>
+  
+  <!-- 详情 -->
+   <select id="getNewsDetail" parameterType="hashmap" resultType="hashmap">
+  	select new_id id, new_title title,new_content detail,new_img img,DATE_FORMAT(create_date,'%Y-%m-%d') createDate
+  	from web_news where new_id=#{id}
+  </select>	
+  
+</mapper>

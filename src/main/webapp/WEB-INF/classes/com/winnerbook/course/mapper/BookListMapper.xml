@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BookListMapper">
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.BookList">
+    <id column="book_id" jdbcType="INTEGER" property="bookId" />
+    <id column="blu_id" jdbcType="INTEGER" property="bluId" />
+    <result column="book_name" jdbcType="VARCHAR" property="bookName" />
+    <result column="book_search_name" jdbcType="VARCHAR" property="bookSearchName" />
+    <result column="book_author" jdbcType="VARCHAR" property="bookAuthor" />
+    <result column="book_author_des" jdbcType="VARCHAR" property="bookAuthorDes" />
+    <result column="book_publishers" jdbcType="VARCHAR" property="bookPublishers" />
+    <result column="book_publication_date" jdbcType="VARCHAR" property="bookPublicationDate" />
+    <result column="book_content_des" jdbcType="VARCHAR" property="bookContentDes" />
+    <result column="open_book" jdbcType="VARCHAR" property="openBook" />
+    <result column="book_paper" jdbcType="VARCHAR" property="bookPaper" />
+    <result column="book_pack" jdbcType="VARCHAR" property="bookPack" />
+    <result column="is_suit" jdbcType="VARCHAR" property="isSuit" />
+    <result column="book_isbn" jdbcType="VARCHAR" property="bookIsbn" />
+    <result column="book_class" jdbcType="VARCHAR" property="bookClass" />
+    <result column="book_img" jdbcType="VARCHAR" property="bookImg" />
+    <result column="book_url" jdbcType="VARCHAR" property="bookUrl" />
+    <result column="book_status" jdbcType="VARCHAR" property="bookStatus" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    book_id, book_name,book_search_name, book_author, book_author_des, book_publishers, book_publication_date, 
+    book_content_des,open_book,book_paper, book_pack,is_suit,book_isbn,book_class,book_img,book_url,book_status, create_date, create_user_id, create_user_name, update_date,source
+  </sql>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from (
+  	select 0 blu_id,book_id, book_name,book_search_name, book_author, book_publishers, book_publication_date, book_status, create_date,create_user_id, create_user_name 
+  	from bus_book_list where 1=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		UNION
+		select blu.blu_id,blu.book_list_id book_id, blu.book_name,blu.book_search_name,blu.book_author, blu.book_publishers, blu.book_publication_date, blu.book_status, blu.create_date,
+		blu.create_user_id, blu.create_user_name from bus_book_list_user_id blu left join bus_book_list bl on blu.book_list_id=bl.book_id 
+		where FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	) a where 1=1 
+	<if test="bookName != null and bookName  != '' "> and a.book_name like '%${bookName}%' </if>
+	
+	order by create_date desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	SELECT sum(count) from (
+  		select count(*) count from bus_book_list where 1=1 
+	  		<if test="bookName != null and bookName  != '' "> and book_name like '%${bookName}%' </if>
+  			<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
+		  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+		  		UNION
+				select count(*) count from bus_book_list_user_id blu left join bus_book_list bl on blu.book_list_id=bl.book_id 
+				where user_id=#{sessionUser.userId}
+				<if test="bookName != null and bookName  != '' "> and bl.book_name like '%${bookName}%' </if>
+		  	</if>
+		) a
+  </select>
+  
+  <select id="findById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bus_book_list
+    where book_id = #{bookId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteById" parameterType="java.lang.Integer">
+    delete from bus_book_list
+    where book_id = #{bookId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.winnerbook.course.dto.BookList" useGeneratedKeys="true" keyProperty="bookId">
+    insert into bus_book_list (book_name,book_search_name, book_author, 
+      book_author_des, book_publishers, book_publication_date, 
+      open_book,book_paper, book_pack,is_suit,
+      book_isbn,book_class,book_img,book_url,
+      book_content_des, create_date, create_user_id, 
+      create_user_name,source)
+    values (#{bookName,jdbcType=VARCHAR}, #{bookSearchName,jdbcType=VARCHAR},#{bookAuthor,jdbcType=VARCHAR}, 
+      #{bookAuthorDes,jdbcType=VARCHAR}, #{bookPublishers,jdbcType=VARCHAR}, #{bookPublicationDate,jdbcType=VARCHAR}, 
+      #{openBook,jdbcType=VARCHAR}, #{bookPaper,jdbcType=VARCHAR}, #{bookPack,jdbcType=VARCHAR}, #{isSuit,jdbcType=VARCHAR}, 
+      #{bookIsbn,jdbcType=VARCHAR}, #{bookClass,jdbcType=VARCHAR}, #{bookImg,jdbcType=VARCHAR},  #{bookUrl,jdbcType=VARCHAR}, 
+      #{bookContentDes,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, 
+      #{createUserName,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR})
+  </insert>
+ 
+  <update id="update" parameterType="com.winnerbook.course.dto.BookList">
+    update bus_book_list
+    set book_name = #{bookName,jdbcType=VARCHAR},
+      book_author = #{bookAuthor,jdbcType=VARCHAR},
+      book_author_des = #{bookAuthorDes,jdbcType=VARCHAR},
+      book_publishers = #{bookPublishers,jdbcType=VARCHAR},
+      book_publication_date = #{bookPublicationDate,jdbcType=VARCHAR},
+      book_content_des = #{bookContentDes,jdbcType=VARCHAR},
+      open_book = #{openBook,jdbcType=VARCHAR},
+      book_paper = #{bookPaper,jdbcType=VARCHAR},
+      book_pack = #{bookPack,jdbcType=VARCHAR},
+      is_suit = #{isSuit,jdbcType=VARCHAR},
+      book_isbn = #{bookIsbn,jdbcType=VARCHAR},
+      book_class = #{bookClass,jdbcType=VARCHAR},
+      book_img = #{bookImg,jdbcType=VARCHAR},
+      book_url = #{bookUrl,jdbcType=VARCHAR},
+      book_status = #{bookStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where book_id = #{bookId,jdbcType=INTEGER}
+  </update>
+ 
+   <select id="getBookListAll"  parameterType="hashmap" resultType="com.winnerbook.course.dto.BookList">
+  	select book_id bookId, book_name bookName from bus_book_list where book_status=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和管理员赋给他的课程类型-->
+  		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  		or create_user_id=#{sessionUser.adminId})
+  		UNION
+		select bl.book_id bookId,bl.book_name bookName from bus_book_list_user_id blu left join bus_book_list bl on blu.book_list_id=bl.book_id 
+		where user_id=#{sessionUser.userId}
+  	</if>
+  </select>
+  
+  <!-- 根据bookName查询 -->
+  <select id="getBookListByName" parameterType="hashmap" resultType="com.winnerbook.course.dto.BookList">
+  	select book_id bookId, book_name bookName from bus_book_list where book_status=1 and book_name = #{bookName}
+  </select>
+  
+  <select id="getBookListByNameLogin" parameterType="hashmap" resultType="com.winnerbook.course.dto.BookList">
+  	select book_id bookId, book_name bookName,0 bluId from bus_book_list where book_status=1 and book_name = #{bookName}
+  	and create_user_id=#{sessionUser.userId}
+  	<if test="bookId != null and bookId  != '' "> and book_id!=#{bookId}</if>
+  	union 
+	select bl.book_id bookId,bl.book_name bookName,blu.blu_id bluId from bus_book_list_user_id blu left join bus_book_list bl on blu.book_list_id=bl.book_id 
+	where user_id=#{sessionUser.userId} and bl.book_name = #{bookName}
+	<if test="bluId != null and bluId  != '' "> and blu.blu_id!=#{bluId}</if>
+  </select>
+  
+  <!-- 相同的书籍不同的人添加 -->
+  <insert id="insertBookListUser" parameterType="com.winnerbook.course.dto.BookListUserId" useGeneratedKeys="true" keyProperty="bluId">
+  	insert into bus_book_list_user_id (book_list_id, user_id, 
+      book_name, book_search_name, book_author, 
+      book_publishers, book_publication_date, open_book, 
+      book_paper, book_pack, is_suit, 
+      book_isbn, book_class, book_img, 
+      book_url, book_content_des, book_author_des, 
+      book_status, create_date, create_user_id, 
+      create_user_name)
+    values (#{bookListId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{bookName,jdbcType=VARCHAR}, #{bookSearchName,jdbcType=VARCHAR}, #{bookAuthor,jdbcType=VARCHAR}, 
+      #{bookPublishers,jdbcType=VARCHAR}, #{bookPublicationDate,jdbcType=VARCHAR}, #{openBook,jdbcType=VARCHAR}, 
+      #{bookPaper,jdbcType=VARCHAR}, #{bookPack,jdbcType=VARCHAR}, #{isSuit,jdbcType=VARCHAR}, 
+      #{bookIsbn,jdbcType=VARCHAR}, #{bookClass,jdbcType=VARCHAR}, #{bookImg,jdbcType=VARCHAR}, 
+      #{bookUrl,jdbcType=VARCHAR}, #{bookContentDes,jdbcType=VARCHAR}, #{bookAuthorDes,jdbcType=VARCHAR}, 
+      #{bookStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, 
+      #{createUserName,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 查询相同书籍的中间表的数据-->
+  <select id="findByBookListUser" parameterType="hashmap" resultType="hashmap">
+  	select * from bus_book_list_user_id where blu_id=#{bluId}
+  </select>
+  
+  <!-- 修改 -->
+  <update id="updateBookListUser" parameterType="com.winnerbook.course.dto.BookList">
+    update bus_book_list_user_id
+    set book_name = #{bookName,jdbcType=VARCHAR},
+      book_author = #{bookAuthor,jdbcType=VARCHAR},
+      book_author_des = #{bookAuthorDes,jdbcType=VARCHAR},
+      book_publishers = #{bookPublishers,jdbcType=VARCHAR},
+      book_publication_date = #{bookPublicationDate,jdbcType=VARCHAR},
+      book_content_des = #{bookContentDes,jdbcType=VARCHAR},
+      open_book = #{openBook,jdbcType=VARCHAR},
+      book_paper = #{bookPaper,jdbcType=VARCHAR},
+      book_pack = #{bookPack,jdbcType=VARCHAR},
+      is_suit = #{isSuit,jdbcType=VARCHAR},
+      book_isbn = #{bookIsbn,jdbcType=VARCHAR},
+      book_class = #{bookClass,jdbcType=VARCHAR},
+      book_img = #{bookImg,jdbcType=VARCHAR},
+      book_url = #{bookUrl,jdbcType=VARCHAR},
+      book_status = #{bookStatus,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where blu_id = #{bluId,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- web端使用   企业端书籍列表 -->
+  <select id="getBooks" parameterType="hashmap" resultType="hashmap">
+  	select * from (
+	select 0 bluId,bl.book_id bookId, bl.book_name bookName, bl.book_author bookAuthor, bl.book_class bookClass,bl.book_img bookImg,bl.book_content_des bookContentDes,bl.create_date,c.course_id courseId,c.main_guest mainGuest
+	from bus_book_list bl left join bus_course c on bl.book_id=c.book_list_id where book_status=1
+	  	 <if test="userId != null and userId  != '' "> and FIND_IN_SET(bl.create_user_id,getChildrenUser(${busId}))  </if>
+	union 
+	select blu.blu_id bluId,bl.book_id bookId,blu.book_name bookName,blu.book_author bookAuthor,blu.book_class bookClass,blu.book_img bookImg,blu.book_content_des bookContentDes,blu.create_date,c.course_id courseId,c.main_guest mainGuest
+	from bus_book_list_user_id blu left join bus_book_list bl on blu.book_list_id=bl.book_id 
+	left join bus_course c on bl.book_id=c.book_list_id
+	where 1=1 
+	<if test="userId != null and userId  != '' "> and  FIND_IN_SET(blu.user_id,getChildrenUser(${busId}))</if>
+	) a order by courseId desc,create_date desc
+  	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <!-- 共多少条数 -->
+  <select id="getBooksCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select sum(count) from (
+		select count(1) count from bus_book_list bl left join bus_course c on bl.book_id=c.book_list_id where book_status=1  
+		<if test="userId != null and userId  != '' "> and FIND_IN_SET(bl.create_user_id,getChildrenUser(${busId})) </if>
+		union 
+		select count(1) count from bus_book_list_user_id blu left join bus_course c on blu.book_list_id=c.book_list_id where 1=1
+		<if test="userId != null and userId  != '' "> and FIND_IN_SET(blu.user_id,getChildrenUser(${busId})) </if>
+	) a
+  </select>
+  
+  <!-- 书单详情 -->
+  <select id="getBookDetail" parameterType="hashmap" resultType="hashmap">
+  	select book_id bookId,book_name bookName,book_author bookAuthor,book_publishers bookPublishers,book_publication_date bookPublicationDate,open_book openBook,book_paper bookPaper,book_pack bookPack,
+  	is_suit isSuit,book_isbn bookIsbn,book_class bookClass,book_img bookImg,DATE_FORMAT(create_date,'%Y-%m-%d') createDate,book_author_des bookAuthorDes,book_content_des bookContentDes 
+  	from bus_book_list 
+  	where book_id=#{bookId}
+  </select>
+  
+  <!-- 获取中间表的中间详情 -->
+  <select id="getBookDetailUser" parameterType="hashmap" resultType="hashmap">
+  	select blu_id bluId,book_list_id bookId,book_name bookName,book_author bookAuthor,book_publishers bookPublishers,book_publication_date bookPublicationDate,open_book openBook,book_paper bookPaper,book_pack bookPack,
+  	is_suit isSuit,book_isbn bookIsbn,book_class bookClass,book_img bookImg,DATE_FORMAT(create_date,'%Y-%m-%d') createDate,book_author_des bookAuthorDes,book_content_des bookContentDes 
+  	from bus_book_list_user_id 
+  	where blu_id=#{bluId}
+  </select>
+  
+  <!-- 根据书单id下的书籍信息-->
+  <select id="getLabelBookLists" parameterType="hashmap" resultType="hashmap">
+  	select book_id bookId, book_name bookName, book_author bookAuthor, book_class bookClass,book_img bookImg,book_content_des bookContentDes,bc.course_id courseId,bc.main_guest mainGuest
+	from bus_book_list bl left join bus_course bc on bl.book_id=bc.book_list_id where book_id in (select book_list_id from bus_book_list_type_id where type_id=#{typeId} order by id asc)
+	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <!-- 查询总数 -->
+  <select id="getLabelBookListsCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_book_list where book_id in (select book_list_id from bus_book_list_type_id where type_id=#{typeId})
+  </select>
+ 
+</mapper>
