@@ -31,6 +31,9 @@ public interface QrcodeService {
 	 */
 	void update(Qrcode record);
 	
+	//根据企业id查询二维码
+	Qrcode getQrcodeByBusId(String busId);
+	
 
 		
 }

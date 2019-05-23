@@ -168,32 +168,32 @@ public class WxInfoServiceImpl extends BaseServiceImpl implements WxInfoService{
 			User user = userService.findUserById(activity.getCreateUserId()+"");
 			
 			//发微博
-			title = (StringUtils.isNotBlank(activity.getWbTitle())?activity.getWbTitle():activity.getTitle())+"\n"+ConstantUtils.H5_URL+"page/activity/activityDetail.html?busId="+user.getBelongBusUserId()+"&userId=&id="+activity.getId()+"&sourse=wb";
+			title = (StringUtils.isNotBlank(activity.getWbTitle())?activity.getWbTitle():activity.getTitle())+"\n请点击"+ConstantUtils.H5_URL+"page/activity/activityDetail.html?busId="+user.getBelongBusUserId()+"&userId=&id="+activity.getId()+"&sourse=wb";
 			pic = activity.getWbImg();
 		}else if("new".equals(type)){//企业风采
 			//通过id查询企业风采信息
 			News news = newsService.findById(id);
 			User user = userService.findUserById(news.getCreateUserId()+"");
 			//发微博
-			title = (StringUtils.isNotBlank(news.getWbTitle())?news.getWbTitle():news.getNewTitle())+"\n"+ConstantUtils.H5_URL+"page/detail/detail.html?busId="+user.getBelongBusUserId()+"&userId=&id="+news.getNewId()+"&list_type=2&sourse=wb";
+			title = (StringUtils.isNotBlank(news.getWbTitle())?news.getWbTitle():news.getNewTitle())+"\n请点击"+ConstantUtils.H5_URL+"page/detail/detail.html?busId="+user.getBelongBusUserId()+"&userId=&id="+news.getNewId()+"&list_type=2&sourse=wb";
 			pic = news.getWbImg();
 		}else if("club".equals(type)){
 			ReadBookClub readBookClub = readBookClubService.findById(id);
 			User user = userService.findUserById(readBookClub.getCreateUserId()+"");
 			//发微博
-			title = (StringUtils.isNotBlank(readBookClub.getWbTitle())?readBookClub.getWbTitle():readBookClub.getClubTitle())+"\n"+ConstantUtils.H5_URL+"page/detail/detail.html?busId="+user.getBelongBusUserId()+"&userId=&id="+readBookClub.getClubId()+"&list_type=3&sourse=wb";
+			title = (StringUtils.isNotBlank(readBookClub.getWbTitle())?readBookClub.getWbTitle():readBookClub.getClubTitle())+"\n请点击"+ConstantUtils.H5_URL+"page/detail/detail.html?busId="+user.getBelongBusUserId()+"&userId=&id="+readBookClub.getClubId()+"&list_type=3&sourse=wb";
 			pic = readBookClub.getWbImg();
 		}else if("course".equals(type)){
 			Course course = courseService.findById(id);
 			User user = userService.findUserById(course.getCreateUserId()+"");
 			//发微博
-			title = (StringUtils.isNotBlank(course.getWbTitle())?course.getWbTitle():course.getTitle())+"\n"+ConstantUtils.H5_URL+"page/detail/courseDetail.html?busId="+user.getBelongBusUserId()+"&userId=&courseId="+course.getCourseId()+"&type=1&sourse=wb";
+			title = (StringUtils.isNotBlank(course.getWbTitle())?course.getWbTitle():course.getTitle())+"\n请点击"+ConstantUtils.H5_URL+"page/detail/courseDetail.html?busId="+user.getBelongBusUserId()+"&userId=&courseId="+course.getCourseId()+"&type=1&sourse=wb";
 			pic = course.getWbImg();
 		}else if("booklisttype".equals(type)){
 			BookListType bookListType = bookListTypeService.findById(id);
 			User user = userService.findUserById(bookListType.getCreateUserId()+"");
 			//发微博
-			title = (StringUtils.isNotBlank(bookListType.getWbTitle())?bookListType.getWbTitle():bookListType.getTypeName())+"\n"+ConstantUtils.H5_URL+"page/list/bookList.html?busId="+user.getBelongBusUserId()+"&userId=&typeId="+bookListType.getId()+"&sourse=wb";
+			title = (StringUtils.isNotBlank(bookListType.getWbTitle())?bookListType.getWbTitle():bookListType.getTypeName())+"\n请点击"+ConstantUtils.H5_URL+"page/list/bookList.html?busId="+user.getBelongBusUserId()+"&userId=&typeId="+bookListType.getId()+"&sourse=wb";
 			pic = bookListType.getWbImg();
 		}
 		

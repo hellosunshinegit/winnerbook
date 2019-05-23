@@ -68,10 +68,10 @@
 					<tr>
 						<td>${(pageDTO.pageIndex-1)*pageDTO.pageSize+status.index+1}</td>
 						<td title="${item.title } ">
-							<c:if test="${fn:length(item.title)>20}">
-								${fn:substring(item.title,0,20)}...
+							<c:if test="${fn:length(item.title)>15}">
+								${fn:substring(item.title,0,15)}...
 							</c:if>
-							<c:if test="${fn:length(item.title)<=20}">
+							<c:if test="${fn:length(item.title)<=15}">
 								${item.title}
 							</c:if>
 						</td>

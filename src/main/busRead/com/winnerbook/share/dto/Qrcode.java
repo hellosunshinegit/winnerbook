@@ -26,6 +26,10 @@ public class Qrcode {
 	private String createUserName;
 
 	private Date updateDate;
+	
+	private Integer busId;
+	
+	private String isNewGenerate;
 
 	public Integer getId() {
 		return id;
@@ -123,5 +127,22 @@ public class Qrcode {
 	public void setQrcodeUrl(String qrcodeUrl) {
 		this.qrcodeUrl = qrcodeUrl;
 	}
+
+	public Integer getBusId() {
+		return busId;
+	}
+
+	public void setBusId(Integer busId) {
+		this.busId = busId;
+	}
+
+	public String getIsNewGenerate() {
+		return isNewGenerate;
+	}
+
+	public void setIsNewGenerate(String isNewGenerate) {
+		this.isNewGenerate = isNewGenerate;
+	}
+	
 
 }

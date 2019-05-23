@@ -90,7 +90,7 @@
               <tr>
               	<td>序号</td>
               	<td>手机号(登录名)</td>
-              	<td>企业名/姓名</td>
+              	<td>姓名</td>
 				<c:if test="${sessionUser.userId eq userAdminId }">
 					<td>是否企业管理员</td>
 				</c:if>

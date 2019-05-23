@@ -67,7 +67,7 @@ function submitForm(){
             <dd><input type="text" name="userName" id="userName" value="${user.userName }" maxlength="11" require="true" requireMsg="登录名为必填项!" dataType="Mobile" msg="手机格式不正确"/></dd>
         </dl>
         <dl>
-            <dt><i>*</i>企业名/姓名：</dt>
+            <dt><i>*</i>姓名：</dt>
             <dd><input type="text" name="userUnitName" value="${user.userUnitName }" maxlength="50" require="true" requireMsg="个人/企业名为必填项!" dataType="Require" />
             </dd>
         </dl>

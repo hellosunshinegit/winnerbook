@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.winnerbook.base.common.PageDTO;
+import com.winnerbook.base.common.util.ConstantUtils;
 import com.winnerbook.base.frame.controller.BaseController;
 import com.winnerbook.busInfo.dto.BusInfo;
 import com.winnerbook.busInfo.dto.UserBusCourseType;
@@ -26,6 +29,7 @@ import com.winnerbook.busInfo.service.BusInfoService;
 import com.winnerbook.busInfo.service.UserBusCourseTypeService;
 import com.winnerbook.course.dto.CourseType;
 import com.winnerbook.course.service.CourseTypeService;
+import com.winnerbook.share.dto.Qrcode;
 import com.winnerbook.system.service.UserService;
 
 /**
@@ -124,5 +128,16 @@ public class BusInfoController extends BaseController{
 		return userBusCourseTypeService.findByUserId(userId);
 	}
 	
+	//生成手机端二维码
+	@RequestMapping("getBusQrcode.html")
+	@ResponseBody
+	public Qrcode getBusQrcode(@RequestBody String busIdJson){
+		JSONObject jsonObject = JSONObject.fromObject(busIdJson);
+		Qrcode qrcode = busInfoService.getBusQrcode(jsonObject.getString("busId"));
+		if(null!=qrcode){
+			qrcode.setImg(ConstantUtils.BASE_PATH_URL+qrcode.getImg()); 
+		}
+		return qrcode;
+	}
 
 }

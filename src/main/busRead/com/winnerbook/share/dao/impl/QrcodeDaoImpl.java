@@ -49,4 +49,9 @@ public class QrcodeDaoImpl  extends BaseDAO implements QrcodeDao{
 		return this.sqlSession.update(QRCODE_MAPPER+"updateScanCount",parameter);
 	}
 
+	@Override
+	public List<Qrcode> getQrcodeByBusId(Map<String, Object> parameter) {
+		return this.sqlSession.selectList(QRCODE_MAPPER+"getQrcodeByBusId",parameter);
+	}
+
 }

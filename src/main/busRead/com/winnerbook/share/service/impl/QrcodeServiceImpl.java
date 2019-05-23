@@ -114,5 +114,13 @@ public class QrcodeServiceImpl extends BaseServiceImpl implements QrcodeService{
 		qrcodeDao.update(qrcode);
 		logRecord("3","二维码更新，id："+qrcode.getId());
 	}
+
+	@Override
+	public Qrcode getQrcodeByBusId(String busId) {
+		Map<String, Object> parameter  = new HashMap<String, Object>();
+		parameter.put("busId", busId);
+		List<Qrcode> qrcodes = qrcodeDao.getQrcodeByBusId(parameter);
+		return qrcodes.size()>0?qrcodes.get(0):null;
+	}
 	
 }

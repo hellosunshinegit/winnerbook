@@ -126,8 +126,12 @@ public class LoginService extends WebBaseServiceImpl{
 				pwd = user.getUserName().substring(5, 11);
 			}
 		}
+		String unitNameNum = System.currentTimeMillis()+"";
+		if(user.getUserName().length()==11){
+			unitNameNum = user.getUserName().substring(5, 11);
+		}
 		user.setUserPassword(EncryptUtil.hash(pwd));
-		user.setUserUnitName("体验用户"+System.currentTimeMillis());
+		user.setUserUnitName("体验用户"+unitNameNum);
 		user.setUserParentId(2l);//demo的企业id
 		user.setUserStatue("1");
 		user.setSourceType("3");//不是企业用户，但是通过系统登录的

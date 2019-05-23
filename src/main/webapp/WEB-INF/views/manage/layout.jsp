@@ -11,7 +11,7 @@
 <%@ page import="com.winnerbook.base.frame.content.UserContext"%>
 <%
 
-request.setAttribute("userName",user.getUserName());
+request.setAttribute("user",user);
 
 //如果是admin 则显示出所有的权限就可以 ，不用查询
 //查询该用户下的权限
@@ -39,6 +39,7 @@ request.setAttribute("menuLists",menuLists);
     <script type="text/javascript" src="${basePath }resources/css/index.js"></script>
     <script type="text/javascript" src="${basePath }resources/js/html5.js"></script>
     <script type="text/javascript" src="${basePath }resources/js/jquery-1.8.1.min.js"></script>
+    <script type="text/javascript" src="${basePath }resources/js/layer/layer.js"></script>
     <style type="text/css">
     	.message{display: inline-block;position: absolute;top: -3px;left: -20px;width: 7px;height: 7px;background: red;padding: 5px;border-radius: 20px;text-align: center;line-height: 7px;color: #FFF;font-size: 12px;text-indent: 0;}
 	    .ordernew{padding-right: 10px;font-size: 14px;}
@@ -69,6 +70,34 @@ request.setAttribute("menuLists",menuLists);
     	function clicktop(){
     		core.loadPage("${basePath}user/welcome.html", ".main", "mainframe", false);
     	}
+    	
+    	//点击扫描二维码
+    	function mobileFun(){
+    		//获取当前登录的企业，点击获取二维码
+    		var str = {"busId":'${user.belongBusUserId}'};
+    		$.ajax({
+    			type:"POST",
+    			async: false,
+    			dataType:"json",
+    		    contentType : "application/json;charset=utf-8",//必须要设置contentType，不然后台接收不到json数据格式，并且是乱码
+    			data:JSON.stringify(str),
+    			url:"${basePath}userController/getBusQrcode.html",
+    			success:function(data){
+    				var content = "<div style='padding:50px;font-size:14px;'>该企业没有生成二维码，请联系管理员。</div>";
+    				if(data!=null){
+    					content = "<div style='text-align: center;margin-top:25px;'><img src="+data.img+" width='200' heigth='200'></div>";
+    				}
+    				layer.open({
+    				  title:"手机端二维码",
+		   			  type: 1,
+		   			  /* skin: 'layui-layer-rim', //加上边框 */
+		   			  area: ['300px', '300px'], //宽高
+		   			  content: content
+		   			});
+    			}
+    		});
+    	}
+    	
     </script>
   </head>
   <body style="padding: 0;">
@@ -76,7 +105,10 @@ request.setAttribute("menuLists",menuLists);
     <%-- <img src="${basePath }resources/new_images/logo.png"> --%><a href="javascript:void(0);" class="logo" hidefocus="true">企业读书云平台</a>
     <div class="user"> 
 	    <!-- <span id="ordernew" class="ordernew"><a href="javascript:void(0);" ><span style="position: relative;color:#e6002d;">消息<b id="message_id">(2)</b></span></a></span> -->
-	    ${userName}，欢迎您！  -<a href="${path }/user/logout.html">退出系统</a>
+	    <c:if test="${user.userId ne 1}">
+		    <span onclick="mobileFun()" title="点击预览手机端 " style="padding: 10px;cursor:pointer;text-decoration: underline;">手机端</span>
+	    </c:if>
+	    ${user.userName}，欢迎您！  -<a href="${path }/user/logout.html" style="text-decoration: underline;">退出系统</a>
     </div>
     <div class="nav" style="display: none;"><!-- 右上部分导航去掉，不需要 -->
     <ul>

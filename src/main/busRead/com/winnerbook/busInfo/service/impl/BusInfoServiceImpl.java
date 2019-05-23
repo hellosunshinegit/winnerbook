@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.winnerbook.base.common.GlobalConfigure;
 import com.winnerbook.base.common.PageDTO;
+import com.winnerbook.base.common.util.ConstantUtils;
 import com.winnerbook.base.common.util.FileUtils;
 import com.winnerbook.base.frame.service.impl.BaseServiceImpl;
 import com.winnerbook.busInfo.dao.BusInfoDao;
@@ -25,7 +26,10 @@ import com.winnerbook.busInfo.dto.BusInfo;
 import com.winnerbook.busInfo.dto.UserBusCourseType;
 import com.winnerbook.busInfo.dto.UserBusInfo;
 import com.winnerbook.busInfo.service.BusInfoService;
+import com.winnerbook.share.dto.Qrcode;
+import com.winnerbook.share.service.QrcodeService;
 import com.winnerbook.system.dto.User;
+import com.winnerbook.system.service.UserService;
 
 @Service("busInfoService")
 public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoService{
@@ -35,6 +39,12 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 	
 	@Autowired
 	private UserBusCourseTypeDao userBusCourseTypeDao;
+	
+	@Autowired
+	private QrcodeService qrcodeService;
+	
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public UserBusInfo findById(String userId) {
@@ -127,6 +137,29 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 			e.printStackTrace();
 			return "-1";
 		}
+	}
+
+	@Override
+	public Qrcode getBusQrcode(String busId) {
+		//根据busId查询是否有二维码
+		Qrcode qrcode = qrcodeService.getQrcodeByBusId(busId);
+		if(null==qrcode){
+			//根据id查询name
+			User user = userService.findUserById(busId);
+			
+			//给企业生成二维码信息
+			qrcode = new Qrcode();
+			qrcode.setName("企业预览二维码："+user.getUserUnitName());
+			qrcode.setAddress("登陆后，右上角-后台预览手机端");
+			qrcode.setForwardUrl(ConstantUtils.H5_URL+"?busId="+busId);
+			qrcode.setBusId(Integer.parseInt(busId));
+			qrcodeService.insert(qrcode);
+			qrcode.setIsNewGenerate("1");//是新生成
+ 		}else{
+ 			qrcode.setIsNewGenerate("0");//不是新生成
+ 		}
+		return qrcode;
+		
 	}
 
 }

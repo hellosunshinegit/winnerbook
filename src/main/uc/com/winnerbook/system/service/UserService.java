@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.winnerbook.base.common.PageDTO;
+import com.winnerbook.share.dto.Qrcode;
 import com.winnerbook.system.dto.Role;
 import com.winnerbook.system.dto.User;
 
@@ -97,5 +98,7 @@ public interface UserService {
 	User getUserByUserBus(String userId,String busId);
 	
 	User isExistsByBusId(String busId,String phone);
+	
+	Qrcode getBusQrcode(String busId);
 	
 }

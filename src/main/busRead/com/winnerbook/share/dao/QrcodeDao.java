@@ -19,4 +19,6 @@ public interface QrcodeDao {
 	int updateQrcodeUrl(Map<String, Object> parameter);
 	int updateScanCount(Map<String, Object> parameter);
 	
+	List<Qrcode> getQrcodeByBusId(Map<String, Object> parameter);
+	
 }

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.busInfo.dto.BusInfo;
 import com.winnerbook.busInfo.dto.UserBusInfo;
+import com.winnerbook.share.dto.Qrcode;
 import com.winnerbook.system.dto.User;
 
 public interface BusInfoService {
@@ -37,4 +38,6 @@ public interface BusInfoService {
 	int findBusInfoById(String userId);
 	
 	String customCourseTypeSubmit(String courseTypeIds);
+	
+	Qrcode getBusQrcode(String busId);
 }

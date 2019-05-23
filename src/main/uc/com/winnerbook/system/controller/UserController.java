@@ -11,18 +11,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.winnerbook.base.common.PageDTO;
+import com.winnerbook.base.common.util.ConstantUtils;
 import com.winnerbook.base.frame.controller.BaseController;
+import com.winnerbook.share.dto.Qrcode;
+import com.winnerbook.share.service.QrcodeService;
 import com.winnerbook.system.dto.Role;
 import com.winnerbook.system.dto.User;
 import com.winnerbook.system.dto.UserRole;
@@ -42,6 +48,9 @@ public class UserController extends BaseController{
 	
 	@Autowired
 	private UserRoleService userRoleService;
+	
+	@Autowired
+	private QrcodeService qrcodeService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
@@ -199,6 +208,18 @@ public class UserController extends BaseController{
 	@ResponseBody
 	public String userCourseTypes(){
 		return userService.userCourseTypes();
+	}
+	
+	//根据所属企业id得到二维码链接
+	@RequestMapping("getBusQrcode.html")
+	@ResponseBody
+	public Qrcode getBusQrcode(@RequestBody String busIdJson){
+		JSONObject jsonObject = JSONObject.fromObject(busIdJson);
+		Qrcode qrcode = qrcodeService.getQrcodeByBusId(jsonObject.getString("busId"));
+		if(null!=qrcode){
+			qrcode.setImg(ConstantUtils.BASE_PATH_URL+qrcode.getImg()); 
+		}
+		return qrcode;
 	}
 }
 
