@@ -7,6 +7,10 @@ public class ReadBookClub {
 
 	private String clubTitle;
 
+	private String wbTitle;
+
+	private String wbImg;
+
 	private String clubImg;
 
 	private String clubDate;
@@ -155,6 +159,22 @@ public class ReadBookClub {
 
 	public void setClubImg(String clubImg) {
 		this.clubImg = clubImg;
+	}
+
+	public String getWbTitle() {
+		return wbTitle;
+	}
+
+	public void setWbTitle(String wbTitle) {
+		this.wbTitle = wbTitle;
+	}
+
+	public String getWbImg() {
+		return wbImg;
+	}
+
+	public void setWbImg(String wbImg) {
+		this.wbImg = wbImg;
 	}
 
 }

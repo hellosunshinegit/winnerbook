@@ -29,6 +29,7 @@ import com.winnerbook.course.service.BookListService;
 import com.winnerbook.course.service.CourseFileService;
 import com.winnerbook.course.service.CourseService;
 import com.winnerbook.course.service.CourseTypeService;
+import com.winnerbook.wx.service.WxInfoService;
 
 /**
  * 课程
@@ -50,6 +51,9 @@ public class CourseController extends BaseController{
 	@Autowired
 	private BookListService bookListService;
 	
+	@Autowired
+	private WxInfoService wxInfoService;
+	
 	private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
 	
 	//查询列表
@@ -64,6 +68,8 @@ public class CourseController extends BaseController{
 		PageDTO<Course> pageDTO  = courseService.listByPage(map, pageIndex,10);//默认每页显示10条数据
  
 		model.addAttribute("pageDTO", pageDTO);
+		//获取微博appid
+		map.put("wxInfo", wxInfoService.getWxInfo("2"));
 		model.addAllAttributes(map);
 		return "manage/busRead/course/course/courseList";
 	}

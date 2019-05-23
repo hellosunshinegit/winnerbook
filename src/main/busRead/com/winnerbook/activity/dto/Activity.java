@@ -6,6 +6,10 @@ public class Activity {
 	private Integer id;
 
 	private String title;
+	
+	private String wbTitle;
+	
+	private String wbImg;
 
 	private String imgUrl;
 
@@ -40,6 +44,8 @@ public class Activity {
 	private String content;
 
 	private String isInvalid;
+	
+	private String belongBusUserId;
 
 	public Integer getId() {
 		return id;
@@ -194,4 +200,30 @@ public class Activity {
 		this.detailAddress = detailAddress;
 	}
 
+	public String getBelongBusUserId() {
+		return belongBusUserId;
+	}
+
+	public void setBelongBusUserId(String belongBusUserId) {
+		this.belongBusUserId = belongBusUserId;
+	}
+
+	public String getWbTitle() {
+		return wbTitle;
+	}
+
+	public void setWbTitle(String wbTitle) {
+		this.wbTitle = wbTitle;
+	}
+
+	public String getWbImg() {
+		return wbImg;
+	}
+
+	public void setWbImg(String wbImg) {
+		this.wbImg = wbImg;
+	}
+
+	
+	
 }

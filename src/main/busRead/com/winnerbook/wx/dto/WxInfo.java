@@ -3,73 +3,84 @@ package com.winnerbook.wx.dto;
 import java.util.Date;
 
 public class WxInfo {
-    private Integer id;
+	private Integer id;
 
-    private String appid;
+	private String appid;
 
-    private String appsecret;
+	private String appsecret;
 
-    private String accesstoken;
+	private String accesstoken;
 
-    private Date accesstokendate;
+	private Date accesstokendate;
 
-    private String jsapiticket;
+	private String jsapiticket;
 
-    private Date jsapiticketdate;
+	private Date jsapiticketdate;
 
-    public Integer getId() {
-        return id;
-    }
+	private String redirectUri;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public String getAppid() {
-        return appid;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setAppid(String appid) {
-        this.appid = appid == null ? null : appid.trim();
-    }
+	public String getAppid() {
+		return appid;
+	}
 
-    public String getAppsecret() {
-        return appsecret;
-    }
+	public void setAppid(String appid) {
+		this.appid = appid == null ? null : appid.trim();
+	}
 
-    public void setAppsecret(String appsecret) {
-        this.appsecret = appsecret == null ? null : appsecret.trim();
-    }
+	public String getAppsecret() {
+		return appsecret;
+	}
 
-    public String getAccesstoken() {
-        return accesstoken;
-    }
+	public void setAppsecret(String appsecret) {
+		this.appsecret = appsecret == null ? null : appsecret.trim();
+	}
 
-    public void setAccesstoken(String accesstoken) {
-        this.accesstoken = accesstoken == null ? null : accesstoken.trim();
-    }
+	public String getAccesstoken() {
+		return accesstoken;
+	}
 
-    public Date getAccesstokendate() {
-        return accesstokendate;
-    }
+	public void setAccesstoken(String accesstoken) {
+		this.accesstoken = accesstoken == null ? null : accesstoken.trim();
+	}
 
-    public void setAccesstokendate(Date accesstokendate) {
-        this.accesstokendate = accesstokendate;
-    }
+	public Date getAccesstokendate() {
+		return accesstokendate;
+	}
 
-    public String getJsapiticket() {
-        return jsapiticket;
-    }
+	public void setAccesstokendate(Date accesstokendate) {
+		this.accesstokendate = accesstokendate;
+	}
 
-    public void setJsapiticket(String jsapiticket) {
-        this.jsapiticket = jsapiticket == null ? null : jsapiticket.trim();
-    }
+	public String getJsapiticket() {
+		return jsapiticket;
+	}
 
-    public Date getJsapiticketdate() {
-        return jsapiticketdate;
-    }
+	public void setJsapiticket(String jsapiticket) {
+		this.jsapiticket = jsapiticket == null ? null : jsapiticket.trim();
+	}
 
-    public void setJsapiticketdate(Date jsapiticketdate) {
-        this.jsapiticketdate = jsapiticketdate;
-    }
+	public Date getJsapiticketdate() {
+		return jsapiticketdate;
+	}
+
+	public void setJsapiticketdate(Date jsapiticketdate) {
+		this.jsapiticketdate = jsapiticketdate;
+	}
+
+	public String getRedirectUri() {
+		return redirectUri;
+	}
+
+	public void setRedirectUri(String redirectUri) {
+		this.redirectUri = redirectUri;
+	}
+
 }

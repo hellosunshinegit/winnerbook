@@ -76,8 +76,12 @@
 							</c:if>
 						</td>
 						<td>${item.startDate} ${item.startDateTime } - ${item.endDate } ${item.endDateTime }</td>
-						<td>${item.address}-${item.detailAddress}</td>
-						<td><a href="<%=ConstantUtils.H5_URL %>page/activity/activityDetail.html?busId=${sessionUser.belongBusUserId }&id=${item.id}" target="_blank" style="text-decoration: underline;color: blue;">手机端预览</a></td>
+						<td>${item.address}
+							<c:if test="${item.detailAddress ne ''}">
+								-${item.detailAddress}
+							</c:if>
+						</td>
+						<td><a href="<%=ConstantUtils.H5_URL %>page/activity/activityDetail.html?busId=${item.belongBusUserId }&id=${item.id}" target="_blank" style="text-decoration: underline;color: blue;">手机端预览</a></td>
 						<td>
 							<c:choose>
 								<c:when test="${item.isInvalid eq '1' }">
@@ -95,6 +99,7 @@
 							<a href="${basePath }activityController/updateActivity.html?id=${item.id}">修改</a>
 							<a href="${basePath }activityController/viewActivity.html?id=${item.id}">详情</a>
 							<a href="${basePath }activityController/singupActivityList.html?activityId=${item.id}">报名信息</a>
+							<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=activity_${item.id}" target="_blank">发微博</a>
 						</td>
 					</tr>
 				</c:forEach>

@@ -76,6 +76,7 @@
 							<a href="${basePath }readBookClubController/updateReadBookClub.html?clubId=${item.clubId}">修改</a>
 							<a href="${basePath }readBookClubController/deleteReadBookClub.html?clubId=${item.clubId}">删除</a>
 							<a href="${basePath }readBookClubController/viewReadBookClub.html?clubId=${item.clubId}">详情</a>
+							<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=club_${item.clubId}" target="_blank">发微博</a>
 						</td>
 					</tr>
 				</c:forEach>

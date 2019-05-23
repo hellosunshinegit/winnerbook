@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ctc.wstx.util.StringUtil;
 import com.winnerbook.base.common.GlobalConfigure;
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.frame.service.impl.BaseServiceImpl;
@@ -68,6 +67,8 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		//解析
 		JSONObject jsonObject = JSONObject.fromObject(dataJson);
 		String typeName = jsonObject.getString("typeName");
+		String wbTitle = jsonObject.getString("wbTitle");
+		String wbImg = jsonObject.getString("wbImg");
 		String typeDes = jsonObject.getString("typeDes");
 		String status = jsonObject.getString("status");
 		String bookTags = jsonObject.getString("bookTags");
@@ -75,6 +76,8 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		
 		BookListType bookListType = new BookListType();
 		bookListType.setTypeName(typeName);
+		bookListType.setWbTitle(wbTitle);
+		bookListType.setWbImg(wbImg);
 		bookListType.setTypeLabel(bookTags);
 		bookListType.setTypeDes(typeDes);
 		bookListType.setStatus(status);
@@ -135,6 +138,8 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		JSONObject jsonObject = JSONObject.fromObject(dataJson);
 		Integer typeId = jsonObject.getInt("id");
 		String typeName = jsonObject.getString("typeName");
+		String wbTitle = jsonObject.getString("wbTitle");
+		String wbImg = jsonObject.getString("wbImg");
 		String typeDes = jsonObject.getString("typeDes");
 		String status = jsonObject.getString("status");
 		String bookTags = jsonObject.getString("bookTags");
@@ -143,7 +148,9 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		BookListType bookListType = new BookListType();
 		bookListType.setId(typeId);
 		bookListType.setTypeName(typeName);
-		bookListType.setTypeLabel(bookTags);
+		bookListType.setWbTitle(wbTitle);
+		bookListType.setWbImg(wbImg);
+ 		bookListType.setTypeLabel(bookTags);
 		bookListType.setTypeDes(typeDes);
 		bookListType.setStatus(status);
 		bookListType.setTypeImg(typeImg);

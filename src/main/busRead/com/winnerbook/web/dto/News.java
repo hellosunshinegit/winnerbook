@@ -7,6 +7,10 @@ public class News {
 
 	private String newTitle;
 
+	private String wbTitle;
+
+	private String wbImg;
+
 	private String newImg;
 
 	private String newAuthor;
@@ -122,6 +126,22 @@ public class News {
 
 	public void setNewImg(String newImg) {
 		this.newImg = newImg;
+	}
+
+	public String getWbTitle() {
+		return wbTitle;
+	}
+
+	public void setWbTitle(String wbTitle) {
+		this.wbTitle = wbTitle;
+	}
+
+	public String getWbImg() {
+		return wbImg;
+	}
+
+	public void setWbImg(String wbImg) {
+		this.wbImg = wbImg;
 	}
 
 }

@@ -50,6 +50,8 @@
 			
 			var id = $("#id").val();
 			var typeName = $("#typeName").val().trim();
+			var wbTitle = $("#wbTitle").val().trim();
+			var wbImg = $("#wbImg").val().trim();
 			var typeDes = $("#typeDes").val();
 			var status = $("#status").val();
 			var typeImg = $("#typeImg").val();
@@ -57,7 +59,7 @@
 			typeBookNames = typeBookNames.replace("，",",");
 			var typeBookNamesArray = typeBookNames.split(",");
 			
-			var dataJson = {"id":id,"typeName":typeName,"typeDes":typeDes,"status":status,"typeImg":typeImg,"bookNameList":[]};
+			var dataJson = {"id":id,"typeName":typeName,"wbTitle":wbTitle,"wbImg":wbImg,"typeDes":typeDes,"status":status,"typeImg":typeImg,"bookNameList":[]};
 			
 			dataJson.bookNameList = typeBookNamesArray;
 			
@@ -149,6 +151,27 @@
 					<dd>
 						<input type="text" name="typeName" id="typeName" value="${bookListType.typeName }" maxlength="20" require="true"
 							requireMsg="书单名称为必填项!" dataType="Require" />
+					</dd>
+				</dl>
+				<dl>
+					<dt>微博正文：</dt>
+					<dd>
+						<input type="text" name="wbTitle" id="wbTitle" value="${bookListType.wbTitle }" maxlength="140" />
+						<span style="color: red;">注：如果‘微博正文’内容为空，则发微博时采用‘书单名称’的内容</span>
+					</dd>
+				</dl>
+				<dl>
+					<dt>
+						微博正文图：
+					</dt>
+					<dd>
+						<input type="hidden" name="wbImg" id="wbImg" value="${bookListType.wbImg }"/>
+						<img alt="" id="wbImg" src="" width="150" height="150">
+						<c:if test="${!empty(bookListType.wbImg) }">
+							<a href="${basePath}${bookListType.wbImg}" target="_blank"><img src="${basePath}${bookListType.wbImg}" width="50" height="50"></a>
+						</c:if>
+						<div id="upload_wbImg"></div>
+		            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=wbImg&path=booktype/wb&typeExts=5" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
 					</dd>
 				</dl>
 				<dl>

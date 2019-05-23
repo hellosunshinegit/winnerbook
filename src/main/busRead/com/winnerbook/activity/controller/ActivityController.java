@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,14 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.winnerbook.activity.dto.Activity;
 import com.winnerbook.activity.dto.ActivitySignup;
 import com.winnerbook.activity.service.ActivityService;
 import com.winnerbook.activity.service.ActivitySignupService;
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.frame.controller.BaseController;
+import com.winnerbook.wx.service.WxInfoService;
 
 /**
  * 读书会展示信息
@@ -33,6 +36,9 @@ public class ActivityController extends BaseController{
 	@Autowired
 	private ActivitySignupService activitySignupService;
 	
+	@Autowired
+	private WxInfoService wxInfoService;
+	
 	private static final Logger logger = LoggerFactory.getLogger(ActivityController.class);
 	
 	//查询列表
@@ -46,6 +52,8 @@ public class ActivityController extends BaseController{
 		PageDTO<Activity> pageDTO  = activityService.listByPage(map, pageIndex,10);//默认每页显示10条数据
  
 		model.addAttribute("pageDTO", pageDTO);
+		//获取微博appid
+		map.put("wxInfo", wxInfoService.getWxInfo("2"));
 		model.addAllAttributes(map);
 		return "manage/busRead/activity/activity/activityList";
 	}

@@ -13,6 +13,10 @@ public class BookListType {
 
 	private String typeName;
 
+	private String wbTitle;
+	
+	private String wbImg;
+
 	private String typeLabel;
 
 	private String labelIds;
@@ -119,5 +123,22 @@ public class BookListType {
 	public void setTypeImg(String typeImg) {
 		this.typeImg = typeImg;
 	}
+
+	public String getWbTitle() {
+		return wbTitle;
+	}
+
+	public void setWbTitle(String wbTitle) {
+		this.wbTitle = wbTitle;
+	}
+
+	public String getWbImg() {
+		return wbImg;
+	}
+
+	public void setWbImg(String wbImg) {
+		this.wbImg = wbImg;
+	}
+	
 
 }

@@ -37,6 +37,9 @@
 			fileTypeExts="*.doc;*.docx;*.xls;*.xlxs";
 			fileSizeLimit=10;
 			fileName = 'name_'+'${filePath}';//上传文件名称
+		}else if(typeExts==5){//微博图片
+			fileTypeExts="*.png;*.PNG;*.jpg;*.JPG;*.jpeg;*.JPEG";
+			fileSizeLimit=5;
 		}
 		
 		$("#fileTypeExts").html("文件最大支持"+fileSizeLimit+"M，支持格式："+fileTypeExts);

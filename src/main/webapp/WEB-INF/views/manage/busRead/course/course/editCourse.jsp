@@ -69,12 +69,33 @@
 	        </dl>
 	        <dl>
 	            <dt><i>*</i>标题：</dt>
-	            <dd><input type="text" name="title" id="title" value="${course.title }" maxlength="50" require="true" requireMsg="标题为必填项!" dataType="Require" style="width: 200px;"/></dd>
+	            <dd><input type="text" name="title" id="title" value="${course.title }" maxlength="50" require="true" requireMsg="标题为必填项!" dataType="Require" /></dd>
 	        </dl>
+	        <dl>
+				<dt>微博正文：</dt>
+				<dd>
+					<input type="text" name="wbTitle" id="wbTitle" value="${course.wbTitle }" maxlength="140" />
+					<span style="color: red;">注：如果‘微博正文’内容为空，则发微博时采用‘主题’的内容</span>
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					微博正文图：
+				</dt>
+				<dd>
+					<input type="hidden" name="wbImg" id="wbImg" value="${course.wbImg }"/>
+					<img alt="" id="wbImg" src="" width="150" height="150">
+					<c:if test="${!empty(course.wbImg) }">
+						<a href="${basePath}${course.wbImg}" target="_blank"><img src="${basePath}${course.wbImg}" width="50" height="50"></a>
+					</c:if>
+					<div id="upload_wbImg"></div>
+	            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=wbImg&path=course/wb&typeExts=5" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
+				</dd>
+			</dl>
 	        <dl>
 	            <dt><i>*</i>总裁课程类型：</dt>
 	            <dd>
-	                <exp:select code="COURSE_TYPE" name="courseType" id="courseType" value="${course.courseType}"  require="true" requireMsg="课程类型为必填项!" dataType="Require" style="width: 210px;"></exp:select>
+	                <exp:select code="COURSE_TYPE" name="courseType" id="courseType" value="${course.courseType}"  require="true" requireMsg="课程类型为必填项!" dataType="Require" style="width: 310px;"></exp:select>
 	            </dd>
 	        </dl>
 	        <dl>

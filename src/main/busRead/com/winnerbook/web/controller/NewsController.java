@@ -18,6 +18,7 @@ import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.frame.controller.BaseController;
 import com.winnerbook.web.dto.News;
 import com.winnerbook.web.service.NewsService;
+import com.winnerbook.wx.service.WxInfoService;
 
 /**
  * 宣传图信息
@@ -29,6 +30,9 @@ public class NewsController extends BaseController{
 	
 	@Autowired
 	private NewsService newsService;
+	
+	@Autowired
+	private WxInfoService wxInfoService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
 	
@@ -43,6 +47,8 @@ public class NewsController extends BaseController{
 		PageDTO<News> pageDTO  = newsService.listByPage(map, pageIndex,10);//默认每页显示10条数据
  
 		model.addAttribute("pageDTO", pageDTO);
+		//获取微博appid
+		map.put("wxInfo", wxInfoService.getWxInfo("2"));
 		model.addAllAttributes(map);
 		return "manage/busRead/web/news/newsList";
 	}
@@ -77,8 +83,8 @@ public class NewsController extends BaseController{
 	//点击修改
 	@RequestMapping(value="viewNews.html")
 	public String viewNews(@RequestParam String newId,ModelMap modelMap){
-		modelMap.addAttribute("new",newsService.findById(newId));
-		return "manage/busRead/web/news/editNews";
+		modelMap.addAttribute("news",newsService.findById(newId));
+		return "manage/busRead/web/news/viewNews";
 	}
 	
 	@RequestMapping(value="updateStatus.html")

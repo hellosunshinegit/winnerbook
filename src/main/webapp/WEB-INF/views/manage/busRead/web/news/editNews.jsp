@@ -50,13 +50,33 @@
 						<input type="text" name="newTitle" id="newTitle" value="${news.newTitle }" maxlength="50" require="true" requireMsg="标题为必填项!" dataType="Require" />
 					</dd>
 				</dl>
-				
+				<dl>
+					<dt>微博正文：</dt>
+					<dd>
+						<input type="text" name="wbTitle" id="wbTitle" value="${news.wbTitle }" maxlength="140" />
+						<span style="color: red;">注：如果‘微博正文’内容为空，则发微博时采用‘标题’的内容</span>
+					</dd>
+				</dl>
+				<dl>
+					<dt>
+						微博正文图：
+					</dt>
+					<dd>
+						<input type="hidden" name="wbImg" id="wbImg" value="${news.wbImg }"/>
+						<img alt="" id="wbImg" src="" width="150" height="150">
+						<c:if test="${!empty(news.wbImg) }">
+							<a href="${basePath}${news.wbImg}" target="_blank"><img src="${basePath}${news.wbImg}" width="50" height="50"></a>
+						</c:if>
+						<div id="upload_wbImg"></div>
+		            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=wbImg&path=news/wb&typeExts=5" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
+					</dd>
+				</dl>
 				<dl>
 					<dt>
 						<i>*</i>缩略图：
 					</dt>
 					<dd>
-						<input type="hidden" name="newImg" id="newImg" value="${news.newImg }" require="true" requireMsg="活动图片为必填项!" dataType="Require"/>
+						<input type="hidden" name="newImg" id="newImg" value="${news.newImg }" require="true" requireMsg="缩略图为必填项!" dataType="Require"/>
 						<c:if test="${!empty(news.newImg) }">
 							<a href="${basePath}${news.newImg}" target="_blank"><img src="${basePath}${news.newImg}" width="80" height="80"></a>
 						</c:if>

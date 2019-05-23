@@ -17,6 +17,10 @@ public class Course implements Serializable {
 
 	private String title;
 
+	private String wbTitle;
+	
+	private String wbImg;
+
 	private String courseDesc;
 
 	private String mainGuest;
@@ -26,7 +30,7 @@ public class Course implements Serializable {
 	private String mainGuestIntroduce;
 
 	private String mainGuestImg;
-	
+
 	private String mainGuestBaiduKnow;
 
 	private String dialogGuest;
@@ -74,7 +78,7 @@ public class Course implements Serializable {
 	private Date updateDate;
 
 	private String content;
-	
+
 	private String courseReleaseId;
 	private String courseReleaseStatus;
 
@@ -360,8 +364,23 @@ public class Course implements Serializable {
 	public void setMainGuestBaiduKnow(String mainGuestBaiduKnow) {
 		this.mainGuestBaiduKnow = mainGuestBaiduKnow;
 	}
+
+	public String getWbTitle() {
+		return wbTitle;
+	}
+
+	public void setWbTitle(String wbTitle) {
+		this.wbTitle = wbTitle;
+	}
+
+	public String getWbImg() {
+		return wbImg;
+	}
+
+	public void setWbImg(String wbImg) {
+		this.wbImg = wbImg;
+	}
 	
 	
-	
-	
+
 }

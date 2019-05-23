@@ -13,10 +13,12 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.winnerbook.activity.dto.ReadBookClub;
 import com.winnerbook.activity.service.ReadBookClubService;
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.frame.controller.BaseController;
+import com.winnerbook.wx.service.WxInfoService;
 
 /**
  * 读书会展示信息
@@ -28,6 +30,10 @@ public class ReadBookClubController extends BaseController{
 	
 	@Autowired
 	private ReadBookClubService readBookClubService;
+	
+	@Autowired
+	private WxInfoService wxInfoService;
+	
 	
 	private static final Logger logger = LoggerFactory.getLogger(ReadBookClubController.class);
 	
@@ -42,6 +48,8 @@ public class ReadBookClubController extends BaseController{
 		PageDTO<ReadBookClub> pageDTO  = readBookClubService.listByPage(map, pageIndex,10);//默认每页显示10条数据
  
 		model.addAttribute("pageDTO", pageDTO);
+		//获取微博appid
+		map.put("wxInfo", wxInfoService.getWxInfo("2"));
 		model.addAllAttributes(map);
 		return "manage/busRead/activity/readBookClubList";
 	}

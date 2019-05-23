@@ -17,8 +17,7 @@ public class ConstantUtils {
 	public static String SERVER_LOCAL_PATH = rb.getString("SERVER_LOCAL_PATH");
 	public static String QROCDE_HTTP = rb.getString("QROCDE_HTTP");
 	public static String BASE_PATH_URL = rb.getString("BASE_PATH_URL");
-	public static String WB_SHARE_URL = rb.getString("WB_SHARE_URL");//微博分享的url
-	public static String H5_URL = rb.getString("H5_URL");//微博分享的url
+	public static String H5_URL = rb.getString("H5_URL");//后台点击预览h5
 	
 	public static void main(String[] args) {
 		System.out.println(rb.getString("initial_password"));

@@ -9,10 +9,11 @@
     <result column="accessTokenDate" property="accesstokendate" jdbcType="TIMESTAMP" />
     <result column="jsapiTicket" property="jsapiticket" jdbcType="VARCHAR" />
     <result column="jsapiTicketDate" property="jsapiticketdate" jdbcType="TIMESTAMP" />
+    <result column="redirectUri" property="redirectUri" jdbcType="VARCHAR" />
   </resultMap>
  
   <select id="findWxInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, appId, appSecret, accessToken, accessTokenDate, jsapiTicket, jsapiTicketDate
+    select id, appId, appSecret, accessToken, accessTokenDate, jsapiTicket, jsapiTicketDate,redirectUri
     from wx_info where id = #{id}
   </select>
  

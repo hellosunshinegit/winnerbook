@@ -5,6 +5,8 @@
     <id column="course_id" property="courseId" jdbcType="INTEGER" />
     <result column="course_type_id" property="courseTypeId" jdbcType="INTEGER" />
     <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="wb_title" property="wbTitle" jdbcType="VARCHAR" />
+    <result column="wb_img" property="wbImg" jdbcType="VARCHAR" />
     <result column="course_desc" property="courseDesc" jdbcType="VARCHAR" />
     <result column="main_guest" property="mainGuest" jdbcType="VARCHAR" />
     <result column="main_guest_post" property="mainGuestPost" jdbcType="VARCHAR" />
@@ -38,7 +40,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    course_id, course_type_id, title, course_desc, main_guest, main_guest_post, main_guest_introduce, 
+    course_id, course_type_id, title, wb_title,wb_img,course_desc, main_guest, main_guest_post, main_guest_introduce, 
     main_guest_img, main_guest_baidu_know,dialog_guest, dialog_guest_post, presenter, content,book_list_id,recommend_book, recommend_book_img, 
     recommend_book_introduce, recommend_reason, recommend_reason_img, recording_date, 
     main_video_url, main_video_filename,main_video_link, main_video_time ,main_audio_url, main_audio_filename, course_type, 
@@ -83,7 +85,7 @@
   </delete>
   
   <insert id="insert" parameterType="com.winnerbook.course.dto.Course">
-    insert into bus_course (course_type_id, title, 
+    insert into bus_course (course_type_id, title, wb_title,wb_img,
       course_desc, main_guest, main_guest_post, 
       main_guest_introduce, main_guest_img, main_guest_baidu_know,dialog_guest, 
       dialog_guest_post, presenter, book_list_id,recommend_book, 
@@ -93,7 +95,7 @@
       main_audio_filename, course_type, course_status, 
       create_date, create_user_id, create_user_name, 
       content)
-    values (#{courseTypeId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+    values (#{courseTypeId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},  #{wbTitle,jdbcType=VARCHAR}, #{wbImg,jdbcType=VARCHAR}, 
       #{courseDesc,jdbcType=VARCHAR}, #{mainGuest,jdbcType=VARCHAR}, #{mainGuestPost,jdbcType=VARCHAR}, 
       #{mainGuestIntroduce,jdbcType=VARCHAR}, #{mainGuestImg,jdbcType=VARCHAR},#{mainGuestBaiduKnow,jdbcType=VARCHAR}, #{dialogGuest,jdbcType=VARCHAR}, 
       #{dialogGuestPost,jdbcType=VARCHAR}, #{presenter,jdbcType=VARCHAR}, #{bookListId,jdbcType=INTEGER},#{recommendBook,jdbcType=VARCHAR}, 
@@ -110,6 +112,8 @@
     update bus_course
     set course_type_id = #{courseTypeId,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
+      wb_title = #{wbTitle,jdbcType=VARCHAR},
+      wb_img = #{wbImg,jdbcType=VARCHAR},
       course_desc = #{courseDesc,jdbcType=VARCHAR},
       main_guest = #{mainGuest,jdbcType=VARCHAR},
       main_guest_post = #{mainGuestPost,jdbcType=VARCHAR},
@@ -166,7 +170,7 @@
   
   <!-- web端查询课程 -->
   <select id="getCourses" parameterType="hashmap" resultType="hashmap">
-  	select c.course_id courseId, c.title, c.course_desc  courseDesc, c.main_guest mainGuest, c.main_guest_post mainGuestPost, bl.book_img bookImg,c.course_click_num courseClickNum 
+  	select c.course_id courseId, c.title, c.wb_title wbTitle,c.course_desc  courseDesc, c.main_guest mainGuest, c.main_guest_post mainGuestPost, bl.book_img bookImg,c.course_click_num courseClickNum 
   	from bus_course  c left join bus_book_list bl on c.book_list_id=bl.book_id 
   	where c.course_status=2
     <if test="busId != null and busId  != '' "> and c.create_user_id = #{busId} or c.course_id in (select course_id from bus_course_release where user_id=#{busId}) </if>

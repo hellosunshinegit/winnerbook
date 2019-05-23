@@ -12,5 +12,12 @@ public interface WxInfoService {
 	
 	//更新jsapi_ticket
 	void updateJsapiTicket(String accessToken);
+		
+	String getWbAccessToken(String code);
+	
+	//设置微博的access_token
+	String setWbAccess_token(String code);
+	
+	String sendWbInfo(String idInfo,String accessToken);
 	
 }

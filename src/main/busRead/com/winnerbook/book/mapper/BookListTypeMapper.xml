@@ -4,6 +4,8 @@
   <resultMap id="BaseResultMap" type="com.winnerbook.book.dto.BookListType" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="wb_title" property="wbTitle" jdbcType="VARCHAR" />
+    <result column="wb_img" property="wbImg" jdbcType="VARCHAR" />
     <result column="type_label" property="typeLabel" jdbcType="VARCHAR" />
     <result column="type_img" property="typeImg" jdbcType="VARCHAR" />
     <result column="type_des" property="typeDes" jdbcType="VARCHAR" />
@@ -14,7 +16,7 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, type_name, type_label,type_img, type_des, status, create_date, create_user_id, create_user_name, 
+    id, type_name, wb_title,wb_img,type_label,type_img, type_des, status, create_date, create_user_id, create_user_name, 
     update_date
   </sql>
   
@@ -40,17 +42,17 @@
   </select>
   
   <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, type_name, type_label,type_img, type_des, status,(select GROUP_CONCAT(label_id) from bus_book_list_label_id where type_id=#{id}) labelIds
+    select id, type_name,wb_title, wb_img,type_label,type_img, type_des, status,(select GROUP_CONCAT(label_id) from bus_book_list_label_id where type_id=#{id}) labelIds,create_date, create_user_id, create_user_name
     from bus_book_list_type
     where id = #{id,jdbcType=INTEGER}
   </select>
   
   <insert id="insert" parameterType="com.winnerbook.book.dto.BookListType" useGeneratedKeys="true" keyProperty="id">
-    insert into bus_book_list_type (type_name, type_label, type_img,
+    insert into bus_book_list_type (type_name,wb_title, wb_img,type_label, type_img,
       status, type_des,create_date, 
       create_user_id, create_user_name
       )
-    values (#{typeName,jdbcType=VARCHAR}, #{typeLabel,jdbcType=VARCHAR}, #{typeImg,jdbcType=VARCHAR}, 
+    values (#{typeName,jdbcType=VARCHAR}, #{wbTitle,jdbcType=VARCHAR}, #{wbImg,jdbcType=VARCHAR},#{typeLabel,jdbcType=VARCHAR}, #{typeImg,jdbcType=VARCHAR}, 
       #{status,jdbcType=VARCHAR},#{typeDes,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
       )
@@ -59,6 +61,8 @@
   <update id="update" parameterType="com.winnerbook.book.dto.BookListType" >
     update bus_book_list_type
     set type_name = #{typeName,jdbcType=VARCHAR},
+      wb_title = #{wbTitle,jdbcType=VARCHAR},
+      wb_img = #{wbImg,jdbcType=VARCHAR},
       type_label = #{typeLabel,jdbcType=VARCHAR},
       type_img = #{typeImg,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
@@ -99,7 +103,7 @@
   <!-- web -->
   <!-- 根据标签查询书单列表 -->
   <select id="getBookListTypes" parameterType="hashmap" resultType="hashmap">
-  	select id typeId,type_name typeName,type_img typeImg from bus_book_list_type where id in (select type_id from bus_book_list_label_id where label_id=#{labelId}) and status=1
+  	select id typeId,type_name typeName,type_img typeImg,wb_title wbTitle from bus_book_list_type where id in (select type_id from bus_book_list_label_id where label_id=#{labelId}) and status=1
   	order by type_sort desc,id desc
   	<if test="start != null "> limit ${start},${limit} </if>
   </select>

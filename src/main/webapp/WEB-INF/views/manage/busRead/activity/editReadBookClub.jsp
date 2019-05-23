@@ -52,14 +52,35 @@
 					</dd>
 				</dl>
 				<dl>
+					<dt>微博正文：</dt>
+					<dd>
+						<input type="text" name="wbTitle" id="wbTitle" value="${readBookClub.wbTitle }" maxlength="140" />
+						<span style="color: red;">注：如果‘微博正文’内容为空，则发微博时采用‘主题’的内容</span>
+					</dd>
+				</dl>
+				<dl>
 					<dt>
-						<i>*</i>活动图片：
+						微博正文图：
 					</dt>
 					<dd>
-						<input type="hidden" name="clubImg" id="clubImg" value="${readBookClub.clubImg }" require="true" requireMsg="活动图片为必填项!" dataType="Require"/>
+						<input type="hidden" name="wbImg" id="wbImg" value="${readBookClub.wbImg }"/>
+						<img alt="" id="wbImg" src="" width="150" height="150">
+						<c:if test="${!empty(readBookClub.wbImg) }">
+							<a href="${basePath}${readBookClub.wbImg}" target="_blank"><img src="${basePath}${readBookClub.wbImg}" width="50" height="50"></a>
+						</c:if>
+						<div id="upload_wbImg"></div>
+		            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=wbImg&path=readBookClub/wb&typeExts=5" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
+					</dd>
+				</dl>
+				<dl>
+					<dt>
+						<i>*</i>活动缩略图：
+					</dt>
+					<dd>
+						<input type="hidden" name="clubImg" id="clubImg" value="${readBookClub.clubImg }" require="true" requireMsg="活动缩略图为必填项!" dataType="Require"/>
 						<img alt="" id="bookImgUrl" src="" width="150" height="150">
 						<c:if test="${!empty(readBookClub.clubImg) }">
-							<a href="${basePath}${readBookClub.clubImg}" target="_blank"><img src="${basePath}${readBookClub.clubImg}" width="150" height="150"></a>
+							<a href="${basePath}${readBookClub.clubImg}" target="_blank"><img src="${basePath}${readBookClub.clubImg}" width="50" height="50"></a>
 						</c:if>
 						<div id="upload_clubImg"></div>
 		            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=clubImg&path=readBookClub&typeExts=1" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>

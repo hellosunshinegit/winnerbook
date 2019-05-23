@@ -43,8 +43,24 @@
 					</dd>
 				</dl>
 				<dl>
+					<dt>微博正文：</dt>
+					<dd>
+						<input type="text" name="wbTitle" id="wbTitle" value="${activity.wbTitle }" disabled="disabled"/>
+					</dd>
+				</dl>
+				<dl>
 					<dt>
-						活动图片：
+						微博正文图：
+					</dt>
+					<dd>
+						<c:if test="${!empty(activity.wbImg) }">
+							<a href="${basePath}${activity.wbImg}" target="_blank"><img src="${basePath}${activity.wbImg}" width="50" height="50"></a>
+						</c:if>
+					</dd>
+				</dl>
+				<dl>
+					<dt>
+						活动缩略图：
 					</dt>
 					<dd>
 						<c:if test="${!empty(activity.imgUrl) }">

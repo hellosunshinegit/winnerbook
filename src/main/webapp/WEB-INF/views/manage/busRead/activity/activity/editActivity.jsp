@@ -142,8 +142,29 @@
 					</dd>
 				</dl>
 				<dl>
+					<dt>微博正文：</dt>
+					<dd>
+						<input type="text" name="wbTitle" id="wbTitle" value="${activity.wbTitle }" maxlength="140" />
+						<span style="color: red;">注：如果‘微博正文’内容为空，则发微博时采用‘主题’的内容</span>
+					</dd>
+				</dl>
+				<dl>
 					<dt>
-						活动图片：
+						微博正文图：
+					</dt>
+					<dd>
+						<input type="hidden" name="wbImg" id="wbImg" value="${activity.wbImg }"/>
+						<img alt="" id="wbImg" src="" width="150" height="150">
+						<c:if test="${!empty(activity.wbImg) }">
+							<a href="${basePath}${activity.wbImg}" target="_blank"><img src="${basePath}${activity.wbImg}" width="50" height="50"></a>
+						</c:if>
+						<div id="upload_wbImg"></div>
+		            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=wbImg&path=activity/wb&typeExts=5" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
+					</dd>
+				</dl>
+				<dl>
+					<dt>
+						活动缩略图：
 					</dt>
 					<dd>
 						<input type="hidden" name="imgUrl" id="imgUrl" value="${activity.imgUrl }"/>

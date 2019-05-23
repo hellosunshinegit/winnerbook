@@ -84,12 +84,28 @@
 	        </dl> --%>
 	        <dl>
 	            <dt>标题：</dt>
-	            <dd><input type="text" name="title" id="title" value="${course.title }" disabled="disabled" style="width: 200px;"/></dd>
+	            <dd><input type="text" name="title" id="title" value="${course.title }" disabled="disabled"/></dd>
 	        </dl>
+	        <dl>
+				<dt>微博正文：</dt>
+				<dd>
+					<input type="text" name="wbTitle" id="wbTitle" value="${course.wbTitle }" disabled="disabled" />
+				</dd>
+			</dl>
+			<dl>
+				<dt>
+					微博正文图：
+				</dt>
+				<dd>
+					<c:if test="${!empty(course.wbImg) }">
+						<a href="${basePath}${course.wbImg}" target="_blank"><img src="${basePath}${course.wbImg}" width="50" height="50"></a>
+					</c:if>
+				</dd>
+			</dl>
 	        <dl>
 	            <dt>总裁课程类型：</dt>
 	            <dd>
-	                <exp:select code="COURSE_TYPE" name="courseType" id="courseType" value="${course.courseType}" disabled="true" style="width: 210px;"></exp:select>
+	                <exp:select code="COURSE_TYPE" name="courseType" id="courseType" value="${course.courseType}" disabled="true" style="width: 310px;"></exp:select>
 	            </dd>
 	        </dl>
 	        <dl>

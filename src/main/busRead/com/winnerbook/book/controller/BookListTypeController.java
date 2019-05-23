@@ -25,6 +25,7 @@ import com.winnerbook.base.frame.controller.BaseController;
 import com.winnerbook.book.dto.BookListType;
 import com.winnerbook.book.service.BookListTypeService;
 import com.winnerbook.book.service.BookTypeLabelService;
+import com.winnerbook.wx.service.WxInfoService;
 
 /**
  * 书单
@@ -41,6 +42,9 @@ public class BookListTypeController extends BaseController{
 	@Autowired
 	private BookTypeLabelService bookTypeLabelService;
 	
+	@Autowired
+	private WxInfoService wxInfoService;
+	
 	//查询列表
 	@RequestMapping(value="/bookListType.html")
 	public String bookListType(HttpServletRequest request,Model model, Integer pageIndex,Integer pageSize){
@@ -52,6 +56,8 @@ public class BookListTypeController extends BaseController{
 		PageDTO<BookListType> pageDTO  = bookListTypeService.listByPage(map, pageIndex,10);//默认每页显示10条数据
  
 		model.addAttribute("pageDTO", pageDTO);
+		//获取微博appid
+		map.put("wxInfo", wxInfoService.getWxInfo("2"));
 		model.addAllAttributes(map);
 		return "manage/busRead/book/bookListType/bookListTypeList";
 	}

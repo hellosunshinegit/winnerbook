@@ -47,6 +47,32 @@
 					</dd>
 				</dl>
 				<dl>
+					<dt>微博正文：</dt>
+					<dd>
+						<input type="text" name="wbTitle" id="wbTitle" value="${readBookClub.wbTitle }" disabled="disabled"  />
+					</dd>
+				</dl>
+				<dl>
+					<dt>
+						微博正文图：
+					</dt>
+					<dd>
+						<c:if test="${!empty(readBookClub.wbImg) }">
+							<a href="${basePath}${readBookClub.wbImg}" target="_blank"><img src="${basePath}${readBookClub.wbImg}" width="50" height="50"></a>
+						</c:if>
+					</dd>
+				</dl>
+				<dl>
+					<dt>
+						活动缩略图：
+					</dt>
+					<dd>
+						<c:if test="${!empty(readBookClub.clubImg) }">
+							<a href="${basePath}${readBookClub.clubImg}" target="_blank"><img src="${basePath}${readBookClub.clubImg}" width="50" height="50"></a>
+						</c:if>
+					</dd>
+				</dl>
+				<dl>
 		            <dt>时间：</dt>
 		            <dd>
 		            	<input type="text" name="clubDate" id="clubDate" value="${readBookClub.clubDate}" disabled="disabled" style="width: 150px;"/>

@@ -70,6 +70,7 @@
 						<td>${item.createUserName}</td>
 						<td>
 							<a href="${basePath }bookListTypeController/updateBookListType.html?id=${item.id}">修改</a>
+							<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=booklisttype_${item.id}" target="_blank">发微博</a>
 						</td>
 					</tr>
 				</c:forEach>

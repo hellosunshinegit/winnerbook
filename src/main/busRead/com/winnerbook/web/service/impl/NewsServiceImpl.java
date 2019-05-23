@@ -57,18 +57,6 @@ public class NewsServiceImpl extends BaseServiceImpl implements NewsService{
 		newsDao.insert(news);
 		logRecord("2","企业风采添加，："+news.getNewTitle());
 		//发送微博
-		
-		//获取access_token 
-		//通过appkey获取code，通过code
-		/*String getCodeUrl = "https://api.weibo.com/oauth2/authorize?client_id=3416615626&response_type=code&redirect_uri="+ConstantUtils.BASE_PATH_URL+"getWbCode.html?id="+news.getNewId()+"&type=1";
-		
-		String access_token = "";
-		String status = "";
-		String pic = "";
-		String ip = "";
-		HttpRequestUtil.sendPost(ConstantUtils.WB_SHARE_URL, "");*/
-		
-		
 	}
 
 	@Override

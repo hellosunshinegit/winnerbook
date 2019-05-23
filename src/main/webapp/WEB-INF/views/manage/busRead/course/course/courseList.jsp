@@ -71,7 +71,7 @@
               	<td>序号</td>
                 <td>课程类型</td>
                 <td>课程标题</td>
-				<td>总裁课程类型</td>
+				<!-- <td>总裁课程类型</td> -->
 				<td>主讲嘉宾</td>
 				<!-- <td>主讲嘉宾职务</td> -->
 				<td>推荐书目</td>
@@ -96,7 +96,7 @@
 								${item.title}
 							</c:if>
 						</td>
-						<td><exp:code code="COURSE_TYPE" value="${item.courseType }"></exp:code></td>
+						<%-- <td><exp:code code="COURSE_TYPE" value="${item.courseType }"></exp:code></td> --%>
 						<td>${item.mainGuest}</td>
 						<%-- <td>${item.mainGuestPost}</td>--%>
 						<td title="${item.recommendBook}">
@@ -133,6 +133,7 @@
 									<c:if test="${sessionUser.isAdmin eq '1' }"><!-- 不是超级管理员，也不是企业管理员，则可以学习 -->
 										<a href="${basePath }courseController/studentCourse.html?courseId=${item.courseId}">开始学习</a>
 									</c:if>
+									<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=course_${item.courseId}" target="_blank">发微博</a>
 								</c:when>
 								<c:otherwise>
 									<c:if test="${(sessionUser.isBusinessAdmin ne '1' && sessionUser.isAdmin eq '0') or sessionUser.isAdmin eq '1' }"><!-- 不是超级管理员，也不是企业管理员，则可以学习 -->
