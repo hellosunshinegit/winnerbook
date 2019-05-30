@@ -34,17 +34,18 @@ public interface BusInfoDao{
 	 * 新增
 	 * @param dictionary
 	 */
-	void insert(BusInfo busInfo);
+	void insert(UserBusInfo busInfo);
 	/**
 	 * 修改
 	 * @param dictionary
 	 */
-	void update(BusInfo busInfo);
+	void update(UserBusInfo busInfo);
 	
 	//查询企业管理员用户
 	List<User> findBusUserName();
 	
 	int findBusInfoById(String userId);
 
+	int getNumber(String busNumber);
 
 }

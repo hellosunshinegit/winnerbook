@@ -8,7 +8,8 @@ public class UserBusInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Integer buId;
-	private Long userId;
+	
+	private Integer userId;
 
 	private String userName;
 
@@ -32,15 +33,28 @@ public class UserBusInfo implements Serializable {
 
 	private String busDetail;
 
-	private Date addressCreateDate;
+	private Date busCreateDate;
 
-	private Date addressUpdateDate;
+	private Date busUpdateDate;
+	
+	private Integer manageQrcodeId;
+	
+	private String busNumber;
+	
+	private Integer brandQrcodeId;
 
-	public Long getUserId() {
+	private String brandDate;
+	
+	private String brandDateChinese;
+	
+	private String brandImg;
+	
+	
+	public Integer getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Long userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 
@@ -82,22 +96,6 @@ public class UserBusInfo implements Serializable {
 
 	public void setBusDes(String busDes) {
 		this.busDes = busDes;
-	}
-
-	public Date getAddressCreateDate() {
-		return addressCreateDate;
-	}
-
-	public void setAddressCreateDate(Date addressCreateDate) {
-		this.addressCreateDate = addressCreateDate;
-	}
-
-	public Date getAddressUpdateDate() {
-		return addressUpdateDate;
-	}
-
-	public void setAddressUpdateDate(Date addressUpdateDate) {
-		this.addressUpdateDate = addressUpdateDate;
 	}
 
 	public String getBusDetail() {
@@ -156,4 +154,71 @@ public class UserBusInfo implements Serializable {
 		this.busIndustry = busIndustry;
 	}
 
+	public Integer getManageQrcodeId() {
+		return manageQrcodeId;
+	}
+
+	public void setManageQrcodeId(Integer manageQrcodeId) {
+		this.manageQrcodeId = manageQrcodeId;
+	}
+
+	public String getBusNumber() {
+		return busNumber;
+	}
+
+	public void setBusNumber(String busNumber) {
+		this.busNumber = busNumber;
+	}
+
+	public Integer getBrandQrcodeId() {
+		return brandQrcodeId;
+	}
+
+	public void setBrandQrcodeId(Integer brandQrcodeId) {
+		this.brandQrcodeId = brandQrcodeId;
+	}
+
+	public Date getBusCreateDate() {
+		return busCreateDate;
+	}
+
+	public void setBusCreateDate(Date busCreateDate) {
+		this.busCreateDate = busCreateDate;
+	}
+
+	public Date getBusUpdateDate() {
+		return busUpdateDate;
+	}
+
+	public void setBusUpdateDate(Date busUpdateDate) {
+		this.busUpdateDate = busUpdateDate;
+	}
+
+	public String getBrandDate() {
+		return brandDate;
+	}
+
+	public void setBrandDate(String brandDate) {
+		this.brandDate = brandDate;
+	}
+
+	public String getBrandDateChinese() {
+		return brandDateChinese;
+	}
+
+	public void setBrandDateChinese(String brandDateChinese) {
+		this.brandDateChinese = brandDateChinese;
+	}
+
+	public String getBrandImg() {
+		return brandImg;
+	}
+
+	public void setBrandImg(String brandImg) {
+		this.brandImg = brandImg;
+	}
+	
+	
+
+	
 }

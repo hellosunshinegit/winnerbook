@@ -11,12 +11,70 @@
     <script type="text/javascript" src="${basePath }resources/css/common.js"></script>
     <script type="text/javascript" src="${basePath }resources/js/jquery-1.8.1.min.js"></script>
     <script type="text/javascript" src="${basePath }resources/js/layer/layer.js"></script>
+    <style type="text/css">
+    	.bus_qrcode{
+    		position: relative;
+		    top: 55px;
+		    right: 55px;
+		    float: right;
+    	}
+    	.bus_qrcode img{
+    		width:80px;
+    	}
+    	.bus_num{
+    		    position: absolute;
+			    top: 336px;
+			    left: 402px;
+			    font-size: 18px;
+			    font-family: 楷体;
+			    font-weight: bold;
+			    color: #000;
+    	}
+    	.brandDate{
+    		    position: absolute;
+			    top: 360px;
+			    left: 402px;
+			    font-size: 18px;
+			    font-family: 楷体;
+			    font-weight: bold;
+			    color: #000;
+    	}
+    	
+    	.bus_logo{
+    		position: absolute;
+		    top: 82px;
+		    right: 255px;
+    	}
+    	.bus_logo img{
+    		width:58px;
+    	}
+    	
+    	.bus_name{
+    		position: absolute;
+		    top: 70px;
+		    left: 86px;
+		    font-size: 21px;
+		    color: #000;
+		    font-family: 黑体;
+		    font-weight: 600;
+		}
+		
+		.brand_upload{
+		    text-align: center;
+		    font-size: 18px;
+		    color: blue;
+		    text-decoration: underline;
+		    padding-top: 10px;
+		}
+    	
+    </style>
 	<script type="text/javascript">
 		//重置
 		function resetFun(){
 			$("#busName").val("");	
 		}
 		
+		//生成企业二维码
 		function getBusQrcode(busId,busName){
 			//getBusQrcode
 			//首先查询该企业下是否有二维码，如果没有则生成，有则直接返回
@@ -39,6 +97,35 @@
     				  title:busName!=''?busName:"手机端二维码",
 		   			  type: 1,
 		   			  area: ['300px', '300px'], //宽高
+		   			  content: content
+		   			});
+    			}
+    		});
+		}
+		
+		//生成企业名牌 (把编码和二维码查询出来返回，用户自己点击生成再生成。)
+		function getBusBrand(busId,busName){
+			var str = {"busId":busId};
+			$.ajax({
+    			type:"POST",
+    			async: false,
+    			dataType:"json",
+    		    contentType : "application/json;charset=utf-8",//必须要设置contentType，不然后台接收不到json数据格式，并且是乱码
+    			data:JSON.stringify(str),
+    			url:"${basePath}busInfoController/getBusBrandInfo.html",
+    			success:function(data){
+    				console.log(data);
+    				var busName = data.userBusInfo.busName!=null?data.userBusInfo.busName:"";
+    				var busNumber = data.userBusInfo.busNumber!=null?data.userBusInfo.busNumber:"";
+    				var brandDateChinese = data.userBusInfo.brandDateChinese!=null?data.userBusInfo.brandDateChinese:"";
+    				/* var busLogo = data.userBusInfo.busLogo!=null?"<img src='"+data.userBusInfo.busLogo+"'/>":""; */
+    				var content = "<div style='margin: 5px 50px 0px 50px;'><div style='text-align: center;width:600px;height:440px;background:url(${basePath}resources/images/bus_brand_custom.jpg) no-repeat;background-size:600px;'>"+
+    				"<span class='bus_name'>授予："+busName+"</span><span class='bus_num'>编号："+busNumber+"</span><span class='brandDate'>"+brandDateChinese+"</span><span class='bus_qrcode'><img src='"+data.qrcode.img+"'></span>"+
+    				"</div><div class='brand_upload'><a href='${basePath}busInfoController/uploadGenerateBrandImg.html?busId="+busId+"'>生成企业名牌图片并下载</a></div></div>";
+    				layer.open({
+    				  title:busName!=''?busName:"企业名牌",
+		   			  type: 1,
+		   			  area: ['700px', '550px'], //宽高
 		   			  content: content
 		   			});
     			}
@@ -98,6 +185,7 @@
 							<a href="${basePath }busInfoController/viewBusInfo.html?userId=${item.userId}">详情</a>
 							<a href="${basePath }busInfoController/customCourseType.html?userId=${item.userId}">定制课程分类</a>
 							<a href="javascript:getBusQrcode(${item.userId},'${item.busName}')">手机端预览</a>
+							<a href="javascript:getBusBrand(${item.userId},'${item.busName}')">企业名牌</a>
 						</td>
 					</tr>
 				</c:forEach>

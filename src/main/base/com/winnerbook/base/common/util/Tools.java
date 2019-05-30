@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * @author Administrator
@@ -260,6 +261,16 @@ public class Tools {
                 + df.format(total);
         return contractNum;
     }
+    
+    //生成企业编号
+	public static String getBusNumber(){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
+		String busNumberStr = "BN";
+		String date = sdf.format(new Date());
+		Random random = new Random();//默认构造方法
+		int i2 = random.nextInt(1000000);
+		return busNumberStr+date+i2;
+	}
 
    
 }

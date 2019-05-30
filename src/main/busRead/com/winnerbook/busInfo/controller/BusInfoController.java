@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.common.util.ConstantUtils;
+import com.winnerbook.base.common.util.DateTimeUtils;
+import com.winnerbook.base.common.util.FileUtils;
 import com.winnerbook.base.frame.controller.BaseController;
-import com.winnerbook.busInfo.dto.BusInfo;
 import com.winnerbook.busInfo.dto.UserBusCourseType;
 import com.winnerbook.busInfo.dto.UserBusInfo;
 import com.winnerbook.busInfo.service.BusInfoService;
@@ -72,8 +75,12 @@ public class BusInfoController extends BaseController{
 			UserBusInfo userBusInfo = busInfoService.findById(getSessionUser().getUserId().toString());
 			if(null==userBusInfo){
 				userBusInfo = new UserBusInfo();
-				userBusInfo.setUserId(getSessionUser().getUserId());
+				userBusInfo.setUserId(Integer.parseInt(getSessionUser().getUserId()+""));
 				userBusInfo.setUserUnitName(getSessionUser().getUserUnitName());
+			}else{
+				if(StringUtils.isNotBlank(userBusInfo.getBrandDate())){
+					userBusInfo.setBrandDateChinese(DateTimeUtils.transformDateChinese(userBusInfo.getBrandDate()));
+				}
 			}
 			model.addAttribute("busInfo",userBusInfo);
 			return "manage/busRead/bus/busInfo/editBusManageInfo";
@@ -85,14 +92,18 @@ public class BusInfoController extends BaseController{
 	public String updateBusInfo(@RequestParam String userId,ModelMap modelMap){
 		//查询所有的用户信息
 		//modelMap.addAttribute("busUserNameList", busInfoService.findBusUserName());
-		modelMap.addAttribute("busInfo",busInfoService.findById(userId));
+		UserBusInfo userBusInfo = busInfoService.findById(userId);
+		if(StringUtils.isNotBlank(userBusInfo.getBrandDate())){
+			userBusInfo.setBrandDateChinese(DateTimeUtils.transformDateChinese(userBusInfo.getBrandDate()));
+		}
+		modelMap.addAttribute("busInfo",userBusInfo);
 		return "manage/busRead/bus/busInfo/editBusInfo";
 	}
 	
 	//修改提交
 	@RequestMapping(value="updateSubmitBusInfo.html")
-	public String updateSubmitBusInfo(BusInfo busInfo,HttpServletRequest request){
-		busInfoService.update(busInfo,request);
+	public String updateSubmitBusInfo(UserBusInfo userBusInfo,HttpServletRequest request){
+		busInfoService.update(userBusInfo,request);
 		return "redirect:/busInfoController/busInfoList.html";
 	}
 	
@@ -139,5 +150,48 @@ public class BusInfoController extends BaseController{
 		}
 		return qrcode;
 	}
+	
+	//获取生成名牌的信息
+	@RequestMapping("getBusBrandInfo.html")
+	@ResponseBody
+	public Map<String, Object> getBusBrandInfo(@RequestBody String busIdJson){
+		Map<String, Object> map = new HashMap<>();
+		JSONObject jsonObject = JSONObject.fromObject(busIdJson);
+		Qrcode qrcode = busInfoService.getBusBrandQrcode(jsonObject.getString("busId"));
+		if(null!=qrcode && StringUtils.isNotBlank(qrcode.getImg())){
+			qrcode.setImg(ConstantUtils.BASE_PATH_URL+qrcode.getImg()); 
+		}
+		//获取企业信息
+		UserBusInfo userBusInfo = busInfoService.findById(jsonObject.getString("busId"));
+		if(null!=userBusInfo && StringUtils.isNotBlank(userBusInfo.getBusLogo())){
+			userBusInfo.setBusLogo(ConstantUtils.BASE_PATH_URL+userBusInfo.getBusLogo());
+		}
+		if(StringUtils.isNotBlank(userBusInfo.getBrandDate())){
+			userBusInfo.setBrandDateChinese(DateTimeUtils.transformDateChinese(userBusInfo.getBrandDate()));
+		}
+		map.put("qrcode", qrcode);
+		map.put("userBusInfo", userBusInfo);
+		return map;
+	}
+	
+	//点击下载名牌
+	@RequestMapping("uploadGenerateBrandImg.html")
+	public void uploadGenerateBrandImg(@RequestParam String busId,HttpServletResponse response){
+		busInfoService.uploadBrandImg(busId,response);
+	}
+	
+	@RequestMapping("uploadBrandImg.html")
+	public void uploadBrandImg(@RequestParam String busId,HttpServletResponse response){
+		UserBusInfo userBusInfo = busInfoService.findById(busId);
+		FileUtils.downloadFilename(FileUtils.getRealtyPathName(userBusInfo.getBrandImg()),userBusInfo.getBusName()+"-企业名牌.jpg", response);
+	}
+	
+	//获取编号
+	@RequestMapping("generateCode.html")
+	@ResponseBody
+	public String generateCode(){
+		return busInfoService.getGenerateCode();
+	}
+	
 
 }

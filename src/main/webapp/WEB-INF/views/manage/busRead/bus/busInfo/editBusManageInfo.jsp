@@ -70,20 +70,40 @@
 	        </dl>
 	        <dl>
 	            <dt><i>*</i>企业名称：</dt>
-	            <dd><input type="text" name="busName" id="busName" value="${busInfo.busName }" maxlength="30" require="true" requireMsg="企业名称为必填项!" dataType="Require"/></dd>
+	            <dd>
+	            	<c:if test="${busInfo.busName ne '' && busInfo.brandImg ne null && busInfo.busName ne undefined}">
+		            	<input type="text" name="busName" id="busName" value="${busInfo.busName }" disabled="disabled"/>
+		            	<input type="hidden" name="busName" value="${busInfo.busName }"/>
+		            	<span style="color: red;">注：企业名称添加后不可修改。如需修改，请联系管理员。</span>
+	            	</c:if>
+	            	<c:if test="${busInfo.busName eq '' || busInfo.brandImg eq null || busInfo.busName eq undefined}">
+		            	<input type="text" name="busName" id="busName" value="${busInfo.busName }" maxlength="16" require="true" requireMsg="企业名称为必填项!" dataType="Require"/>
+	            		<span style="color: red;">注：企业名称添加后不可修改。最长16个字，如果超过，请联系管理员。</span>
+	            	</c:if>
+	            </dd>
+	        </dl>
+	        <dl>
+	            <dt>下载企业名牌：</dt>
+	            <dd>
+	            	<c:if test="${busInfo.brandImg ne '' && busInfo.brandImg ne null && busInfo.brandImg ne undefined}">
+	            		<a href="${basePath}busInfoController/uploadBrandImg.html?busId=${busInfo.userId}" style="color:blue;text-decoration: underline;" title="点击下载企业名牌">下载企业名牌</a>
+	            	</c:if>
+	            	<c:if test="${busInfo.brandImg eq '' || busInfo.brandImg eq null || busInfo.brandImg eq undefined}">
+	            		请联系管理员生成企业名牌
+	            	</c:if>
+	            	<input type="hidden" name="brandImg" value="${busInfo.brandImg }"/>
+	            </dd>
 	        </dl>
 	        <dl>
 	            <dt><c:if test="${empty(busInfo.busLogo)}"><i>*</i></c:if>企业logo：</dt>
 	            <dd>
-	            	<c:if test="${!empty(busInfo.busLogo)}">
-	            		<img alt="" src="${bathPath }${busInfo.busLogo}" width="50" height="50">
-	            	</c:if>
-	            	<c:if test="${!empty(busInfo.busLogo)}">
-	            		<input type="checkbox" name="isAgin" id="isAgin" value="1" onchange="isAginFun(this)" >是否重新上传
-	            	</c:if>
-	            	&nbsp;&nbsp;
-	            	<input type="file" name="file" id="file" <c:if test="${empty(busInfo.busLogo)}">require="true"  requireMsg="企业logo为必选项!" dataType="Require" </c:if><c:if test="${!empty(busInfo.busLogo)}"> style="display:none "</c:if> />
-	            	<input type="hidden" name="busLogo" id="busLogo" value="${busInfo.busLogo}">
+		           	<input type="hidden" name="busLogo" id="busLogo" value="${busInfo.busLogo }"/>
+					<img alt="" id="wbImg" src="" width="150" height="150">
+					<c:if test="${!empty(busInfo.busLogo) }">
+						<a href="${basePath}${busInfo.busLogo}" target="_blank"><img src="${basePath}${busInfo.busLogo}" width="50" height="50"></a>
+					</c:if>
+					<div id="upload_busLogo"></div>
+	            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=busLogo&path=bus&typeExts=1" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
 	            </dd>
 	        </dl>
 	        <dl>
@@ -99,6 +119,20 @@
 	            	<select name="busCounty" id="areaId"  ></select>
 	                <input type="text" name="busAddress" id="busAddress" value="${busInfo.busAddress}" maxlength="100"/>(详细住址)
 	            </dd>
+	        </dl>
+	        <dl>
+	            <dt>名牌编号：</dt>
+	            <dd>
+	            	${busInfo.busNumber}
+	            	<input type="hidden" name="busNumber" value="${busInfo.busNumber }"/>
+	        	</dd>
+	        </dl>
+	        <dl>
+	            <dt>名牌授予时间：</dt>
+	            <dd>
+	            	${busInfo.brandDateChinese }
+	            	<input type="hidden" name="brandDate" value="${busInfo.brandDate }"/>
+	        	</dd>
 	        </dl>
 	        <dl>
 	            <dt>企业描述：</dt>

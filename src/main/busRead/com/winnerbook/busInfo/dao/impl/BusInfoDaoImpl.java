@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.winnerbook.base.frame.dao.BaseDAO;
 import com.winnerbook.busInfo.dao.BusInfoDao;
-import com.winnerbook.busInfo.dto.BusInfo;
 import com.winnerbook.busInfo.dto.UserBusInfo;
 import com.winnerbook.system.dto.User;
 
@@ -32,12 +31,12 @@ private static final String BUSINFO_MAPPER = "BusInfoMapper.";
 	}
 
 	@Override
-	public void insert(BusInfo busInfo) {
+	public void insert(UserBusInfo busInfo) {
 		this.sqlSession.insert(BUSINFO_MAPPER+"insert",busInfo);
 	}
 
 	@Override
-	public void update(BusInfo busInfo) {
+	public void update(UserBusInfo busInfo) {
 		this.sqlSession.insert(BUSINFO_MAPPER+"update",busInfo);
 	}
 
@@ -50,6 +49,12 @@ private static final String BUSINFO_MAPPER = "BusInfoMapper.";
 	@Override
 	public int findBusInfoById(String userId) {
 		Object obj = this.sqlSession.selectOne(BUSINFO_MAPPER+"findBusInfoById",userId);
+		return obj == null ? 0 : Integer.parseInt(obj.toString());
+	}
+
+	@Override
+	public int getNumber(String busNumber) {
+		Object obj = this.sqlSession.selectOne(BUSINFO_MAPPER+"getNumber",busNumber);
 		return obj == null ? 0 : Integer.parseInt(obj.toString());
 	}
 }

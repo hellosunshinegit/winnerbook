@@ -17,6 +17,7 @@
 <script type="text/javascript" charset="utf-8" src="${basePath}resources/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" charset="utf-8" src="${basePath}resources/ueditor/ueditor.all.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="${basePath}resources/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="${basePath }resources/My97DatePicker/WdatePicker.js"></script>
 
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -44,6 +45,22 @@
 			$("#file").removeAttr("dataType","Require");
 		}	
 	}
+	
+	//重新生成编号
+	function generateCodeFun() {
+		$.ajax({
+			type:"GET",
+			async: false,
+			dataType:"html",
+			url:"${basePath}busInfoController/generateCode.html",
+			success:function(data){
+				if(data!=""){
+					$("#busNumber_show").val(data);
+					$("#busNumber").val(data);
+				}
+			}
+		});
+	}
 </script>
 </head>
 <body>
@@ -59,6 +76,10 @@
             <dd>
             	<div class="dd_radio">${busInfo.userUnitName}</div>
             	<input type="hidden" name="userId" value="${busInfo.userId }"/>
+            	<input type="hidden" name="busProvince" value="${busInfo.busProvince }"/>
+            	<input type="hidden" name="busCity" value="${busInfo.busCity }"/>
+            	<input type="hidden" name="busCounty" value="${busInfo.busCounty }"/>
+            	<input type="hidden" name="busAddress" id="busAddress" value="${busInfo.busAddress}" maxlength="100"/>
             </dd>
         </dl>
         <dl>
@@ -68,16 +89,27 @@
         <dl>
             <dt><c:if test="${empty(busInfo.busLogo)}"><i>*</i></c:if>企业logo：</dt>
             <dd>
-            	<c:if test="${!empty(busInfo.busLogo)}">
-            		<img alt="" src="${bathPath }${busInfo.busLogo}" width="50" height="50">
-            	</c:if>
-            	<c:if test="${!empty(busInfo.busLogo)}">
-            		<input type="checkbox" name="isAgin" id="isAgin" value="1" onchange="isAginFun(this)" >是否重新上传
-            	</c:if>
-            	&nbsp;&nbsp;
-            	<input type="file" name="file" id="file" <c:if test="${empty(busInfo.busLogo)}">require="true"  requireMsg="企业logo为必选项!" dataType="Require" </c:if><c:if test="${!empty(busInfo.busLogo)}"> style="display:none "</c:if> />
-            	<input type="hidden" name="busLogo" id="busLogo" value="${busInfo.busLogo}">
+            	<input type="hidden" name="busLogo" id="busLogo" value="${busInfo.busLogo }"/>
+				<img alt="" id="wbImg" src="" width="150" height="150">
+				<c:if test="${!empty(busInfo.busLogo) }">
+					<a href="${basePath}${busInfo.busLogo}" target="_blank"><img src="${basePath}${busInfo.busLogo}" width="50" height="50"></a>
+				</c:if>
+				<div id="upload_busLogo"></div>
+            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=busLogo&path=bus&typeExts=1" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
             </dd>
+        </dl>
+        <dl>
+            <dt>名牌编号：</dt>
+            <dd>
+            	<input type="text" name="busNumber_show" id="busNumber_show" value="${busInfo.busNumber}" disabled="disabled"/><span style="margin-left: 10px;"><a href="javascript:generateCodeFun()" style="text-decoration: underline;">重新生成编号</a></span>
+            	<input type="hidden" name="busNumber"  id="busNumber" value="${busInfo.busNumber }"/>
+        	</dd>
+        </dl>
+        <dl>
+            <dt>名牌授予时间：</dt>
+            <dd>
+            	<input type="text" name="brandDate" id="brandDate" value="${busInfo.brandDate}" class="Wdate" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" style="width: 150px;"/>
+        	</dd>
         </dl>
         <dl>
             <dt>企业描述：</dt>

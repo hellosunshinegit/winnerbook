@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,11 @@ import com.winnerbook.base.common.GlobalConfigure;
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.common.util.ConstantUtils;
 import com.winnerbook.base.common.util.FileUtils;
-import com.winnerbook.base.common.util.QRCodeUtil;
 import com.winnerbook.base.common.util.QrcodeZxing;
 import com.winnerbook.base.common.util.UUIDGenerator;
 import com.winnerbook.base.frame.service.impl.BaseServiceImpl;
+import com.winnerbook.busInfo.dao.BusInfoDao;
+import com.winnerbook.busInfo.dto.UserBusInfo;
 import com.winnerbook.share.dao.QrcodeDao;
 import com.winnerbook.share.dto.Qrcode;
 import com.winnerbook.share.service.QrcodeService;
@@ -32,6 +34,9 @@ public class QrcodeServiceImpl extends BaseServiceImpl implements QrcodeService{
 	
 	@Autowired
 	private QrcodeDao qrcodeDao;
+	
+	@Autowired
+	private BusInfoDao busInfoDao;
 
 	@Override
 	public Qrcode findById(String id) {
@@ -117,10 +122,28 @@ public class QrcodeServiceImpl extends BaseServiceImpl implements QrcodeService{
 
 	@Override
 	public Qrcode getQrcodeByBusId(String busId) {
+		Qrcode qrcode = null;
 		Map<String, Object> parameter  = new HashMap<String, Object>();
-		parameter.put("busId", busId);
-		List<Qrcode> qrcodes = qrcodeDao.getQrcodeByBusId(parameter);
-		return qrcodes.size()>0?qrcodes.get(0):null;
+		parameter.put("userId", busId);
+		//根据企业id查询二维码
+		UserBusInfo userBusInfo = busInfoDao.findById(parameter);
+		if(null!=userBusInfo && null!=userBusInfo.getManageQrcodeId() && userBusInfo.getManageQrcodeId()!=0){
+			qrcode = findById(userBusInfo.getManageQrcodeId().toString());
+		}
+		return qrcode;
+	}
+
+	@Override
+	public Qrcode getBrandQrcodeByBusId(String busId) {
+		Qrcode qrcode = null;
+		Map<String, Object> parameter  = new HashMap<String, Object>();
+		parameter.put("userId", busId);
+		//根据企业id查询二维码
+		UserBusInfo userBusInfo = busInfoDao.findById(parameter);
+		if(null!=userBusInfo && null!=userBusInfo.getBrandQrcodeId() && userBusInfo.getBrandQrcodeId()!=0){
+			qrcode = findById(userBusInfo.getBrandQrcodeId().toString());
+		}
+		return qrcode;
 	}
 	
 }

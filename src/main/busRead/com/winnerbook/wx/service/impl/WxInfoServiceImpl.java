@@ -209,6 +209,7 @@ public class WxInfoServiceImpl extends BaseServiceImpl implements WxInfoService{
 	
 	
 	public Status sendPost(String accessToken,String title,String filePath){
+		System.out.println("开始发送请求。。。。");
 		Status status = null;
 		try {
 			title = title.replace("#", "");//title title限制在140字以内

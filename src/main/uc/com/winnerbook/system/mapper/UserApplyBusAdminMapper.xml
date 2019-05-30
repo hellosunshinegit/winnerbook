@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UserApplyBusAdminMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.UserApplyBusAdmin" >
+    <id column="ua_id" property="uaId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="bus_id" property="busId" jdbcType="INTEGER" />
+    <result column="apply_bus_name" property="applyBusName" jdbcType="VARCHAR" />
+    <result column="apply_bus_des" property="applyBusDes" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="status_reason" property="statusReason" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="success_date" property="successDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ua_id, user_id, user_name, bus_id,apply_bus_name, apply_bus_des, status, status_reason, create_date,success_date,update_date
+  </sql>
+  
+  <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from uc_user_apply_bus_admin where 1=1
+ 	<if test="status != null and status  != '' ">and status = #{status} </if>
+	<if test="userName != null and userName  != '' ">and user_name like '%${userName}%' </if>
+  </select>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+	 SELECT <include refid="Base_Column_List" /> FROM uc_user_apply_bus_admin where 1=1
+	 <if test="status != null and status  != '' ">and status = #{status} </if>
+	 <if test="userName != null and userName  != '' ">and user_name like '%${userName}%' </if>
+	  order by ua_id desc 
+	 <if test="limit != null and limit != ''">
+		limit ${start},${limit} 
+	 </if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from uc_user_apply_bus_admin
+    where ua_id = #{uaId}
+  </select>
+  
+  <update id="update" parameterType="com.winnerbook.system.dto.UserApplyBusAdmin" >
+    update uc_user_apply_bus_admin
+    set status = #{status,jdbcType=VARCHAR},
+      status_reason = #{statusReason,jdbcType=VARCHAR},
+      success_date = #{successDate,jdbcType=VARCHAR},
+      update_date = NOW()
+    where ua_id = #{uaId}
+  </update>
+  
+  
+  <!-- 申请成为企业管理员 -->
+  <insert id="insert" parameterType="com.winnerbook.system.dto.UserApplyBusAdmin" useGeneratedKeys="true" keyProperty="uaId">
+    insert into uc_user_apply_bus_admin (user_id, user_name, bus_id,
+      apply_bus_name, apply_bus_des, status,status_reason, create_date
+      )
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{busId,jdbcType=INTEGER},
+      #{applyBusName,jdbcType=VARCHAR}, #{applyBusDes,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{statusReason,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 根据用户id查询是否申请了企业管理员，如果已经申请，则不需要重复申请 -->
+  <select id="getUserApplyBusAdmin" parameterType="hashmap" resultType="hashmap">
+  	select ua_id uaId,user_id userId, user_name userName, bus_id busId,apply_bus_name applyBusName, apply_bus_des applyBusDes, status, status_reason statusReason, DATE_FORMAT(create_date,'%Y-%m-%d %H:%i:%s') createDate,DATE_FORMAT(success_date,'%Y-%m-%d %H:%i:%s') successDate from uc_user_apply_bus_admin where user_id=#{userId} order by ua_id desc 
+  </select>
+  
+</mapper>

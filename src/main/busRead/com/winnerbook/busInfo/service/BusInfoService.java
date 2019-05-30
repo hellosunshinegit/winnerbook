@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.busInfo.dto.BusInfo;
@@ -31,7 +32,7 @@ public interface BusInfoService {
 	 * 修改
 	 * @param dictionary
 	 */
-	void update(BusInfo busInfo,HttpServletRequest request);
+	void update(UserBusInfo busInfo,HttpServletRequest request);
 	//查询企业管理员用户
 	List<User> findBusUserName();
 	
@@ -40,4 +41,10 @@ public interface BusInfoService {
 	String customCourseTypeSubmit(String courseTypeIds);
 	
 	Qrcode getBusQrcode(String busId);
+	
+	Qrcode getBusBrandQrcode(String busId);
+	
+	void uploadBrandImg(String busId,HttpServletResponse response);
+
+	String getGenerateCode();
 }

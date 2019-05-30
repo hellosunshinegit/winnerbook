@@ -34,6 +34,7 @@ public class LoginService extends WebBaseServiceImpl{
 	
 	public JSONResponse getLoginInfo(String username,String password,String selectUser,HttpServletRequest request){
 		JSONResponse result = new JSONResponse();
+		String busId = request.getParameter("busId");
 		
 		if(StringUtils.isEmpty(username)){
 			result.setMsg("请输入手机号码!");
@@ -63,7 +64,7 @@ public class LoginService extends WebBaseServiceImpl{
 			
 			if(null==users || users.size()==0){
 				//直接进行注册，把用户归于zcdsh（demo）企业中
-				user = insertDemoUser(username, password);
+				user = insertDemoUser(username, password,busId);
 				loginRecord(user, request);
 				result.setSuccess(true);
 				//根据用户id查询企业名称
@@ -110,7 +111,7 @@ public class LoginService extends WebBaseServiceImpl{
 	}
 	
 	
-	public User insertDemoUser(String userName,String password){
+	public User insertDemoUser(String userName,String password,String busId){
 		User user = new User();
 		//查询2的企业
 		Map<String,Object> map_user = new HashMap<>();
@@ -138,7 +139,7 @@ public class LoginService extends WebBaseServiceImpl{
 		user.setIsBusinessAdmin("0");//否
 		user.setDepartment("");
 		user.setIsDepartLeader("");
-		user.setBelongBusUserId("2");
+		user.setBelongBusUserId(StringUtils.isNotBlank(busId)?busId:"2");
 		user.setUserCreateDate(new Date());
 		user.setUserCreateUserId(2l);
 		user.setUserCreateUserName(user_bus.getUserUnitName());

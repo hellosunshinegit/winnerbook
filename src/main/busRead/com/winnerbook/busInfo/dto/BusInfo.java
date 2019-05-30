@@ -7,6 +7,7 @@ public class BusInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Integer buId;
+	
 	private Integer userId;
 
 	private String busName;
@@ -30,7 +31,17 @@ public class BusInfo implements Serializable {
 	private Date addressUpdateDate;
 
 	private String busDetail;
+	
+	private Integer manageQrcodeId;
+	
+	private String busNumber;
+	
+	private Integer brandQrcodeId;
 
+	private String brandDate;
+	
+	private String brandImg;
+	
 	public Integer getUserId() {
 		return userId;
 	}
@@ -134,5 +145,47 @@ public class BusInfo implements Serializable {
 	public void setBusIndustry(String busIndustry) {
 		this.busIndustry = busIndustry;
 	}
+
+	public Integer getManageQrcodeId() {
+		return manageQrcodeId;
+	}
+
+	public void setManageQrcodeId(Integer manageQrcodeId) {
+		this.manageQrcodeId = manageQrcodeId;
+	}
+
+	public String getBusNumber() {
+		return busNumber;
+	}
+
+	public void setBusNumber(String busNumber) {
+		this.busNumber = busNumber;
+	}
+
+	public Integer getBrandQrcodeId() {
+		return brandQrcodeId;
+	}
+
+	public void setBrandQrcodeId(Integer brandQrcodeId) {
+		this.brandQrcodeId = brandQrcodeId;
+	}
+
+	public String getBrandDate() {
+		return brandDate;
+	}
+
+	public void setBrandDate(String brandDate) {
+		this.brandDate = brandDate;
+	}
+
+	public String getBrandImg() {
+		return brandImg;
+	}
+
+	public void setBrandImg(String brandImg) {
+		this.brandImg = brandImg;
+	}
+	
+	
 
 }

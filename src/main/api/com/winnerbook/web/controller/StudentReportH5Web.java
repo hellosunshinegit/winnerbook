@@ -118,11 +118,13 @@ public class StudentReportH5Web {
 		Map<String, Object> mapResult = new HashMap<String, Object>();
 				
 		Map<String, Object> map_bus = new HashMap<>();
-		Map<String, Object> busRanks = studentReportService.getAllBusRanks(PageUtil.getParam(map_bus, "", pageIndex));
+		Map<String, Object> busRanks = studentReportService.getAllBusRanks(PageUtil.getParam(map_bus, "", pageIndex));//前10的数据
+		
+		Map<String, Object> busRanksAll = studentReportService.getAllBusRanks(new HashMap<String,Object>());
 		
 		//获取当前企业排名
 		Map<String, Object> currentBusMap = new HashMap<>();
-		List<Map<String, Object>> allBusRankList = (List<Map<String, Object>>) busRanks.get("allBusRankList");
+		List<Map<String, Object>> allBusRankList = (List<Map<String, Object>>) busRanksAll.get("allBusRankList");
 		for(Map<String, Object> busMap:allBusRankList){
 			if(busId.equals(busMap.get("busId").toString())){
 				currentBusMap = busMap;

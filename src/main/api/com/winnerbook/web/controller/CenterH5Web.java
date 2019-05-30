@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.winnerbook.base.common.JSONResponse;
 import com.winnerbook.course.service.ReadThoughtService;
 import com.winnerbook.course.service.StudentRecordService;
+import com.winnerbook.system.service.UserApplyBusAdminService;
+import com.winnerbook.web.service.CenterServiceWeb;
 import com.winnerbook.web.service.ClickInfoService;
 import com.winnerbook.web.service.StudentRecordServiceWeb;
 import com.winnerbook.web.utils.PageUtil;
@@ -35,6 +37,12 @@ public class CenterH5Web {
 	
 	@Autowired
 	private ClickInfoService clickInfoService;
+	
+	@Autowired
+	private CenterServiceWeb centerServiceWeb;
+	
+	@Autowired
+	private UserApplyBusAdminService userApplyBusAdminService;
 
 	//获取我的读后感
 	@RequestMapping(value="getReadThoughtUsers.jhtml",produces = {"application/json;charset=utf-8"})
@@ -100,5 +108,37 @@ public class CenterH5Web {
 		return callback+"("+JSONObject.fromObject(result)+")";
 	}
 	
+	//请求是否已经申请了成为企业管理员
+	@RequestMapping(value="isApplyBusAdmin.jhtml",produces = {"application/json;charset=utf-8"})
+	@ResponseBody
+	public String isApplyBusAdmin(@RequestParam String userId,String busId,@RequestParam("callback") String callback){
+		JSONResponse result = new JSONResponse();
+		if(!StringUtils.isNotBlank(userId)){
+			result.setMsg("请登录...");
+			return callback+"("+JSONObject.fromObject(result)+")";
+ 		}
+		
+		Map<String, Object> busAdminMap = userApplyBusAdminService.getUserApplyBusAdmin(userId);
+		result.setData(busAdminMap);
+		result.setSuccess(true);
+		return callback+"("+JSONObject.fromObject(result)+")";
+	}
+	
+	//申请成为企业管理员
+	@RequestMapping(value="applyBusAdmin.jhtml",produces = {"application/json;charset=utf-8"})
+	@ResponseBody
+	public String applyBusAdmin(@RequestParam String userId,String busId,String applyBusName,String applyBusDes,@RequestParam("callback") String callback){
+		JSONResponse result = new JSONResponse();
+		if(!StringUtils.isNotBlank(userId)){
+			result.setMsg("请登录...");
+			return callback+"("+JSONObject.fromObject(result)+")";
+ 		}
+		
+		String applyId = centerServiceWeb.addApplyRecord(userId, busId, applyBusName, applyBusDes);
+		
+		result.setData(applyId);
+		result.setSuccess(true);
+		return callback+"("+JSONObject.fromObject(result)+")";
+	}
 	
 }

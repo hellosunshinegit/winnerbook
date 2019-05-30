@@ -39,7 +39,7 @@ a:hover { color:#3a7ec1;}
 .form_main dl:after{clear:both;}
 .form_main dt { width:110px; text-align:right; float:left; line-height:30px; padding-right:10px;}
 .form_main dt i { font-weight:bold; line-height:30px; color:#f30; margin-right:5px;}
-.form_main dd { margin-left:130px;}
+.form_main dd { margin-left:130px; line-height: 30px;}
 .form_main dd small { color:#999; line-height:25px; font-size:12px;}
 .form_main input[type="text"],.form_main input[type="password"] { width:300px;}
 .form_main input.w80 { width:80px;}

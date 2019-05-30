@@ -34,6 +34,9 @@ public interface QrcodeService {
 	//根据企业id查询二维码
 	Qrcode getQrcodeByBusId(String busId);
 	
+	//获取名牌二维码
+	Qrcode getBrandQrcodeByBusId(String busId);
+	
 
 		
 }

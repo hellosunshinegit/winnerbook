@@ -3,7 +3,7 @@
 <mapper namespace="BusInfoMapper" >
   <resultMap id="BaseResultMap" type="com.winnerbook.busInfo.dto.BusInfo" >
     <id column="bu_id" property="buId" jdbcType="INTEGER" />
-    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="bus_name" property="busName" jdbcType="VARCHAR" />
     <result column="bus_logo" property="busLogo" jdbcType="VARCHAR" />
     <result column="bus_province" property="busProvince" jdbcType="VARCHAR" />
@@ -15,6 +15,11 @@
     <result column="bus_detail" property="busDetail" jdbcType="LONGVARCHAR" />
     <result column="bus_create_date" property="busCreateDate" jdbcType="TIMESTAMP" />
     <result column="bus_update_date" property="busUpdateDate" jdbcType="TIMESTAMP" />
+    <result column="manage_qrcode_id" property="manageQrcodeId" jdbcType="INTEGER" /><!--企业二维码id，企业编号  2019-05-24 -->
+    <result column="bus_number" property="busNumber" jdbcType="VARCHAR" />
+    <result column="brand_qrcode_id" property="brandQrcodeId" jdbcType="INTEGER" />
+    <result column="brand_date" property="brandDate" jdbcType="VARCHAR" />
+    <result column="brand_img" property="brandImg" jdbcType="VARCHAR" />
   </resultMap>
   
    <!-- 用户企业列表 -->
@@ -34,6 +39,11 @@
     <result column="bus_detail" property="busDetail" jdbcType="LONGVARCHAR" />
     <result column="bus_create_date" property="busCreateDate" jdbcType="TIMESTAMP" />
     <result column="bus_update_date" property="busUpdateDate" jdbcType="TIMESTAMP" />
+    <result column="manage_qrcode_id" property="manageQrcodeId" jdbcType="INTEGER" /><!--企业二维码id，企业编号  2019-05-24 -->
+    <result column="bus_number" property="busNumber" jdbcType="VARCHAR" />
+    <result column="brand_qrcode_id" property="brandQrcodeId" jdbcType="INTEGER" />
+    <result column="brand_date" property="brandDate" jdbcType="VARCHAR" />
+    <result column="brand_img" property="brandImg" jdbcType="VARCHAR" />
   </resultMap>
   
   <!-- 查询企业信息 -->
@@ -55,20 +65,21 @@
   <!-- 根据id查询信息 -->
   <select id="findBusInfoByuserId" parameterType="hashmap" resultMap="BaseResultUserMap">
 	select ub.bu_id,u.user_id,u.user_name,u.user_unit_name,ub.bus_name,ub.bus_logo,ub.bus_province,ub.bus_city,ub.bus_county,ub.bus_address,ub.bus_industry,
-	ub.bus_des,ub.bus_detail from 
+	ub.bus_des,ub.bus_detail,ub.manage_qrcode_id,ub.bus_number,ub.brand_qrcode_id,ub.brand_date,ub.brand_img from 
 	uc_user u left join uc_user_bus_info ub on u.user_id=ub.user_id where u.user_id=#{userId} 
   </select>
 
-  <insert id="insert" parameterType="com.winnerbook.busInfo.dto.BusInfo" >
+  <insert id="insert" parameterType="com.winnerbook.busInfo.dto.UserBusInfo" >
     insert into uc_user_bus_info (user_id, bus_name, bus_logo, bus_province,bus_city,bus_county,bus_address,bus_industry,
-      bus_des, bus_detail, bus_create_date)
+      bus_des, bus_detail, bus_create_date,manage_qrcode_id,bus_number,brand_qrcode_id)
     values (#{userId,jdbcType=INTEGER}, #{busName,jdbcType=VARCHAR}, #{busLogo,jdbcType=VARCHAR}, 
       #{busProvince,jdbcType=VARCHAR},#{busCity,jdbcType=VARCHAR},#{busCounty,jdbcType=VARCHAR},
       #{busAddress,jdbcType=VARCHAR},#{busIndustry,jdbcType=VARCHAR},
-      #{busDes,jdbcType=VARCHAR},#{busDetail,jdbcType=LONGVARCHAR},NOW())
+      #{busDes,jdbcType=VARCHAR},#{busDetail,jdbcType=LONGVARCHAR},NOW(),
+      #{manageQrcodeId,jdbcType=INTEGER},#{busNumber,jdbcType=VARCHAR},#{brandQrcodeId,jdbcType=INTEGER})
   </insert>
   
-  <update id="update" parameterType="com.winnerbook.busInfo.dto.BusInfo" >
+  <update id="update" parameterType="com.winnerbook.busInfo.dto.UserBusInfo" >
     update uc_user_bus_info
     set bus_name = #{busName,jdbcType=VARCHAR},
       bus_logo = #{busLogo,jdbcType=VARCHAR},
@@ -79,9 +90,18 @@
       bus_industry = #{busIndustry,jdbcType=VARCHAR},
       bus_des = #{busDes,jdbcType=LONGVARCHAR},
       bus_detail = #{busDetail,jdbcType=VARCHAR},
+      manage_qrcode_id = #{manageQrcodeId,jdbcType=VARCHAR},
+      bus_number = #{busNumber,jdbcType=VARCHAR},
+      brand_qrcode_id = #{brandQrcodeId,jdbcType=VARCHAR},
+      brand_date = #{brandDate,jdbcType=VARCHAR},
+      brand_img = #{brandImg,jdbcType=VARCHAR},
       bus_update_date = NOW()
-    where user_id = #{userId,jdbcType=INTEGER}
+    where user_id = #{userId}
   </update>
+  
+  <select id="getNumber" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) countNumber from uc_user_bus_info where bus_number=#{busNumber}
+  </select>
   
   <!-- 查询是企业管理员的用户-->
   <select id="findBusUserName" resultType="com.winnerbook.system.dto.User">

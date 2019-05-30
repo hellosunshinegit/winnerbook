@@ -26,11 +26,11 @@
   </resultMap>
   
    <select id="findUserByUserName" parameterType="hashmap" resultType="hashmap">
-	select a.user_id userId,a.user_unit_name userName,belong_bus_user_id busId,b.user_unit_name busName from (
-	(select user_id,user_unit_name,belong_bus_user_id from uc_user WHERE user_name = #{userName}) a
+	select a.user_id userId,a.user_unit_name userName,belong_bus_user_id busId,IF(b.bus_name!='',b.bus_name,b.user_unit_name) busName  from (
+	(select u.user_id,u.user_unit_name,u.belong_bus_user_id,b.bus_name from uc_user u left join uc_user_bus_info b on u.user_id=b.user_id WHERE user_name = #{userName} and user_statue=1) a
 	left join 
-	(select user_id,user_unit_name from uc_user where user_id in (select belong_bus_user_id from uc_user WHERE user_name = #{userName}))
-	b on a.belong_bus_user_id=b.user_id) 
+	(select u.user_id,u.user_unit_name,b.bus_name from uc_user u left join uc_user_bus_info b on u.user_id=b.user_id where u.user_id in (select belong_bus_user_id from uc_user WHERE user_name = #{userName} and user_statue=1))
+	b on a.belong_bus_user_id=b.user_id)
 	
   </select>
   

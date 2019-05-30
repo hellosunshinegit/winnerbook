@@ -5,12 +5,14 @@
 */ 
 package com.winnerbook.system.service.impl; 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,12 +27,15 @@ import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.common.util.ConstantUtils;
 import com.winnerbook.base.common.util.EncryptUtil;
 import com.winnerbook.base.common.util.FileUtils;
+import com.winnerbook.base.common.util.Tools;
 import com.winnerbook.base.common.util.ValidateUtils;
 import com.winnerbook.base.frame.content.ThreadLocalWrapper;
 import com.winnerbook.base.frame.content.UserContext;
 import com.winnerbook.base.frame.service.impl.BaseServiceImpl;
+import com.winnerbook.busInfo.dao.BusInfoDao;
 import com.winnerbook.busInfo.dao.UserBusCourseTypeDao;
 import com.winnerbook.busInfo.dto.UserBusCourseType;
+import com.winnerbook.busInfo.dto.UserBusInfo;
 import com.winnerbook.course.dao.CourseDao;
 import com.winnerbook.share.dto.Qrcode;
 import com.winnerbook.share.service.QrcodeService;
@@ -74,6 +79,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 	
 	@Autowired
 	private QrcodeService qrcodeService;
+	
+	@Autowired
+	private BusInfoDao busInfoDao;
 	
 	@Override
 	public List<Map<String, Object>> findUserByUserName(String userName) {
@@ -210,16 +218,34 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 				courseDao.insertCourseRelease(course_release);
 			}
 			
-			if(StringUtils.isNotBlank(user.getBelongBusUserId())){
-				//给企业生成二维码信息
-				Qrcode qrcode = new Qrcode();
-				qrcode.setName("企业预览二维码："+user.getUserUnitName());
-				qrcode.setAddress("登陆后，右上角-后台预览手机端");
-				qrcode.setForwardUrl(ConstantUtils.H5_URL+"?busId="+user.getUserId());
-				qrcode.setBusId(Integer.parseInt(user.getUserId()+""));
-				qrcodeService.insert(qrcode);
-			}
+			//给企业生成后台扫描二维码信息
+			Qrcode qrcode = new Qrcode();
+			qrcode.setName("企业预览二维码："+user.getUserUnitName());
+			qrcode.setAddress("登陆后，右上角-后台预览手机端");
+			qrcode.setForwardUrl(ConstantUtils.H5_URL+"?busId="+user.getUserId());
+			qrcode.setBusId(Integer.parseInt(user.getUserId()+""));
+			qrcodeService.insert(qrcode);
 			
+			//给企业生成名牌上的二维码
+			Qrcode qrcode_brand = new Qrcode();
+			qrcode_brand.setName("企业名牌二维码："+user.getUserUnitName());
+			qrcode_brand.setAddress("企业名牌");
+			qrcode_brand.setForwardUrl(ConstantUtils.H5_URL+"?busId="+user.getUserId());
+			qrcode_brand.setBusId(Integer.parseInt(user.getUserId()+""));
+			qrcodeService.insert(qrcode_brand);
+			
+			//创建企业信息，在user_bus_info表中
+			UserBusInfo userBusInfo = new UserBusInfo();
+			userBusInfo.setUserId(Integer.parseInt(user.getUserId()+""));
+			//企业编号
+			userBusInfo.setBusNumber(Tools.getBusNumber());
+			if(qrcode.getId()>0){
+				userBusInfo.setManageQrcodeId(qrcode.getId());
+			}
+			if(qrcode_brand.getId()>0){
+				userBusInfo.setBrandQrcodeId(qrcode_brand.getId());
+			}
+			busInfoDao.insert(userBusInfo);
 		}
 		logRecord("2","用户添加，id："+user.getUserId());
 		return Integer.parseInt(user.getUserId().toString());
@@ -469,5 +495,5 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 	public Qrcode getBusQrcode(String busId) {
 		return null;
 	}
-		
+	
 }
