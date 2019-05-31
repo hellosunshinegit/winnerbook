@@ -114,6 +114,10 @@ public class UserApplyBusAdminServiceImpl extends BaseServiceImpl implements Use
 				user_insert.setUserStatue("1");
 				user_insert.setIsBusinessAdmin("1");
 				userService.insert(user_insert);
+				
+				//所属企业id
+				userService.updateBelongBusUser(user_insert.getUserId().toString(), user_insert.getUserId().toString());
+				
 				jsonResponse.setSuccess(true);
 				jsonResponse.setMsg("操作成功");
 			}else{
