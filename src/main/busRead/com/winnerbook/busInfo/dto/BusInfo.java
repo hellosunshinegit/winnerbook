@@ -42,6 +42,10 @@ public class BusInfo implements Serializable {
 	
 	private String brandImg;
 	
+	private String brandBusName;
+	
+	private String mobileBusName;
+	
 	public Integer getUserId() {
 		return userId;
 	}
@@ -184,6 +188,22 @@ public class BusInfo implements Serializable {
 
 	public void setBrandImg(String brandImg) {
 		this.brandImg = brandImg;
+	}
+
+	public String getBrandBusName() {
+		return brandBusName;
+	}
+
+	public void setBrandBusName(String brandBusName) {
+		this.brandBusName = brandBusName;
+	}
+
+	public String getMobileBusName() {
+		return mobileBusName;
+	}
+
+	public void setMobileBusName(String mobileBusName) {
+		this.mobileBusName = mobileBusName;
 	}
 	
 	

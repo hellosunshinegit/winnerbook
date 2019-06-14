@@ -11,19 +11,21 @@
     <result column="wb_mid" jdbcType="VARCHAR" property="wbMid" />
     <result column="wb_created_at" jdbcType="TIMESTAMP" property="wbCreatedAt" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
   </resultMap>
   <sql id="Base_Column_List">
     id, main_id, main_title, main_type, wb_id, wb_idstr, wb_mid, wb_created_at, 
-    create_time
+    create_time,create_user_id,create_user_name
   </sql>
   <insert id="insert" parameterType="com.winnerbook.wx.dto.WbSendInfo">
     insert into wb_send_info (main_id, main_title, 
       main_type, wb_id, 
       wb_idstr, wb_mid, wb_created_at, 
-      create_time)
+      create_time,create_user_id,create_user_name)
     values (#{mainId,jdbcType=INTEGER}, #{mainTitle,jdbcType=VARCHAR}, 
       #{mainType,jdbcType=VARCHAR}, #{wbId,jdbcType=VARCHAR}, 
       #{wbIdstr,jdbcType=VARCHAR}, #{wbMid,jdbcType=VARCHAR}, #{wbCreatedAt,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP})
+      #{createTime,jdbcType=TIMESTAMP},#{createUserId,jdbcType=INTEGER},#{createUserName,jdbcType=VARCHAR})
   </insert>
 </mapper>

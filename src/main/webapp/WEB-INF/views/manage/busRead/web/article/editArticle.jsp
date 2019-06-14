@@ -107,7 +107,7 @@
 				</dl>
 				<dl>
 					<dt>
-						<i>*</i>缩略图：
+						缩略图：
 					</dt>
 					<dd>
 						<input type="hidden" name="articleImg" id="articleImg" value="${article.articleImg }" />
@@ -171,6 +171,12 @@
 		            <dt><i>*</i>文章状态：</dt>
 		            <dd>
 		            	<exp:select code="ARTICLE_STATUS" name="articleStatus" id="articleStatus"  value="${article.articleStatus }" require="true" requireMsg="文章状态为必填项!" dataType="Require" style="width: 210px;"></exp:select>
+		            </dd>
+		        </dl>
+				<dl>
+		            <dt>排序：</dt>
+		            <dd>
+		            	<input type="number" name="articleSort" id="articleSort" value="${article.articleSort }" />
 		            </dd>
 		        </dl>
 				<dl>

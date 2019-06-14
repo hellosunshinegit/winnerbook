@@ -89,7 +89,9 @@
 						<td>
 							<a href="${basePath }newsController/updateNews.html?newId=${item.newId}">修改</a>
 							<a href="${basePath }newsController/viewNews.html?newId=${item.newId}">详情</a>
-							<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=new_${item.newId}" target="_blank">发微博</a>
+							<c:if test="${sessionUser.userId eq 1 }">
+								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=new_${item.newId}" target="_blank">发微博</a>
+							</c:if>
 						</td>
 					</tr>
 				</c:forEach>

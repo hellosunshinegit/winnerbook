@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="CourseTypeMapper" >
-  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.CourseType" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.CourseType">
     <id column="type_id" property="typeId" jdbcType="INTEGER" />
+    <id column="type_label_id" property="typeLabelId" jdbcType="INTEGER" />
     <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="type_img" property="typeImg" jdbcType="VARCHAR" />
     <result column="type_desc" property="typeDesc" jdbcType="VARCHAR" />
     <result column="type_status" property="typeStatus" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
     <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="type_sort" property="typeSort" jdbcType="INTEGER" />
+    <result column="type_is_free" property="typeIsFree" jdbcType="VARCHAR" />
   </resultMap>
   
    <sql id="Base_Column_List" >
-    type_id, type_name, type_desc, type_status, create_date, create_user_id, create_user_name, 
-    update_date
+    type_id, type_label_id,type_name,type_img, type_desc, type_status, create_date, create_user_id, create_user_name, 
+    update_date,type_sort,type_is_free
   </sql>
   
    <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
@@ -22,10 +26,10 @@
   	from bus_course_type where 1=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
   		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
-  		or create_user_id = #{sessionUser.adminId})
+  		or FIND_IN_SET(type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=#{sessionUser.userId})))
   	</if>
 	<if test="typeName != null and typeName  != '' "> and type_name like '%${typeName}%' </if>
-	order by type_id desc 
+	order by type_sort desc,type_id desc 
 	<if test="limit != null and limit  != '' ">
 		limit ${start},${limit}
 	</if>
@@ -35,7 +39,7 @@
   	select count(*) from bus_course_type where 1=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
   		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
-  		or create_user_id = #{sessionUser.adminId})
+  		or FIND_IN_SET(type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=#{sessionUser.userId})))
   	</if>
 	<if test="typeName != null and typeName  != '' "> and type_name like '%${typeName}%' </if>
   </select>
@@ -48,17 +52,23 @@
   </select>
   
   <insert id="insert" parameterType="com.winnerbook.course.dto.CourseType" >
-    insert into bus_course_type (type_name, type_desc, 
-      type_status, create_date, create_user_id, create_user_name)
-    values (#{typeName,jdbcType=VARCHAR}, #{typeDesc,jdbcType=VARCHAR}, 
-      #{typeStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
+    insert into bus_course_type (type_name,type_label_id, type_img,type_desc, 
+      type_status, create_date, create_user_id, create_user_name,
+      type_sort,type_is_free)
+    values (#{typeName,jdbcType=VARCHAR}, #{typeLabelId,jdbcType=INTEGER}, #{typeImg,jdbcType=VARCHAR},  #{typeDesc,jdbcType=VARCHAR}, 
+      #{typeStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR},
+      #{typeSort,jdbcType=INTEGER},#{typeIsFree,jdbcType=VARCHAR})
   </insert>
   
   <update id="update" parameterType="com.winnerbook.course.dto.CourseType" >
     update bus_course_type
     set type_name = #{typeName,jdbcType=VARCHAR},
+      type_label_id =  #{typeLabelId,jdbcType=INTEGER},
+      type_img = #{typeImg,jdbcType=VARCHAR},
       type_desc = #{typeDesc,jdbcType=VARCHAR},
       type_status = #{typeStatus,jdbcType=VARCHAR},
+      type_sort = #{typeSort,jdbcType=VARCHAR},
+      type_is_free = #{typeIsFree,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where type_id = #{typeId,jdbcType=INTEGER}
   </update>
@@ -70,11 +80,60 @@
   
   <!-- 获取所有课程列表 -->
   <select id="getCourseTypeAll"  parameterType="hashmap" resultType="com.winnerbook.course.dto.CourseType">
-  	select type_id typeId, type_name typeName from bus_course_type where type_status=1 
+  	select type_id typeId, type_name typeName,create_user_name createUserName from bus_course_type where type_status=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和管理员赋给他的课程类型-->
+  		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
+  	</if>
+  	<if test="sessionUser!=null and sessionUser.isAdmin == '1'.toString()">
+  		and create_user_id=1
+  	</if>
+  	order by type_id desc
+  </select>
+  
+  <select id="getCourseTypeAllSelect"  parameterType="hashmap" resultType="com.winnerbook.course.dto.CourseType">
+  	select type_id typeId, type_name typeName,create_user_name createUserName from bus_course_type where type_status=1 
+  	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
   		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
   		or FIND_IN_SET(type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=#{sessionUser.userId})))
   	</if>
+  	order by type_id desc
   </select>
+  
+  <!-- 定制课程 -->
+  <select id="getCourseTypeAdmin"  parameterType="hashmap" resultType="com.winnerbook.course.dto.CourseType">
+  	select type_id typeId, type_name typeName,create_user_name createUserName from bus_course_type where type_status=1 
+  	and create_user_id=1
+  	order by type_id desc
+  </select>
+  
+  <!-- 根据id查询name -->
+  <select id="getCourseTypeInfoByIds" parameterType="hashmap" resultType="hashmap">
+  	select type_id typeId, type_name typeName from bus_course_type where FIND_IN_SET(type_id,#{typeIds})
+  </select>
+  
+  <!-- web前端查询课程类型 -->
+  <select id="getCourseTypes" parameterType="hashmap" resultType="hashmap">
+  	select type_id typeId, type_name typeName from bus_course_type where type_status=1 
+  	and (FIND_IN_SET(create_user_id,getChildrenUser(${busId}))
+  	or FIND_IN_SET(type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=${busId})))
+  	order by type_sort desc,type_id desc
+  </select>
+  <!-- 获取免费课程类型 -->
+  <select id="getFreeCouresType" resultType="hashmap">
+ 	select type_id typeId, type_name typeName from bus_course_type where create_user_id=1 and type_status=1 and type_is_free=1 order by type_id asc limit 1
+  </select>
+  
+  <!-- 查询admin课程类型 -->
+  <select id="getAdminCourseTypes" parameterType="hashmap" resultType="hashmap">
+  	select type_id typeId, type_name typeName,type_img typeImg from bus_course_type where type_status=1 
+  	and create_user_id=1 and type_label_id = #{typeLabelId}
+  	order by type_sort desc,type_id desc
+  </select>
+  
+  <!-- 查询对应的企业的课程包权限 -->
+  <select id="findBusCourseType" parameterType="hashmap" resultType="hashmap">
+  	select user_id userId,course_type_id courseTypeId from uc_user_bus_course_type where user_id=#{busId}
+  </select>
+  
   
 </mapper>

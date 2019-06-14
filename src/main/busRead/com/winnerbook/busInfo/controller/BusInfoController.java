@@ -117,7 +117,7 @@ public class BusInfoController extends BaseController{
 	//定制课程分类
 	@RequestMapping("customCourseType.html")
 	public String customCourseType(@RequestParam String userId,ModelMap modelMap){
-		List<CourseType> courseTypeList = courseTypeService.getCourseTypeAll(new HashMap<String,Object>());
+		List<CourseType> courseTypeList = courseTypeService.getCourseTypeAdmin(new HashMap<String,Object>());
 		modelMap.put("user", userService.findUserById(userId));
 		modelMap.put("courseTypeList", courseTypeList);
 		return "manage/busRead/bus/busInfo/customCourseType";

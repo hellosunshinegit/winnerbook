@@ -20,6 +20,8 @@
     <result column="brand_qrcode_id" property="brandQrcodeId" jdbcType="INTEGER" />
     <result column="brand_date" property="brandDate" jdbcType="VARCHAR" />
     <result column="brand_img" property="brandImg" jdbcType="VARCHAR" />
+    <result column="brand_bus_name" property="brandBusName" jdbcType="VARCHAR" />
+    <result column="mobile_bus_name" property="mobileBusName" jdbcType="VARCHAR" />
   </resultMap>
   
    <!-- 用户企业列表 -->
@@ -44,6 +46,8 @@
     <result column="brand_qrcode_id" property="brandQrcodeId" jdbcType="INTEGER" />
     <result column="brand_date" property="brandDate" jdbcType="VARCHAR" />
     <result column="brand_img" property="brandImg" jdbcType="VARCHAR" />
+    <result column="brand_bus_name" property="brandBusName" jdbcType="VARCHAR" />
+    <result column="mobile_bus_name" property="mobileBusName" jdbcType="VARCHAR" />
   </resultMap>
   
   <!-- 查询企业信息 -->
@@ -65,7 +69,7 @@
   <!-- 根据id查询信息 -->
   <select id="findBusInfoByuserId" parameterType="hashmap" resultMap="BaseResultUserMap">
 	select ub.bu_id,u.user_id,u.user_name,u.user_unit_name,ub.bus_name,ub.bus_logo,ub.bus_province,ub.bus_city,ub.bus_county,ub.bus_address,ub.bus_industry,
-	ub.bus_des,ub.bus_detail,ub.manage_qrcode_id,ub.bus_number,ub.brand_qrcode_id,ub.brand_date,ub.brand_img from 
+	ub.bus_des,ub.bus_detail,ub.manage_qrcode_id,ub.bus_number,ub.brand_qrcode_id,ub.brand_date,ub.brand_img,ub.brand_bus_name,ub.mobile_bus_name from 
 	uc_user u left join uc_user_bus_info ub on u.user_id=ub.user_id where u.user_id=#{userId} 
   </select>
 
@@ -95,6 +99,8 @@
       brand_qrcode_id = #{brandQrcodeId,jdbcType=VARCHAR},
       brand_date = #{brandDate,jdbcType=VARCHAR},
       brand_img = #{brandImg,jdbcType=VARCHAR},
+      brand_bus_name = #{brandBusName,jdbcType=VARCHAR},
+      mobile_bus_name = #{mobileBusName,jdbcType=VARCHAR},
       bus_update_date = NOW()
     where user_id = #{userId}
   </update>

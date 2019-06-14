@@ -4,8 +4,11 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import weibo4j.model.Status;
+
 import com.winnerbook.base.frame.service.impl.BaseServiceImpl;
+import com.winnerbook.system.dto.User;
 import com.winnerbook.wx.dao.WbSendInfoDao;
 import com.winnerbook.wx.dto.WbSendInfo;
 import com.winnerbook.wx.service.WbSendInfoService;
@@ -18,6 +21,7 @@ public class WbSendInfoServiceImpl extends BaseServiceImpl implements WbSendInfo
 
 	@Override
 	public int insertWbSendInfo(String mainId,String mainType,String title,Status status) {
+		User user = getSessionUser();
 		//记录发送微博信息
 		WbSendInfo wbSendInfo = new WbSendInfo();
 		wbSendInfo.setMainId(Integer.parseInt(mainId));
@@ -28,6 +32,8 @@ public class WbSendInfoServiceImpl extends BaseServiceImpl implements WbSendInfo
 		wbSendInfo.setWbMid(status.getMid());
 		wbSendInfo.setWbCreatedAt(status.getCreatedAt());
 		wbSendInfo.setCreateTime(new Date());
+		wbSendInfo.setCreateUserId(Integer.parseInt(user.getUserId()+""));
+		wbSendInfo.setCreateUserName(user.getUserUnitName());
 		return wbSendInfoDao.insert(wbSendInfo);
 	}
 

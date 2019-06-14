@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="CourseTypeLabelMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.CourseTypeLabel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, remark, status, sort, create_date, create_user_id, create_user_name, update_date
+  </sql>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List" />
+  	from bus_course_type_label where 1=1 
+	<if test="name != null and name  != '' "> and name like '%${name}%' </if>
+	order by sort desc,id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_course_type_label where 1=1 
+	<if test="name != null and name  != '' "> and name like '%${name}%' </if>
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bus_course_type_label
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="com.winnerbook.course.dto.CourseTypeLabel" useGeneratedKeys="true" keyProperty="id">
+    insert into bus_course_type_label (name, remark, 
+      status, sort, create_date, 
+      create_user_id, create_user_name
+      )
+    values (#{name,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
+      )
+  </insert>
+ 
+  <update id="update" parameterType="com.winnerbook.course.dto.CourseTypeLabel" >
+    update bus_course_type_label
+    set name = #{name,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id}
+  </update>
+  <!-- 课程类型打标签 -->
+  <select id="findCourseTypeLabels" resultType="com.winnerbook.course.dto.CourseTypeLabel">
+  	select id, name from bus_course_type_label where status=1 order by sort desc,id desc
+  </select>
+  
+  <!-- web端 -->
+  <select id="getCourseTypeLabels" resultType="hashmap">
+  	select id, name from bus_course_type_label where status=1 order by sort desc,id desc
+  </select>
+  
+  
+</mapper>

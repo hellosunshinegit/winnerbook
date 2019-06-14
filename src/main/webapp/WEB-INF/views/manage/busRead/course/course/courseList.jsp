@@ -13,7 +13,8 @@
 	<script type="text/javascript">
 		//重置
 		function resetFun(){
-			$("#title").val("");	
+			$("#title").val("");
+			$("#courseTypeId").val("");
 		}
 		
 		//添加
@@ -33,6 +34,8 @@
 		function updateCourseRes(courseId,courseReleaseId,courseReleaseStatus){
 			if(courseReleaseStatus!=0 && courseReleaseStatus==1){
 				courseReleaseStatus = 2;
+			}else{
+				courseReleaseStatus = 1;
 			}
 			window.location.href="${basePath }courseController/updateCourseChannel.html?courseId="+courseId+"&courseReleaseId="+courseReleaseId+"&courseReleaseStatus="+courseReleaseStatus;
 		}
@@ -50,6 +53,15 @@
             <dt style="width: 200px;">课程标题/主嘉宾/推荐书目：</dt>
             <dd>
              <input type="text" name="title" id="title" value="${title }">
+            </dd>
+            <dt>课程类型：</dt>
+            <dd>
+            	<select name="courseTypeId" id="courseTypeId">
+            		<option value="">---请选择---</option>
+            		<c:forEach items="${courseTypeList }" var="item">
+		              	<option value="${item.typeId }" <c:if test="${courseTypeId eq item.typeId }">selected="selected"</c:if>>${item.typeName }&nbsp;&nbsp;&nbsp;&nbsp;(${item.createUserName })</option>
+		            </c:forEach>
+            	</select>
             </dd>
             <dd>
               <input type="submit" class="btn btn-blue" id="search" value="搜索"></input>
@@ -78,7 +90,8 @@
 				<c:if test="${sessionUser.isAdmin eq '1' || sessionUser.isBusinessAdmin eq '1'}">
 					<td>课程状态</td>
 					<td>创建时间</td>
-					<td>创建人/推送h5</td>
+					<td>排序</td>
+					<td>创建人/推送手机</td>
 				</c:if>
 				<td>操作</td>
               </tr>
@@ -113,12 +126,16 @@
 									<c:when test="${sessionUser.isAdmin eq '1' || item.createUserId eq sessionUser.userId}">
 										<a href="javascript:updateCourseStatue('${item.courseId}','${item.courseStatus }')" style="color: blue;" title="点击修改状态"><exp:code code="COURSE_STATUS" value="${item.courseStatus }"></exp:code></a>
 									</c:when>
+									<c:when test="${item.createUserId eq 1 && item.createUserId ne sessionUser.userId}">
+										已购
+									</c:when>
 									<c:otherwise>
 										<exp:code code="COURSE_STATUS" value="${item.courseStatus }"></exp:code>
 									</c:otherwise>
 								</c:choose>
 							</td>
 							<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
+							<td>${item.courseSort }</td>
 							<td>${item.createUserName}
 							<c:if test="${item.createUserId eq 1}">
 								（<a href="javascript:updateCourseRes('${item.courseId}','${item.courseReleaseId }','${item.courseReleaseStatus}')" style="color: blue;">${item.courseReleaseStatus eq '1'?"是":"否"}</a>）
@@ -133,7 +150,9 @@
 									<c:if test="${sessionUser.isAdmin eq '1' }"><!-- 不是超级管理员，也不是企业管理员，则可以学习 -->
 										<a href="${basePath }courseController/studentCourse.html?courseId=${item.courseId}">开始学习</a>
 									</c:if>
-									<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=course_${item.courseId}" target="_blank">发微博</a>
+									<c:if test="${sessionUser.userId eq 1 }">
+										<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=course_${item.courseId}" target="_blank">发微博</a>
+									</c:if>
 								</c:when>
 								<c:otherwise>
 									<c:if test="${(sessionUser.isBusinessAdmin ne '1' && sessionUser.isAdmin eq '0') or sessionUser.isAdmin eq '1' }"><!-- 不是超级管理员，也不是企业管理员，则可以学习 -->

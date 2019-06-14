@@ -13,27 +13,27 @@
 	<script type="text/javascript">
 		//重置
 		function resetFun(){
-			$("#typeName").val("");	
+			$("#name").val("");	
 		}
 		
 		//添加
 		function addFun(){
-			window.location.href="${basePath }bookListTypeController/addBookListType.html";
+			window.location.href="${basePath }courseTypeLabelController/addCourseTypeLabel.html";
 		}
 		
 	</script>
   </head>
   <body>
     <div class="page_title">
-      <h5>书单列表 </h5>
+      <h5>课程分类标签列表 </h5>
     </div>
       <div class="page_main">
-	    <form id="searchForm" name="searchForm" action="${basePath}bookListTypeController/bookListType.html" method="post">
+	    <form id="searchForm" name="searchForm" action="${basePath}courseTypeLabelController/courseTypeLabelList.html" method="post">
         <div class="data_search clearfix">
           <dl>
-            <dt>书单名称：</dt>
+            <dt>标签名称：</dt>
             <dd>
-             <input type="text" name="typeName" id="typeName" value="${typeName }">
+             <input type="text" name="name" id="name" value="${name }">
             </dd>
             <dd>
               <input type="submit" class="btn btn-blue" id="search" value="搜索"></input>
@@ -51,10 +51,8 @@
             <thead>
               <tr>
               	<td>序号</td>
-                <td>书单名称</td>
-                <c:if test="${user.userId eq 1 }">
-                <td>标签</td>
-                </c:if>
+                <td>名称</td>
+                <td>描述</td>
 				<td>状态</td>
 				<td>排序</td>
 				<td>创建时间</td>
@@ -66,17 +64,21 @@
 				<c:forEach items="${pageDTO.data}" var="item" varStatus="status">
 					<tr>
 						<td>${(pageDTO.pageIndex-1)*pageDTO.pageSize+status.index+1}</td>
-						<td>${item.typeName}</td>
-						<c:if test="${user.userId eq 1 }"><td>${item.typeLabel}</td></c:if>
+						<td>${item.name}</td>
+						<td title="${item.remark}">
+							<c:if test="${fn:length(item.remark)>15}">
+								${fn:substring(item.remark,0,15)}...
+							</c:if>
+							<c:if test="${fn:length(item.remark)<=15}">
+								${item.remark}
+							</c:if>
+						</td>
 						<td><exp:code code="STATUS" value="${item.status }"></exp:code> </td>
-						<td>${item.typeSort}</td>
+						<td>${item.sort}</td>
 						<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
 						<td>${item.createUserName}</td>
 						<td>
-							<a href="${basePath }bookListTypeController/updateBookListType.html?id=${item.id}">修改</a>
-							<c:if test="${sessionUser.userId eq 1 }">
-								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=booklisttype_${item.id}" target="_blank">发微博</a>
-							</c:if>
+							<a href="${basePath }courseTypeLabelController/updateCourseTypeLabel.html?id=${item.id}">修改</a>
 						</td>
 					</tr>
 				</c:forEach>

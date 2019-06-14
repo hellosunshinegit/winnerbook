@@ -14,10 +14,11 @@
     <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
     <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="type_sort" property="typeSort" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, type_name, wb_title,wb_img,type_label,type_img, type_des, status, create_date, create_user_id, create_user_name, 
-    update_date
+    update_date,type_sort
   </sql>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
@@ -27,7 +28,7 @@
   		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
   	</if>
 	<if test="typeName != null and typeName  != '' "> and type_label like '%${typeName}%' </if>
-	order by id desc 
+	order by type_sort desc,id desc 
 	<if test="limit != null and limit  != '' ">
 		limit ${start},${limit}
 	</if>
@@ -42,7 +43,7 @@
   </select>
   
   <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, type_name,wb_title, wb_img,type_label,type_img, type_des, status,(select GROUP_CONCAT(label_id) from bus_book_list_label_id where type_id=#{id}) labelIds,create_date, create_user_id, create_user_name
+    select id, type_name,wb_title, wb_img,type_label,type_img, type_des, status,(select GROUP_CONCAT(label_id) from bus_book_list_label_id where type_id=#{id}) labelIds,create_date, create_user_id, create_user_name,type_sort 
     from bus_book_list_type
     where id = #{id,jdbcType=INTEGER}
   </select>
@@ -50,11 +51,11 @@
   <insert id="insert" parameterType="com.winnerbook.book.dto.BookListType" useGeneratedKeys="true" keyProperty="id">
     insert into bus_book_list_type (type_name,wb_title, wb_img,type_label, type_img,
       status, type_des,create_date, 
-      create_user_id, create_user_name
+      create_user_id, create_user_name,type_sort
       )
     values (#{typeName,jdbcType=VARCHAR}, #{wbTitle,jdbcType=VARCHAR}, #{wbImg,jdbcType=VARCHAR},#{typeLabel,jdbcType=VARCHAR}, #{typeImg,jdbcType=VARCHAR}, 
       #{status,jdbcType=VARCHAR},#{typeDes,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
+      #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR},#{typeSort,jdbcType=INTEGER}
       )
   </insert>
   
@@ -67,6 +68,7 @@
       type_img = #{typeImg,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
       type_des = #{typeDes,jdbcType=VARCHAR},
+      type_sort = #{typeSort,jdbcType=INTEGER},
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -100,6 +102,11 @@
   	delete from bus_book_list_label_id where type_id=#{typeId}
   </delete>  
   
+  <!-- 查询该企业下是否有此书籍，如果没有则添加 -->
+  <select id="getBookNameByUserId" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_book_list_user_id where FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId})) and book_name=#{bookName}
+  </select>
+  
   <!-- web -->
   <!-- 根据标签查询书单列表 -->
   <select id="getBookListTypes" parameterType="hashmap" resultType="hashmap">
@@ -111,5 +118,18 @@
   <select id="getBookListTypesCount" parameterType="hashmap" resultType="java.lang.Integer">
   	select count(1) from bus_book_list_type where id in (select type_id from bus_book_list_label_id where label_id=#{labelId}) and status=1
   </select>
+  
+  <!-- 查询企业书单 -->
+  <select id="getBusBookListTypes" parameterType="hashmap" resultType="hashmap">
+  	select id typeId,type_name typeName,type_img typeImg,wb_title wbTitle from bus_book_list_type where status=1 and create_user_id=#{busId}
+  	order by type_sort desc,id desc
+  	<if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <!-- 共多少条数 -->
+  <select id="getBusBookListTypesCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(1) from bus_book_list_type where status=1 and create_user_id=#{busId}
+  </select>
+  
+  
   
 </mapper>

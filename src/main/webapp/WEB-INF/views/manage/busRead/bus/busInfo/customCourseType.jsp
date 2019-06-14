@@ -60,7 +60,7 @@
 	//保存
 	function submitForm(){
 		if($("input[id^='courseType']:checked").length==0){
-			alert("请选择课程分类");
+			alert("请选择课程包");
 			return false;
 		}
 		var jsonStr = {
@@ -95,7 +95,7 @@
 </script>
 </head>
 <body>
-<div class="page_title"><h5>企业管理员分配课程分类</h5></div>
+<div class="page_title"><h5>企业管理员分配课程包</h5></div>
 <div class="page_main">
 <form name="editForm" id="editForm" method="post">
 	<input type="hidden" name="userId" value="${user.userId }"/>
@@ -109,7 +109,7 @@
 	         <dd class="dd_radio"><input type="checkbox" id="checkAll" onclick="checkAllFun()" class="checkboxcss"/>全选</dd>
 	     </dl>
         <dl>
-        	 <dt>课程分类：</dt>
+        	 <dt>课程包：</dt>
             <dd style="line-height: 30px;">
             	<c:forEach items="${courseTypeList}" var="item">
 	            	<input type="checkbox" name="courseTypeId" id="courseType${item.typeId}" value="${item.typeId }" class="checkboxcss"/>${item.typeName }<br/>

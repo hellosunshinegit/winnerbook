@@ -99,7 +99,9 @@
 							<a href="${basePath }activityController/updateActivity.html?id=${item.id}">修改</a>
 							<a href="${basePath }activityController/viewActivity.html?id=${item.id}">详情</a>
 							<a href="${basePath }activityController/singupActivityList.html?activityId=${item.id}">报名信息</a>
-							<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=activity_${item.id}" target="_blank">发微博</a>
+							<c:if test="${sessionUser.userId eq 1 }">
+								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=activity_${item.id}" target="_blank">发微博</a>
+							</c:if>
 						</td>
 					</tr>
 				</c:forEach>

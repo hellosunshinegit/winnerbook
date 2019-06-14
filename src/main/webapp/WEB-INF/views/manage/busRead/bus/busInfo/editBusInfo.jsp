@@ -87,7 +87,13 @@
             <dd><input type="text" name="busName" id="busName" value="${busInfo.busName }" maxlength="30" require="true" requireMsg="企业名称为必填项!" dataType="Require"/></dd>
         </dl>
         <dl>
-            <dt><c:if test="${empty(busInfo.busLogo)}"><i>*</i></c:if>企业logo：</dt>
+            <dt>企业短名称：</dt>
+            <dd><input type="text" name="mobileBusName" id="mobileBusName" value="${busInfo.mobileBusName }" maxlength="5" require="true" requireMsg="企业短名称为必填项!" dataType="Require"/>
+            	<span style="color: red;">(注：用于手机端显示企业名称，最多5个字)</span>
+            </dd>
+        </dl>
+        <dl>
+            <dt>企业logo：</dt>
             <dd>
             	<input type="hidden" name="busLogo" id="busLogo" value="${busInfo.busLogo }"/>
 				<img alt="" id="wbImg" src="" width="150" height="150">
@@ -99,14 +105,20 @@
             </dd>
         </dl>
         <dl>
-            <dt>名牌编号：</dt>
+            <dt>读书会铭牌名称：</dt>
+            <dd><input type="text" name="brandBusName" id="brandBusName" value="${busInfo.brandBusName }" maxlength="14"/>
+            	<span style="color: red;">(注：用于生成读书会铭牌时的名称)</span>
+            </dd>
+        </dl>
+        <dl>
+            <dt>读书会铭牌编号：</dt>
             <dd>
             	<input type="text" name="busNumber_show" id="busNumber_show" value="${busInfo.busNumber}" disabled="disabled"/><span style="margin-left: 10px;"><a href="javascript:generateCodeFun()" style="text-decoration: underline;">重新生成编号</a></span>
             	<input type="hidden" name="busNumber"  id="busNumber" value="${busInfo.busNumber }"/>
         	</dd>
         </dl>
         <dl>
-            <dt>名牌授予时间：</dt>
+            <dt>铭牌授予时间：</dt><!-- startDate:'%y-%M-01 00:00:00' -->
             <dd>
             	<input type="text" name="brandDate" id="brandDate" value="${busInfo.brandDate}" class="Wdate" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" style="width: 150px;"/>
         	</dd>

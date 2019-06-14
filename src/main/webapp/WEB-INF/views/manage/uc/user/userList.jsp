@@ -57,7 +57,7 @@
         <div class="data_search clearfix">
           <dl>
             <dt>
-             	手机号：
+             	姓名/手机号：
             </dt>
             <dd>
               <input type="text" name="userName" id="userName" value="${userName }">

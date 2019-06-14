@@ -20,6 +20,10 @@ public class WbSendInfo {
     private Date wbCreatedAt;
 
     private Date createTime;
+    
+    private Integer createUserId;
+    
+    private String createUserName;
 
     public Integer getId() {
         return id;
@@ -92,4 +96,21 @@ public class WbSendInfo {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+	public Integer getCreateUserId() {
+		return createUserId;
+	}
+
+	public void setCreateUserId(Integer createUserId) {
+		this.createUserId = createUserId;
+	}
+
+	public String getCreateUserName() {
+		return createUserName;
+	}
+
+	public void setCreateUserName(String createUserName) {
+		this.createUserName = createUserName;
+	}
+    
 }

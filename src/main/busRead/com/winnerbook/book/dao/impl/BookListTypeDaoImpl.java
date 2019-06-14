@@ -78,4 +78,22 @@ public class BookListTypeDaoImpl  extends BaseDAO implements BookListTypeDao{
 		return obj == null ? 0 : Integer.parseInt(obj.toString());
 	}
 
+	@Override
+	public List<Map<String, Object>> getBusBookListTypes(
+			Map<String, Object> parameter) {
+		return this.sqlSession.selectList(BOOKLISTTYPE_MAPPER+"getBusBookListTypes",parameter);
+	}
+
+	@Override
+	public int getBusBookListTypesCount(Map<String, Object> parameter) {
+		Object obj = this.sqlSession.selectOne(BOOKLISTTYPE_MAPPER + "getBusBookListTypesCount", parameter);
+		return obj == null ? 0 : Integer.parseInt(obj.toString());
+	}
+
+	@Override
+	public int getBookNameByUserId(Map<String, Object> parameter) {
+		Object obj = this.sqlSession.selectOne(BOOKLISTTYPE_MAPPER + "getBookNameByUserId", parameter);
+		return obj == null ? 0 : Integer.parseInt(obj.toString());
+	}
+
 }

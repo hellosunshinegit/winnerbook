@@ -3,7 +3,7 @@
 <mapper namespace="CourseMapper" >
   <resultMap id="BaseResultMap" type="com.winnerbook.course.dto.Course" >
     <id column="course_id" property="courseId" jdbcType="INTEGER" />
-    <result column="course_type_id" property="courseTypeId" jdbcType="INTEGER" />
+    <result column="course_type_name" property="courseTypeName" jdbcType="VARCHAR" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="wb_title" property="wbTitle" jdbcType="VARCHAR" />
     <result column="wb_img" property="wbImg" jdbcType="VARCHAR" />
@@ -18,7 +18,7 @@
     <result column="presenter" property="presenter" jdbcType="VARCHAR" />
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
     <result column="book_list_id" property="bookListId" jdbcType="INTEGER" />
-   <result column="recommend_book" jdbcType="VARCHAR" property="recommendBook" />
+    <result column="recommend_book" jdbcType="VARCHAR" property="recommendBook" />
     <result column="recommend_book_img" jdbcType="VARCHAR" property="recommendBookImg" />
     <result column="recommend_book_introduce" jdbcType="VARCHAR" property="recommendBookIntroduce" />
     <result column="recommend_reason" jdbcType="VARCHAR" property="recommendReason" />
@@ -37,14 +37,15 @@
     <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
     <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="course_sort" property="courseSort" jdbcType="INTEGER" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    course_id, course_type_id, title, wb_title,wb_img,course_desc, main_guest, main_guest_post, main_guest_introduce, 
+    course_id, course_type_name, title, wb_title,wb_img,course_desc, main_guest, main_guest_post, main_guest_introduce, 
     main_guest_img, main_guest_baidu_know,dialog_guest, dialog_guest_post, presenter, content,book_list_id,recommend_book, recommend_book_img, 
     recommend_book_introduce, recommend_reason, recommend_reason_img, recording_date, 
     main_video_url, main_video_filename,main_video_link, main_video_time ,main_audio_url, main_audio_filename, course_type, 
-    course_status, create_date, create_user_id, create_user_name
+    course_status, create_date, create_user_id, create_user_name,course_sort
   </sql>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
@@ -52,11 +53,12 @@
   	from bus_course where 1=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
   		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
-  		or (create_user_id = #{sessionUser.adminId} and course_status=2))
+  		or (FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where FIND_IN_SET(course_type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=#{sessionUser.userId})))) and course_status=2))
   	</if>
   	
 	<if test="title != null and title  != '' "> and (title like '%${title}%' or main_guest like '%${title}%' or recommend_book like '%${title}%') </if>
-	order by course_id desc 
+	<if test="courseTypeId != null and courseTypeId  != '' "> and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId}))</if>
+	order by course_sort desc,course_id desc
 	<if test="limit != null and limit  != '' ">
 		limit ${start},${limit}
 	</if>
@@ -66,15 +68,16 @@
   	select count(*) from bus_course where 1=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()"><!-- 超级管理员可以看所有，企业管理员可以看他自己的和基础数据(超级管理员创建的是基础数据) -->
   		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
-  		or (create_user_id = #{sessionUser.adminId} and course_status=2))
-  		
+  		or (FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where FIND_IN_SET(course_type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=#{sessionUser.userId})))) and course_status=2))
   	</if>
 	<if test="title != null and title  != '' "> and (title like '%${title}%' or main_guest like '%${title}%' or recommend_book like '%${title}%') </if>
+	<if test="courseTypeId != null and courseTypeId  != '' "> and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId}))</if>
   </select>
   
   <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List" />
+    <include refid="Base_Column_List" />,
+    (select GROUP_CONCAT(course_type_id) from bus_course_type_id where course_id=#{courseId}) courseTypeIds
     from bus_course
     where course_id = #{courseId,jdbcType=INTEGER}
   </select>
@@ -84,8 +87,8 @@
     where course_id = #{courseId,jdbcType=INTEGER}
   </delete>
   
-  <insert id="insert" parameterType="com.winnerbook.course.dto.Course">
-    insert into bus_course (course_type_id, title, wb_title,wb_img,
+  <insert id="insert" parameterType="com.winnerbook.course.dto.Course" useGeneratedKeys="true" keyProperty="courseId">
+    insert into bus_course (course_type_name, title, wb_title,wb_img,
       course_desc, main_guest, main_guest_post, 
       main_guest_introduce, main_guest_img, main_guest_baidu_know,dialog_guest, 
       dialog_guest_post, presenter, book_list_id,recommend_book, 
@@ -94,8 +97,8 @@
       main_video_url, main_video_filename, main_video_link ,main_video_time,main_audio_url, 
       main_audio_filename, course_type, course_status, 
       create_date, create_user_id, create_user_name, 
-      content)
-    values (#{courseTypeId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},  #{wbTitle,jdbcType=VARCHAR}, #{wbImg,jdbcType=VARCHAR}, 
+      content,course_sort)
+    values (#{courseTypeName,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR},  #{wbTitle,jdbcType=VARCHAR}, #{wbImg,jdbcType=VARCHAR}, 
       #{courseDesc,jdbcType=VARCHAR}, #{mainGuest,jdbcType=VARCHAR}, #{mainGuestPost,jdbcType=VARCHAR}, 
       #{mainGuestIntroduce,jdbcType=VARCHAR}, #{mainGuestImg,jdbcType=VARCHAR},#{mainGuestBaiduKnow,jdbcType=VARCHAR}, #{dialogGuest,jdbcType=VARCHAR}, 
       #{dialogGuestPost,jdbcType=VARCHAR}, #{presenter,jdbcType=VARCHAR}, #{bookListId,jdbcType=INTEGER},#{recommendBook,jdbcType=VARCHAR}, 
@@ -105,12 +108,12 @@
       #{mainAudioUrl,jdbcType=VARCHAR}, 
       #{mainAudioFilename,jdbcType=VARCHAR}, #{courseType,jdbcType=VARCHAR}, #{courseStatus,jdbcType=VARCHAR}, 
       #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}, 
-      #{content,jdbcType=LONGVARCHAR})
+      #{content,jdbcType=LONGVARCHAR},#{courseSort,jdbcType=INTEGER})
   </insert>
   
   <update id="update" parameterType="com.winnerbook.course.dto.Course">
     update bus_course
-    set course_type_id = #{courseTypeId,jdbcType=INTEGER},
+    set course_type_name = #{courseTypeName,jdbcType=VARCHAR},
       title = #{title,jdbcType=VARCHAR},
       wb_title = #{wbTitle,jdbcType=VARCHAR},
       wb_img = #{wbImg,jdbcType=VARCHAR},
@@ -139,6 +142,7 @@
       course_type = #{courseType,jdbcType=VARCHAR},
       course_status = #{courseStatus,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
+      course_sort = #{courseSort,jdbcType=INTEGER},
       content = #{content,jdbcType=LONGVARCHAR}
     where course_id = #{courseId,jdbcType=INTEGER}
   </update>
@@ -164,17 +168,29 @@
   
   <!-- 查询admin添加的课程，并且是已经发布的数据，用于创建企业的时候，默认推荐一条 -->
   <select id="getCourseAdminCreate" resultType="hashmap">
-  	select course_id courseId from bus_course where create_user_id=1 and course_status=2 order by course_id desc limit 1
+  	select course_id courseId from bus_course where create_user_id=1 and course_status=2 and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where FIND_IN_SET(course_type_id,(select type_id from bus_course_type where create_user_id=1 and type_status=1 and type_is_free=1 order by type_id asc limit 1)))) limit 3
   </select>
   
+  <!-- 删除中间表表 -->
+  <delete id="deleteCourseTypeId" parameterType="java.lang.Integer">
+  	delete from bus_course_type_id where course_id=#{courseId}
+  </delete>
+  
+  <!-- 插入课程类型与课程之间的关系 -->
+  <insert id="insertCourseTypeId" parameterType="list">
+  	insert into bus_course_type_id(course_id,course_type_id,create_date) values
+  	<foreach collection="list" item="item" separator=",">
+  		(#{item.courseId},#{item.courseTypeId},#{item.createDate})
+  	</foreach>
+  </insert>
   
   <!-- web端查询课程 -->
   <select id="getCourses" parameterType="hashmap" resultType="hashmap">
   	select c.course_id courseId, c.title, c.wb_title wbTitle,c.course_desc  courseDesc, c.main_guest mainGuest, c.main_guest_post mainGuestPost, bl.book_img bookImg,c.course_click_num courseClickNum 
   	from bus_course  c left join bus_book_list bl on c.book_list_id=bl.book_id 
   	where c.course_status=2
-    <if test="busId != null and busId  != '' "> and c.create_user_id = #{busId} or c.course_id in (select course_id from bus_course_release where user_id=#{busId}) </if>
-    and c.course_status=2
+  	<if test="courseTypeId!=null and courseTypeId!=''"> and FIND_IN_SET(c.course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) </if>
+    <if test="busId != null and busId  != '' "> and (c.create_user_id = #{busId} or c.course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1)) </if>
     order by c.course_sort desc,c.course_id desc
     <if test="start != null "> limit ${start},${limit} </if>
   </select>
@@ -182,13 +198,28 @@
   	select count(*)
   	from bus_course
   	where course_status=2
-    <if test="busId != null and busId  != '' "> and create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId}) </if>
+  	<if test="courseTypeId!=null and courseTypeId!=''"> and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) </if>
+    <if test="busId != null and busId  != '' "> and (create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1)) </if>
+  </select>
+  
+  <!-- 查询admin所有的课程，已发布的 -->
+  <select id="getAdminCourses" parameterType="hashmap" resultType="hashmap">
+  	select c.course_id courseId, c.title, c.wb_title wbTitle,c.course_desc  courseDesc, c.main_guest mainGuest, c.main_guest_post mainGuestPost, bl.book_img bookImg,c.course_click_num courseClickNum 
+  	from bus_course  c left join bus_book_list bl on c.book_list_id=bl.book_id 
+  	where c.course_status=2 and c.create_user_id = 1
+  	<if test="courseTypeId!=null and courseTypeId!=''"> and FIND_IN_SET(c.course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) </if>
+    order by c.course_sort desc,c.course_id desc
+    <if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <select id="getAdminCoursesCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_course where course_status=2 and create_user_id = 1
+  	<if test="courseTypeId!=null and courseTypeId!=''"> and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) </if>
   </select>
   
   <!-- 查询主讲人 -->
   <select id="getMainGuests" parameterType="hashmap" resultType="hashmap">
   	select course_id courseId,main_guest mainGuest,main_guest_post mainGuestPost,main_guest_introduce mainGuestIntroduce,main_guest_img mainGuesImg,main_guest_baidu_know mainGuestBaiduKnow,recommend_book recommendBook from bus_course where course_status=2
-  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId}) </if>
+  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1) </if>
   	and course_status=2
   	order by course_sort desc,course_id desc
     <if test="start != null "> limit ${start},${limit} </if>
@@ -197,7 +228,7 @@
   	select count(*)
   	from bus_course
   	where course_status=2
-    <if test="busId != null and busId  != '' "> and create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId}) </if>
+    <if test="busId != null and busId  != '' "> and create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1) </if>
   </select>
   
   <!-- 视频清单 课程对应的小视频-->
@@ -206,21 +237,23 @@
 	left join bus_course c on cf.course_id=c.course_id
 	left join bus_book_list b on c.book_list_id=b.book_id
 	where cf.file_type=1 and c.course_status=2 
-	<if test="busId != null and busId  != '' "> and cf.create_user_id = #{busId}  or c.course_id in (select course_id from bus_course_release where user_id=#{busId}) </if>
+	<if test="busId != null and busId  != '' "> and cf.create_user_id = #{busId}  or (c.course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1) and cf.file_type=1) </if>
   	order by c.course_sort desc,c.course_id desc
+  	<if test="start != null "> limit ${start},${limit} </if>
   </select>
   <select id="getVideosCount" parameterType="hashmap" resultType="java.lang.Integer">
   	select count(*) from bus_course_file cf 
 	left join bus_course c on cf.course_id=c.course_id
 	where cf.file_type=1 and c.course_status=2 
-	<if test="busId != null and busId  != '' "> and cf.create_user_id = #{busId}  or c.course_id in (select course_id from bus_course_release where user_id=#{busId}) </if>
+	<if test="busId != null and busId  != '' "> and cf.create_user_id = #{busId}  or (c.course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1) and cf.file_type=1) </if>
  </select>
  
  <!-- 查询课程详情 -->
  <select id="getCourseDetail" parameterType="hashmap" resultType="hashmap">
  	select course_id courseId, title, course_desc  courseDesc, main_guest mainGuest, main_guest_post mainGuestPost,main_guest_introduce mainGuestIntroduce,presenter,
  	l.book_content_des recommendBookIntroduce,recommend_reason recommendReason,recording_date recordingDate,book_list_id bookListId,
- 	recommend_book recommendBook,main_video_url mainVideoUrl,main_video_link mainVideoLink,main_audio_url mainAudioUrl,content,main_guest_baidu_know baiduKnowLink,l.book_img bookImg
+ 	recommend_book recommendBook,main_video_url mainVideoUrl,main_video_link mainVideoLink,main_audio_url mainAudioUrl,content,main_guest_baidu_know baiduKnowLink,l.book_img bookImg,
+ 	c.dialog_guest dialogGuest,(select GROUP_CONCAT(course_type_id) from bus_course_type_id where course_id=#{courseId}) courseTypeIds
   	from bus_course c left join bus_book_list l on c.book_list_id=l.book_id where course_id=#{courseId}
  </select>
  <!-- 查询附件信息   目前只查询小视频 -->
@@ -232,6 +265,21 @@
  <update id="updateClickNum" parameterType="hashmap">
  	update bus_course set course_click_num = course_click_num+1,update_date=NOW() where course_id=#{courseId}
  </update>
+ 
+ <!-- 查询免费课程 -->
+ <select id="getFreeCourses" parameterType="hashmap" resultType="hashmap">
+ 	select c.course_id courseId, c.title, c.wb_title wbTitle,c.course_desc courseDesc, c.main_guest mainGuest, c.main_guest_post mainGuestPost, bl.book_img bookImg,c.course_click_num courseClickNum from bus_course c left join bus_book_list bl on c.book_list_id=bl.book_id 
+	where c.course_status=2 and c.create_user_id=1 and
+	FIND_IN_SET(c.course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) 
+    order by c.course_sort desc,c.course_id desc
+    <if test="start != null "> limit ${start},${limit} </if>
+  </select>
+  <select id="getFreeCoursesCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*)
+  	from bus_course
+  	where course_status=2 and create_user_id=1 and
+	FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) 
+  </select>
  
   
 </mapper>

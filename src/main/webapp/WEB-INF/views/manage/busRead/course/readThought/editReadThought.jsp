@@ -53,7 +53,7 @@
 	        <dl>
 	            <dt><i>*</i>输入书籍名称：</dt>
 	            <dd>
-	            	<input type="text" name="bookListName" id="bookListName" value="${readThought.bookListName }" maxlength="50" require="true" requireMsg="文章作者为必填项!" dataType="Require"/>
+	            	<input type="text" name="bookListName" id="bookListName" value="${readThought.bookListName }" maxlength="50" require="true" requireMsg="书籍名称为必填项!" dataType="Require"/>
 	            </dd>
 	        </dl>
 	        <dl>

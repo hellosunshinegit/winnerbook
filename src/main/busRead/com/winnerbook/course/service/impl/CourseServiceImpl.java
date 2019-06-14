@@ -2,6 +2,7 @@ package com.winnerbook.course.service.impl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,6 +34,7 @@ import com.winnerbook.course.dto.Course;
 import com.winnerbook.course.dto.CourseClickInfo;
 import com.winnerbook.course.dto.CourseFile;
 import com.winnerbook.course.dto.CourseType;
+import com.winnerbook.course.dto.CourseTypeId;
 import com.winnerbook.course.dto.StudentRecord;
 import com.winnerbook.course.service.CourseService;
 import com.winnerbook.system.dto.User;
@@ -67,13 +69,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 		Map<String, Object> parameter  = new HashMap<String, Object>();
 		parameter.put("courseId", Integer.parseInt(courseId));
 		Course course = courseDao.findById(parameter);
-		
-		if(null!=course.getCourseTypeId() && course.getCourseTypeId()!=0){
-			Map<String,Object> courseTypeMap = new HashMap<>();
-			courseTypeMap.put("typeId", course.getCourseTypeId());
-			CourseType courseType = courseTypeDao.findById(courseTypeMap);
-			course.setCourseTypeName(StringUtils.isNotBlank(courseType.getTypeName())?courseType.getTypeName():"");
-		}
 		return course;
 	}
 
@@ -82,15 +77,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 		PageDTO<Course> pageDTO = new PageDTO<Course>(pageIndex, pageSize);
 		parameter.put(GlobalConfigure.PAGINATION_SQL_START, pageDTO.getFirst());
 		parameter.put(GlobalConfigure.PAGINATION_SQL_LIMIT, pageDTO.getPageSize());
-		
-		//查询所以的课程类型
-		List<CourseType> courseTypes = courseTypeDao.getCourseTypeAll(new HashMap<String,Object>());
-		Map<Integer,String> courseTypeMap = new HashMap<>();
-		for(CourseType courseType:courseTypes){
-			if(StringUtils.isNotBlank(courseType.getTypeId().toString())){
-				courseTypeMap.put(courseType.getTypeId(), courseType.getTypeName());
-			}
-		}
 		
 		//根据当前登录人查询此登录人推送的课程
 		Map<String,Object> sessionMap = new HashMap<>();
@@ -107,7 +93,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 		if (rowSize > 0) {
 			data = courseDao.listByPage(parameter);
 			for(Course course:data){
-				course.setCourseTypeName(null!=courseTypeMap.get(course.getCourseTypeId())?courseTypeMap.get(course.getCourseTypeId()):"");
 				if(null!=courseReleaseMap.get(course.getCourseId().toString())){
 					String[] str = courseReleaseMap.get(course.getCourseId().toString()).toString().split("_");
 					course.setCourseReleaseId(str[0]);
@@ -126,6 +111,11 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 	
 	@Override
 	public void insert(Course course) {
+		
+		if(null==course.getCourseSort()){
+			course.setCourseSort(0);
+		}
+		
 		User userone = getSessionUser();
 		course.setCourseStatus("1");//启用
 		course.setCreateDate(new Date());
@@ -138,7 +128,39 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 			BookList bookList = bookListDao.findById(map);
 			course.setRecommendBook(StringUtils.isNotBlank(bookList.getBookName())?bookList.getBookName():"");
 		}
+		//设置课程类型name
+		if(StringUtils.isNotBlank(course.getCourseTypeIds())){
+			String typeName = "";
+			//查询课程类型，并且返回对应的name
+			HashMap<String, Object> map_type = new HashMap<>();
+			map_type.put("typeIds", course.getCourseTypeIds());
+			List<Map<String, Object>> map_type_name = courseTypeDao.getCourseTypeInfoByIds(map_type);
+			for(int i = 0;i<map_type_name.size();i++){
+				if(i!=0){
+					typeName+=",";
+				}
+				typeName += map_type_name.get(i).get("typeName");
+			}
+			course.setCourseTypeName(typeName);
+		}
+		
 		courseDao.insert(course);
+		
+		//课程分类  课程包insert
+		if(StringUtils.isNotBlank(course.getCourseTypeIds())){
+			String courseTypeIds = course.getCourseTypeIds();
+			String[] courseTypeIdArray = courseTypeIds.split(",");
+			
+			List<CourseTypeId> courseTypeIdsArray = new LinkedList<>();
+			for(String courseTypeId:courseTypeIdArray){
+				CourseTypeId courseTypeId_pojo = new CourseTypeId();
+				courseTypeId_pojo.setCourseId(course.getCourseId());
+				courseTypeId_pojo.setCourseTypeId(Integer.parseInt(courseTypeId));
+				courseTypeIdsArray.add(courseTypeId_pojo);
+			}
+			courseDao.insertCourseTypeId(courseTypeIdsArray);
+		}
+		
 		logRecord("2","课程信息添加，id："+course.getTitle());
 	}
 
@@ -152,7 +174,43 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 			BookList bookList = bookListDao.findById(map);
 			course.setRecommendBook(StringUtils.isNotBlank(bookList.getBookName())?bookList.getBookName():"");
 		}
+		//设置课程类型name
+		if(StringUtils.isNotBlank(course.getCourseTypeIds())){
+			String typeName = "";
+			//查询课程类型，并且返回对应的name
+			HashMap<String, Object> map_type = new HashMap<>();
+			map_type.put("typeIds", course.getCourseTypeIds());
+			List<Map<String, Object>> map_type_name = courseTypeDao.getCourseTypeInfoByIds(map_type);
+			for(int i = 0;i<map_type_name.size();i++){
+				if(i!=0){
+					typeName+=",";
+				}
+				typeName += map_type_name.get(i).get("typeName");
+			}
+			course.setCourseTypeName(typeName);
+		}
+		
 		courseDao.update(course);
+		
+		//课程分类  课程包insert
+		if(StringUtils.isNotBlank(course.getCourseTypeIds())){
+			//先删除，后insert
+			courseDao.deleteCourseTypeId(course.getCourseId());
+			
+			String courseTypeIds = course.getCourseTypeIds();
+			String[] courseTypeIdArray = courseTypeIds.split(",");
+			
+			List<CourseTypeId> courseTypeIdsArray = new LinkedList<>();
+			for(String courseTypeId:courseTypeIdArray){
+				CourseTypeId courseTypeId_pojo = new CourseTypeId();
+				courseTypeId_pojo.setCourseId(course.getCourseId());
+				courseTypeId_pojo.setCourseTypeId(Integer.parseInt(courseTypeId));
+				courseTypeId_pojo.setCreateDate(new Date());
+				courseTypeIdsArray.add(courseTypeId_pojo);
+			}
+			courseDao.insertCourseTypeId(courseTypeIdsArray);
+		}
+		
 		logRecord("3","课程信息更新，id："+course.getCourseId());
 	}
 
@@ -257,8 +315,19 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 	@Override
 	public Map<String, Object> getCourses(Map<String, Object> parameter) {
 		Map<String, Object> map = new HashMap<>();
-		List<Map<String, Object>> courseList = courseDao.getCourses(parameter);
-		int courseCount = courseDao.getCoursesCount(parameter);
+		List<Map<String, Object>> courseList = new ArrayList<>();
+		int courseCount = 0;
+		//查询课程类型是免费还是付费
+		String courseTypeId = parameter.get("courseTypeId")+"";
+		Map<String, Object> freeCourseType = courseTypeDao.getFreeCouresType();
+		if(courseTypeId.equals(freeCourseType.get("typeId")+"")){
+			courseList = courseDao.getFreeCourses(parameter);
+			courseCount = courseDao.getFreeCoursesCount(parameter);
+		}else{
+			courseList = courseDao.getCourses(parameter);
+			courseCount = courseDao.getCoursesCount(parameter);
+		}
+		
 		map.put("courseList", courseList);
 		map.put("courseCount", courseCount);
 		return map;
@@ -287,7 +356,50 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 	@Override
 	public Map<String, Object> getCourseDetail(Map<String, Object> parameter) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("courseInfo", courseDao.getCourseDetail(parameter));
+		
+		Map<String,Object> couresMap = courseDao.getCourseDetail(parameter);
+		
+		//判断此课程是否在购买的课程包中，如果不在，则在点击观看主视频的时候，提示需要购买才可以看  courseTypeIds
+		if(StringUtils.isNotBlank(parameter.get("busId")+"")){
+			String busId = parameter.get("busId")+"";
+			
+			String courseTypeIds = couresMap.get("courseTypeIds")+"";
+			
+			//首先判断是不是免费课程，如果是免费课程，直接是0，可以直接观看
+			Map<String, Object> freeCourseType = courseTypeDao.getFreeCouresType();
+			if(null!=freeCourseType.get("typeId") && courseTypeIds.equals(freeCourseType.get("typeId")+"")){
+				couresMap.put("isBuy", "0");//已购买
+			}else{
+				//查询企业id对应购买的课程
+				Map<String, Object> map_courseType = new HashMap<>();
+				map_courseType.put("busId", busId);
+				List<Map<String, Object>> courseTypeList = courseTypeDao.findBusCourseType(map_courseType);
+				Map<String, Object> bus_courseType = new HashMap<>();
+				for(Map<String, Object> courseType:courseTypeList){
+					bus_courseType.put(courseType.get("courseTypeId")+"",courseType.get("courseTypeId")+"");
+				}
+				
+				
+				if(StringUtils.isNotBlank(courseTypeIds)){
+					String[] courseTypeIdsArray = courseTypeIds.split(",");
+					int isLook = 0;
+					for(int j = 0;j<courseTypeIdsArray.length;j++){ //比较该企业是否买了这个课程对应的课程包
+						if(null!=bus_courseType.get(courseTypeIdsArray[j]+"")){
+							isLook++;
+						}
+					}
+					if(isLook>0){
+						couresMap.put("isBuy", "0");//已购买
+					}else{
+						couresMap.put("isBuy", "1");//未购买
+					}
+				}else{
+					couresMap.put("isBuy", "1");//未购买
+				}
+			}
+		}
+		
+		map.put("courseInfo", couresMap);
 		map.put("courseFile", courseDao.getCourseFile(parameter));
 		return map;
 	}
@@ -325,5 +437,43 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 		
 		//更新课程点击次数
 		return courseDao.updateClickNum(parameter);
+	}
+
+	@Override
+	public Map<String, Object> getAdminCourses(Map<String, Object> parameter) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> courseAdminList = courseDao.getAdminCourses(parameter);
+		int courseCount = courseDao.getAdminCoursesCount(parameter);
+		//需要过滤已经买过的视频，如果未买过的视频，则需要标记
+		//根据busId查询
+		/*Map<String, Object> course_map = new HashMap<>();
+		course_map.put("courseTypeId", parameter.get("courseTypeId"));
+		course_map.put("busId", parameter.get("busId"));
+ 		List<Map<String, Object>> busCourseList = courseDao.getCourses(course_map);
+		Map<Object, Object> busCourseMap = new HashMap<>();
+		for(Map<String, Object> busCourse:busCourseList){
+			busCourseMap.put(busCourse.get("courseId"), busCourse.get("courseId"));
+		}
+		
+		for(Map<String, Object> adminCourse:courseAdminList){
+			if(null!=busCourseMap.get(adminCourse.get("courseId"))){//证明是买过的课程
+				adminCourse.put("isBuy", "0");
+			}else{
+				adminCourse.put("isBuy", "1");//需要买的课程
+			}
+		}*/
+		
+		List<CourseType> courseTypes = courseTypeDao.getCourseTypeAdmin(parameter);
+		Map<Object, Object> courseTypeMap = new HashMap<>();
+		for(CourseType courseType:courseTypes){
+			courseTypeMap.put(courseType.getTypeId(), courseType.getTypeName());
+		}
+		if(null!=courseTypeMap.get(Integer.parseInt(parameter.get("courseTypeId")+""))){
+			map.put("courseTypeName", courseTypeMap.get(Integer.parseInt(parameter.get("courseTypeId")+"")));
+		}
+		
+		map.put("courseAdminList", courseAdminList);
+		map.put("courseAdminCount", courseCount);
+		return map;
 	}
 }

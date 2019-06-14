@@ -196,7 +196,9 @@ public class StudentRecordServiceImpl extends BaseServiceImpl implements Student
 				//查询课程附件的title
 				studentRecord.setCourseFileId(StringUtils.isNotBlank(fileId)?Integer.parseInt(fileId):0);
 				CourseFile courseFile = courseFileDao.findCourseFileByFileId(Integer.parseInt(fileId));
-				studentRecord.setCourseFileName(StringUtils.isNotBlank(courseFile.getFileTitle())?courseFile.getFileTitle():"");
+				if(null!=courseFile){
+					studentRecord.setCourseFileName(StringUtils.isNotBlank(courseFile.getFileTitle())?courseFile.getFileTitle():"");
+				}
 			}
 			
 			studentRecord.setUserId(Integer.parseInt(user.getUserId().toString()));

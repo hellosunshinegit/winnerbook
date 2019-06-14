@@ -89,6 +89,8 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 		userBusInfo.setBusCity(busInfo.getBusCity());
 		userBusInfo.setBusCounty(busInfo.getBusCounty());
 		userBusInfo.setBusAddress(busInfo.getBusAddress());
+		userBusInfo.setBrandBusName(busInfo.getBrandBusName());
+		userBusInfo.setMobileBusName(busInfo.getMobileBusName());
 		int userBusInfoCount = findBusInfoById(busInfo.getUserId().toString());
 		if(userBusInfoCount==0){
 			busInfoDao.insert(userBusInfo);

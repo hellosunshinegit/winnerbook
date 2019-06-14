@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.winnerbook.base.frame.dao.BaseDAO;
 import com.winnerbook.course.dao.CourseDao;
 import com.winnerbook.course.dto.Course;
+import com.winnerbook.course.dto.CourseTypeId;
 
 @Repository("courseDao")
 public class CourseDaoImpl  extends BaseDAO implements CourseDao{
@@ -109,8 +110,42 @@ public class CourseDaoImpl  extends BaseDAO implements CourseDao{
 	}
 
 	@Override
-	public Map<String, Object> getCourseAdminCreate(
+	public List<Map<String, Object>> getCourseAdminCreate(
 			Map<String, Object> parameter) {
-		return this.sqlSession.selectOne(COURSE_MAPPER+"getCourseAdminCreate",parameter);
+		return this.sqlSession.selectList(COURSE_MAPPER+"getCourseAdminCreate",parameter);
+	}
+
+	@Override
+	public List<Map<String, Object>> getAdminCourses(
+			Map<String, Object> parameter) {
+		return this.sqlSession.selectList(COURSE_MAPPER+"getAdminCourses",parameter);
+	}
+
+	@Override
+	public int getAdminCoursesCount(Map<String, Object> parameter) {
+		Object obj = this.sqlSession.selectOne(COURSE_MAPPER + "getAdminCoursesCount", parameter);
+		return obj == null ? 0 : Integer.parseInt(obj.toString());
+	}
+
+	@Override
+	public int insertCourseTypeId(List<CourseTypeId> courseTypeIds) {
+		return this.sqlSession.insert(COURSE_MAPPER+"insertCourseTypeId",courseTypeIds);
+ 	}
+
+	@Override
+	public int deleteCourseTypeId(Integer courseId) {
+		return this.sqlSession.delete(COURSE_MAPPER+"deleteCourseTypeId",courseId);
+	}
+
+	@Override
+	public List<Map<String, Object>> getFreeCourses(
+			Map<String, Object> parameter) {
+		return this.sqlSession.selectList(COURSE_MAPPER+"getFreeCourses", parameter);
+	}
+
+	@Override
+	public int getFreeCoursesCount(Map<String, Object> parameter) {
+		Object obj = this.sqlSession.selectOne(COURSE_MAPPER + "getFreeCoursesCount", parameter);
+		return obj == null ? 0 : Integer.parseInt(obj.toString());
 	}
 }

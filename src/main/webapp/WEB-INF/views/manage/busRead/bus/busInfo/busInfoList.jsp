@@ -1,4 +1,5 @@
 <%@ page import="java.util.*" contentType="text/html; charset=UTF-8"%>
+<%@page import="com.winnerbook.base.common.util.ConstantUtils"%>
 <%@ include file="../../../common.jsp"%>
 <!DOCTYPE html>
 <html>
@@ -88,10 +89,11 @@
     			url:"${basePath}busInfoController/getBusQrcode.html",
     			success:function(data){
     				var content = "";
+    				var busUrl = "<a href="+'<%=ConstantUtils.H5_URL%>?busId='+data.busId+''+" target='_black'> PC预览 </a>";
     				if(data.isNewGenerate=="1"){//新生成
-    					content = "<span style='text-align: center;display: block;margin: 5px;font-size: 14px;'>二维码生成成功</span><div style='text-align: center;margin-top:15px;'><img src="+data.img+" width='200' heigth='200'></div>";
+    					content = "<span style='text-align: center;display: block;margin: 5px;font-size: 14px;'>二维码生成成功</span><div style='text-align: center;margin-top:10px;'>"+busUrl+"<br/><img src="+data.img+" width='200' heigth='200'></div>";
     				}else{
-	    				content="<div style='text-align: center;margin-top:25px;'><img src="+data.img+" width='200' heigth='200'></div>";
+	    				content="<div style='text-align: center;margin-top:10px;'>"+busUrl+"<br/><img src="+data.img+" width='200' heigth='200'></div>";
     				}
     				layer.open({
     				  title:busName!=''?busName:"手机端二维码",
@@ -115,15 +117,15 @@
     			url:"${basePath}busInfoController/getBusBrandInfo.html",
     			success:function(data){
     				console.log(data);
-    				var busName = data.userBusInfo.busName!=null?data.userBusInfo.busName:"";
+    				var busName = data.userBusInfo.brandBusName!=null?data.userBusInfo.brandBusName:"";
     				var busNumber = data.userBusInfo.busNumber!=null?data.userBusInfo.busNumber:"";
     				var brandDateChinese = data.userBusInfo.brandDateChinese!=null?data.userBusInfo.brandDateChinese:"";
     				/* var busLogo = data.userBusInfo.busLogo!=null?"<img src='"+data.userBusInfo.busLogo+"'/>":""; */
     				var content = "<div style='margin: 5px 50px 0px 50px;'><div style='text-align: center;width:600px;height:440px;background:url(${basePath}resources/images/bus_brand_custom.jpg) no-repeat;background-size:600px;'>"+
     				"<span class='bus_name'>授予："+busName+"</span><span class='bus_num'>编号："+busNumber+"</span><span class='brandDate'>"+brandDateChinese+"</span><span class='bus_qrcode'><img src='"+data.qrcode.img+"'></span>"+
-    				"</div><div class='brand_upload'><a href='${basePath}busInfoController/uploadGenerateBrandImg.html?busId="+busId+"'>生成企业名牌图片并下载</a></div></div>";
+    				"</div><div class='brand_upload'><a href='${basePath}busInfoController/uploadGenerateBrandImg.html?busId="+busId+"'>生成读书会铭牌图片并下载</a></div></div>";
     				layer.open({
-    				  title:busName!=''?busName:"企业名牌",
+    				  title:busName!=''?busName:"读书会铭牌",
 		   			  type: 1,
 		   			  area: ['700px', '550px'], //宽高
 		   			  content: content
@@ -183,9 +185,9 @@
 						<td>
 							<a href="${basePath }busInfoController/updateBusInfo.html?userId=${item.userId}">完善企业信息</a>
 							<a href="${basePath }busInfoController/viewBusInfo.html?userId=${item.userId}">详情</a>
-							<a href="${basePath }busInfoController/customCourseType.html?userId=${item.userId}">定制课程分类</a>
+							<a href="${basePath }busInfoController/customCourseType.html?userId=${item.userId}">定制课程包</a>
 							<a href="javascript:getBusQrcode(${item.userId},'${item.busName}')">手机端预览</a>
-							<a href="javascript:getBusBrand(${item.userId},'${item.busName}')">企业名牌</a>
+							<a href="javascript:getBusBrand(${item.userId},'${item.busName}')">读书会铭牌</a>
 						</td>
 					</tr>
 				</c:forEach>

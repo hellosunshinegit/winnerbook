@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.winnerbook.course.dto.Course;
+import com.winnerbook.course.dto.CourseTypeId;
 
 public interface CourseDao {
 	
@@ -36,7 +37,12 @@ public interface CourseDao {
 
     List<Map<String, Object>> getCourseByBookListId(Map<String, Object> parameter);
     
-    Map<String, Object> getCourseAdminCreate(Map<String, Object> parameter);
+    List<Map<String, Object>> getCourseAdminCreate(Map<String, Object> parameter);
+    
+    
+    int deleteCourseTypeId(Integer courseId);
+    
+    int insertCourseTypeId(List<CourseTypeId> courseTypeIds);
     
     //查询所有课程 web端
     List<Map<String, Object>> getCourses(Map<String, Object> parameter);
@@ -54,6 +60,12 @@ public interface CourseDao {
     
     int updateClickNum(Map<String, Object> parameter);
     
-
+    //课程超市
+    List<Map<String, Object>> getAdminCourses(Map<String, Object> parameter);
+    int getAdminCoursesCount(Map<String, Object> parameter);
+    
+    //免费课程列表
+    List<Map<String, Object>> getFreeCourses(Map<String, Object> parameter);
+    int getFreeCoursesCount(Map<String, Object> parameter);
     
 }

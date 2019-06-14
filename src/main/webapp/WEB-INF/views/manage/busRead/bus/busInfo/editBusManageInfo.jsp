@@ -71,25 +71,37 @@
 	        <dl>
 	            <dt><i>*</i>企业名称：</dt>
 	            <dd>
-	            	<c:if test="${busInfo.busName ne '' && busInfo.brandImg ne null && busInfo.busName ne undefined}">
-		            	<input type="text" name="busName" id="busName" value="${busInfo.busName }" disabled="disabled"/>
-		            	<input type="hidden" name="busName" value="${busInfo.busName }"/>
-		            	<span style="color: red;">注：企业名称添加后不可修改。如需修改，请联系管理员。</span>
+		            <input type="text" name="busName" id="busName" value="${busInfo.busName }" maxlength="16" require="true" requireMsg="企业名称为必填项!" dataType="Require"/>
+	            </dd>
+	        </dl>
+	        <dl>
+	            <dt>企业短名称：</dt>
+	            <dd><input type="text" name="mobileBusName" id="mobileBusName" value="${busInfo.mobileBusName }" maxlength="5"/>
+	            	<span style="color: red;">(注：用于手机端显示企业名称)</span>
+	            </dd>
+	        </dl>
+	        <dl>
+	            <dt>读书会铭牌名称：</dt>
+	            <dd>
+	            	<c:if test="${busInfo.brandBusName ne '' && busInfo.brandBusName ne null && busInfo.brandBusName ne undefined}">
+		            	<input type="text" name="brandBusName" id="brandBusName" value="${busInfo.brandBusName }" disabled="disabled"/>
+		            	<input type="hidden" name="brandBusName" value="${busInfo.brandBusName }"/>
+		            	<span style="color: red;">注：读书会铭牌名称添加后不可修改。如需修改，请联系管理员。</span>
 	            	</c:if>
-	            	<c:if test="${busInfo.busName eq '' || busInfo.brandImg eq null || busInfo.busName eq undefined}">
-		            	<input type="text" name="busName" id="busName" value="${busInfo.busName }" maxlength="16" require="true" requireMsg="企业名称为必填项!" dataType="Require"/>
-	            		<span style="color: red;">注：企业名称添加后不可修改。最长16个字，如果超过，请联系管理员。</span>
+	            	<c:if test="${busInfo.brandBusName eq '' || busInfo.brandBusName eq null || busInfo.brandBusName eq undefined}">
+		            	<input type="text" name="brandBusName" id="brandBusName" maxlength="16"  value="${busInfo.brandBusName }" />
+	            		<span style="color: red;">注：读书会铭牌名称添加后不可修改。最长16个字，如果超过，请联系管理员。</span>
 	            	</c:if>
 	            </dd>
 	        </dl>
 	        <dl>
-	            <dt>下载企业名牌：</dt>
+	            <dt>企业名牌：</dt>
 	            <dd>
 	            	<c:if test="${busInfo.brandImg ne '' && busInfo.brandImg ne null && busInfo.brandImg ne undefined}">
-	            		<a href="${basePath}busInfoController/uploadBrandImg.html?busId=${busInfo.userId}" style="color:blue;text-decoration: underline;" title="点击下载企业名牌">下载企业名牌</a>
+	            		<a href="${basePath}busInfoController/uploadBrandImg.html?busId=${busInfo.userId}" style="color:blue;text-decoration: underline;" title="点击下载读书会铭牌">下载企业名牌</a>
 	            	</c:if>
 	            	<c:if test="${busInfo.brandImg eq '' || busInfo.brandImg eq null || busInfo.brandImg eq undefined}">
-	            		请联系管理员生成企业名牌
+	            		请联系管理员生成读书会铭牌
 	            	</c:if>
 	            	<input type="hidden" name="brandImg" value="${busInfo.brandImg }"/>
 	            </dd>
@@ -121,14 +133,14 @@
 	            </dd>
 	        </dl>
 	        <dl>
-	            <dt>名牌编号：</dt>
+	            <dt>铭牌编号：</dt>
 	            <dd>
 	            	${busInfo.busNumber}
 	            	<input type="hidden" name="busNumber" value="${busInfo.busNumber }"/>
 	        	</dd>
 	        </dl>
 	        <dl>
-	            <dt>名牌授予时间：</dt>
+	            <dt>铭牌授予时间：</dt>
 	            <dd>
 	            	${busInfo.brandDateChinese }
 	            	<input type="hidden" name="brandDate" value="${busInfo.brandDate }"/>

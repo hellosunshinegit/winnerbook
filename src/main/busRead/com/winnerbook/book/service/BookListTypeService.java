@@ -20,5 +20,7 @@ public interface BookListTypeService {
 	List<Map<String, Object>> getBookListByTypeId(String id);
 	
 	Map<String, Object> getBookListTypes(Map<String, Object> parameter);
+	
+	Map<String, Object> getBusBookListTypes(Map<String, Object> parameter);
 		
 }

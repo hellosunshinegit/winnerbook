@@ -49,7 +49,7 @@
 	            <dd><input type="text" name="busName" id="busName" value="${busInfo.busName }" disabled="disabled"/></dd>
 	        </dl>
 	        <dl>
-	            <dt>名牌授予时间：</dt>
+	            <dt>铭牌授予时间：</dt>
 	            <dd>
 	            	<input type="text" name="brandDate" id="brandDate" value="${busInfo.brandDate}" disabled="disabled"/>
 	        	</dd>

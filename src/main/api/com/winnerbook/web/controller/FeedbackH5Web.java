@@ -2,18 +2,22 @@ package com.winnerbook.web.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.winnerbook.activity.service.FeedbackService;
 import com.winnerbook.base.common.JSONResponse;
 import com.winnerbook.web.service.FeedbackServiceWeb;
 import com.winnerbook.web.utils.ConstantWebUtils;
 import com.winnerbook.web.utils.PageUtil;
+import com.winnerbook.web.utils.ValidateWebUtils;
 
 @Controller
 public class FeedbackH5Web {
@@ -29,9 +33,7 @@ public class FeedbackH5Web {
 	@ResponseBody
 	public String getFeedback(String busId,String userId,String pageIndex,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		
 		Map<String, Object> parameter = new HashMap<String, Object>();
 		parameter.put("userId", userId);
@@ -48,9 +50,7 @@ public class FeedbackH5Web {
 	@ResponseBody
 	public String addCourseComments(@RequestParam String userId,String busId,String remarks,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		if(!StringUtils.isNotBlank(remarks)){
 			result.setMsg("反馈内容不可为空");
 			return callback+"("+JSONObject.fromObject(result)+")";

@@ -22,6 +22,7 @@ import com.winnerbook.web.service.CenterServiceWeb;
 import com.winnerbook.web.service.ClickInfoService;
 import com.winnerbook.web.service.StudentRecordServiceWeb;
 import com.winnerbook.web.utils.PageUtil;
+import com.winnerbook.web.utils.ValidateWebUtils;
 
 @Controller
 public class CenterH5Web {
@@ -138,6 +139,39 @@ public class CenterH5Web {
 		
 		result.setData(applyId);
 		result.setSuccess(true);
+		return callback+"("+JSONObject.fromObject(result)+")";
+	}
+	
+	//添加我的读后感 addReadThought
+	@RequestMapping(value="addReadThought.jhtml",produces = {"application/json;charset=utf-8"})
+	@ResponseBody
+	public String addCourseComments(String busId,String userId,String bookName,String isOpen,String thought,@RequestParam("callback") String callback){
+		JSONResponse result = new JSONResponse();
+		busId = ValidateWebUtils.defaultBus(busId);
+		if(!StringUtils.isNotBlank(bookName)){
+			result.setMsg("书籍名称不可为空");
+			return callback+"("+JSONObject.fromObject(result)+")";
+		}
+		if(!StringUtils.isNotBlank(thought)){
+			result.setMsg("读后感内容不可为空");
+			return callback+"("+JSONObject.fromObject(result)+")";
+		}
+		
+		//判断是否有表情，过滤字符
+		bookName = bookName.replaceAll("[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]", "*");
+		thought = thought.replaceAll("[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]", "*");
+		
+		Map<String, Object> parameter = new HashMap<String, Object>();
+		parameter.put("userId", userId);
+		parameter.put("bookName", bookName);
+		parameter.put("thought", thought);
+		parameter.put("isOpen", isOpen);
+		
+		int readThougthId = centerServiceWeb.insertReadComment(parameter);
+		
+ 		result.setSuccess(true);
+		result.setMsg("添加成功");
+		result.setData(readThougthId);
 		return callback+"("+JSONObject.fromObject(result)+")";
 	}
 	

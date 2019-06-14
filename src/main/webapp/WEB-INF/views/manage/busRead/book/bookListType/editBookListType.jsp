@@ -55,11 +55,12 @@
 			var typeDes = $("#typeDes").val();
 			var status = $("#status").val();
 			var typeImg = $("#typeImg").val();
+			var typeSort = $("#typeSort").val();
 			var typeBookNames = $("#typeBookNames").val();
 			typeBookNames = typeBookNames.replace("，",",");
 			var typeBookNamesArray = typeBookNames.split(",");
 			
-			var dataJson = {"id":id,"typeName":typeName,"wbTitle":wbTitle,"wbImg":wbImg,"typeDes":typeDes,"status":status,"typeImg":typeImg,"bookNameList":[]};
+			var dataJson = {"id":id,"typeName":typeName,"wbTitle":wbTitle,"wbImg":wbImg,"typeDes":typeDes,"status":status,"typeImg":typeImg,"typeSort":typeSort,"bookNameList":[]};
 			
 			dataJson.bookNameList = typeBookNamesArray;
 			
@@ -186,14 +187,17 @@
 		            	<span style="color: red;">注：缩略图需要大于300px，分享时才会显示</span>
 		            </dd>
 		        </dl>
-				<dl>
-		            <dt>书单标签：</dt>
-		            <dd>
-		            	<c:forEach items="${bookTypeLabel }" var="item">
-		            		<input type="checkbox" name="tag" id="tag${item.labelId}" value="${item.labelId }-${item.labelName}" style="width: 18px;height: 18px;"/>${item.labelName }
-		            	</c:forEach>
-		            </dd>
-		        </dl>
+		        <c:if test="${user.userId eq 1 }">
+			        <dl>
+			            <dt>书单标签：</dt>
+			            <dd>
+			            	<c:forEach items="${bookTypeLabel }" var="item">
+			            		<input type="checkbox" name="tag" id="tag${item.labelId}" value="${item.labelId }-${item.labelName}" style="width: 18px;height: 18px;"/>${item.labelName }
+			            	</c:forEach>
+			            </dd>
+			        </dl>
+		        </c:if>
+				
 		        <dl>
 					<dt>
 						<i>*</i>添加书籍：
@@ -213,6 +217,12 @@
 		            <dt><i>*</i>使用状态：</dt>
 		            <dd>		
 		                <exp:select code="STATUS" name="status" id="status" value="${bookListType.status}"  require="true" requireMsg="使用状态为必填项!" dataType="Require"></exp:select>
+		            </dd>
+		        </dl>
+		        <dl>
+		            <dt>排序：</dt>
+		            <dd>
+		            	<input type="number" name="typeSort" id="typeSort" value="${bookListType.typeSort }" />
 		            </dd>
 		        </dl>
 				<dl>

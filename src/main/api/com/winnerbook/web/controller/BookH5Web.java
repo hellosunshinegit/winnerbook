@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.winnerbook.base.common.JSONResponse;
-import com.winnerbook.book.dto.BookListType;
 import com.winnerbook.book.service.BookListTypeService;
 import com.winnerbook.book.service.BookTypeLabelService;
 import com.winnerbook.course.service.BookListService;
 import com.winnerbook.web.service.ClickInfoService;
 import com.winnerbook.web.utils.ConstantWebUtils;
 import com.winnerbook.web.utils.PageUtil;
+import com.winnerbook.web.utils.ValidateWebUtils;
 @Controller
 public class BookH5Web {
 	
@@ -41,9 +41,7 @@ public class BookH5Web {
 	@RequestMapping(value="getBookTypeLists.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String getBookTypeLists(String busId,String pageIndex,@RequestParam String labelId,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		JSONResponse result = new JSONResponse();
 		
 		Map<String, Object> parameter_bookTypeList  = new HashMap<String, Object>();
@@ -74,9 +72,7 @@ public class BookH5Web {
 	@RequestMapping(value="getBookLists.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String getBookLists(String busId,String pageIndex,String typeId,String userId,HttpServletRequest request,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		
 		JSONResponse result = new JSONResponse();
 		
@@ -98,9 +94,7 @@ public class BookH5Web {
 	@ResponseBody
 	public String getArticles(@RequestParam String bookId,String bluId,String busId,String userId,HttpServletRequest request,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		
 		//记录书籍点击列表
 		clickInfoService.bookListClick(userId, bookId, request);
@@ -115,6 +109,21 @@ public class BookH5Web {
 		result.setMsg("获取书单详情成功");
 		result.setData(bookList);
 		return callback+"("+JSONObject.fromObject(result)+")";
+	}
+	
+	//获取企业书单
+	@RequestMapping(value="getBusBookTypeLists.jhtml",produces = {"application/json;charset=utf-8"})
+	@ResponseBody
+	public String getBookTypeLists(String busId,String pageIndex,@RequestParam("callback") String callback){
+		busId = ValidateWebUtils.defaultBus(busId);
+		JSONResponse result = new JSONResponse();
+		
+		Map<String, Object> parameter_bookTypeList  = new HashMap<String, Object>();
+		Map<String, Object> bookTypes = bookListTypeService.getBusBookListTypes(PageUtil.getParam(parameter_bookTypeList, busId, pageIndex));
+		result.setData(bookTypes);
+ 		result.setSuccess(true);
+ 		result.setMsg("获取企业书单成功");
+ 		return callback+"("+JSONObject.fromObject(result)+")";
 	}
 	
 }

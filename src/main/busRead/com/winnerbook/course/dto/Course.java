@@ -11,14 +11,14 @@ public class Course implements Serializable {
 
 	private Integer courseId;
 
-	private Integer courseTypeId;
+	private String courseTypeIds;
 
 	private String courseTypeName;
 
 	private String title;
 
 	private String wbTitle;
-	
+
 	private String wbImg;
 
 	private String courseDesc;
@@ -82,20 +82,14 @@ public class Course implements Serializable {
 	private String courseReleaseId;
 	private String courseReleaseStatus;
 
+	private Integer courseSort;
+
 	public Integer getCourseId() {
 		return courseId;
 	}
 
 	public void setCourseId(Integer courseId) {
 		this.courseId = courseId;
-	}
-
-	public Integer getCourseTypeId() {
-		return courseTypeId;
-	}
-
-	public void setCourseTypeId(Integer courseTypeId) {
-		this.courseTypeId = courseTypeId;
 	}
 
 	public String getTitle() {
@@ -380,7 +374,21 @@ public class Course implements Serializable {
 	public void setWbImg(String wbImg) {
 		this.wbImg = wbImg;
 	}
-	
-	
+
+	public String getCourseTypeIds() {
+		return courseTypeIds;
+	}
+
+	public void setCourseTypeIds(String courseTypeIds) {
+		this.courseTypeIds = courseTypeIds;
+	}
+
+	public Integer getCourseSort() {
+		return courseSort;
+	}
+
+	public void setCourseSort(Integer courseSort) {
+		this.courseSort = courseSort;
+	}
 
 }

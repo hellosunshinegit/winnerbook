@@ -51,8 +51,16 @@
             <thead>
               <tr>
               	<td>序号</td>
+              	<c:if test="${sessionUser.userId eq 1 }">
+                <td>标签名称</td>
+                </c:if>
                 <td>课程类型名称</td>
+                <td>图片</td>
                 <td>课程类型描述</td>
+				<td>排序</td>
+				<c:if test="${sessionUser.userId eq 1 }">
+				<td>是否免费</td>
+				</c:if>
 				<td>状态</td>
 				<td>创建时间</td>
 				<td>创建人</td>
@@ -63,8 +71,19 @@
 				<c:forEach items="${pageDTO.data}" var="item" varStatus="status">
 					<tr>
 						<td>${(pageDTO.pageIndex-1)*pageDTO.pageSize+status.index+1}</td>
+						<c:if test="${sessionUser.userId eq 1 }"><td>${item.typeLabelName}</td></c:if>
 						<td>${item.typeName}</td>
-						<td>${item.typeDesc}</td>
+						<td><img alt="" src="${basePath }${item.typeImg}" width="30px" height="30px"></td>
+						<td title="${item.typeDesc}">
+							<c:if test="${fn:length(item.typeDesc)>15}">
+								${fn:substring(item.typeDesc,0,15)}...
+							</c:if>
+							<c:if test="${fn:length(item.typeDesc)<=15}">
+								${item.typeDesc}
+							</c:if>
+						</td>
+						<td>${item.typeSort}</td>
+						<c:if test="${sessionUser.userId eq 1 }"><td><exp:code code="COURSE_TYPE_ISFREE" value="${item.typeIsFree }"></exp:code> </td></c:if>
 						<td><exp:code code="STATUS" value="${item.typeStatus }"></exp:code> </td>
 						<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
 						<td>${item.createUserName}</td>

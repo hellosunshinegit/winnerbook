@@ -34,6 +34,8 @@ public class BookListType {
 	private String createUserName;
 
 	private Date updateDate;
+	
+	private Integer typeSort;
 
 	public Integer getId() {
 		return id;
@@ -138,6 +140,14 @@ public class BookListType {
 
 	public void setWbImg(String wbImg) {
 		this.wbImg = wbImg;
+	}
+
+	public Integer getTypeSort() {
+		return typeSort;
+	}
+
+	public void setTypeSort(Integer typeSort) {
+		this.typeSort = typeSort;
 	}
 	
 

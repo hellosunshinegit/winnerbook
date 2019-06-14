@@ -24,6 +24,7 @@ import com.winnerbook.base.common.util.DateTimeUtils;
 import com.winnerbook.web.service.ActivityWebService;
 import com.winnerbook.web.utils.ConstantWebUtils;
 import com.winnerbook.web.utils.PageUtil;
+import com.winnerbook.web.utils.ValidateWebUtils;
 @Controller
 public class ActivityH5Web {
 	
@@ -41,9 +42,7 @@ public class ActivityH5Web {
 	@ResponseBody
 	public String getActivitys(String busId,String pageIndex,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		
 		Map<String, Object> parameter = new HashMap<String, Object>();
  		Map<String, Object> article = activityService.getActivitys(PageUtil.getParam(parameter, busId, pageIndex));
@@ -108,9 +107,7 @@ public class ActivityH5Web {
 	@ResponseBody
 	public String getActivitys(String busId,String userId,String pageIndex,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		
 		Map<String, Object> parameter = new HashMap<String, Object>();
 		parameter.put("userId", userId);

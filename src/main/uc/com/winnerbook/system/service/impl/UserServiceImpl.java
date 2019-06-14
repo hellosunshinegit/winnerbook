@@ -5,14 +5,12 @@
 */ 
 package com.winnerbook.system.service.impl; 
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,6 +30,8 @@ import com.winnerbook.base.common.util.ValidateUtils;
 import com.winnerbook.base.frame.content.ThreadLocalWrapper;
 import com.winnerbook.base.frame.content.UserContext;
 import com.winnerbook.base.frame.service.impl.BaseServiceImpl;
+import com.winnerbook.book.dao.BookListTypeDao;
+import com.winnerbook.book.dto.BookListType;
 import com.winnerbook.busInfo.dao.BusInfoDao;
 import com.winnerbook.busInfo.dao.UserBusCourseTypeDao;
 import com.winnerbook.busInfo.dto.UserBusCourseType;
@@ -83,6 +83,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 	@Autowired
 	private BusInfoDao busInfoDao;
 	
+	@Autowired
+	private BookListTypeDao bookListTypeDao;
+	
 	@Override
 	public List<Map<String, Object>> findUserByUserName(String userName) {
 		Map<String, Object> parameter = new HashMap<String,Object>();
@@ -129,6 +132,14 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 		user.setUserUpdateDate(new Date());
 		user.setUserUpdateUserId(userone.getUserId());
 		user.setUserUpdateUserName(userone.getUserUnitName());
+		String pwd = "";
+		if(StringUtils.isNotBlank(user.getUserName())){
+			//截取后6位作为手机号默认登录密码
+			if(user.getUserName().length()==11){
+				pwd = user.getUserName().substring(5, 11);
+			}
+		}
+		user.setUserPassword(EncryptUtil.hash(pwd));
 		userDao.update(user);
 		logRecord("3","用户修改，id："+user.getUserId());
 	}
@@ -206,16 +217,18 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 			roleMenuDao.insertBathRoleMenu(roleMenuList);
 			
 			//给企业默认推荐一个课程在h5端展示，admin添加的已发布的模板第一条
-			Map<String, Object> courseMap = courseDao.getCourseAdminCreate(null);
-			if(null!=courseMap){
-				Map<String, Object> course_release = new HashMap<>();
-				course_release.put("courseId", null!=courseMap.get("courseId")?courseMap.get("courseId"):0);
-				course_release.put("userId", user.getUserId());
-				course_release.put("status", "1");
-				course_release.put("createDate", new Date());
-				course_release.put("createUserId", user.getUserId());
-				course_release.put("createUserName", user.getUserUnitName());
-				courseDao.insertCourseRelease(course_release);
+			List<Map<String, Object>> courseMap = courseDao.getCourseAdminCreate(null);
+			if(null!=courseMap && courseMap.size()>0){
+				for(int i = 0;i<courseMap.size();i++){
+					Map<String, Object> course_release = new HashMap<>();
+					course_release.put("courseId",null!=courseMap.get(i).get("courseId")?courseMap.get(i).get("courseId"):0);
+					course_release.put("userId", user.getUserId());
+					course_release.put("status", "1");
+					course_release.put("createDate", new Date());
+					course_release.put("createUserId", user.getUserId());
+					course_release.put("createUserName", user.getUserUnitName());
+					courseDao.insertCourseRelease(course_release);
+				}
 			}
 			
 			//给企业生成后台扫描二维码信息
@@ -246,6 +259,17 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 				userBusInfo.setBrandQrcodeId(qrcode_brand.getId());
 			}
 			busInfoDao.insert(userBusInfo);
+			
+			//给企业默认添加一个老板书单
+			BookListType bookListType = new BookListType();
+			bookListType.setTypeName("老板书单");
+			bookListType.setStatus("1");
+			bookListType.setTypeSort(10);
+			bookListType.setCreateDate(new Date());
+			bookListType.setCreateUserId(Integer.parseInt(user.getUserId()+""));
+			bookListType.setCreateUserName(user.getUserUnitName());
+			bookListTypeDao.insert(bookListType);
+			
 		}
 		logRecord("2","用户添加，id："+user.getUserId());
 		return Integer.parseInt(user.getUserId().toString());

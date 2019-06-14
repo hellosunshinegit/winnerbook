@@ -45,7 +45,7 @@
 	function lookMainPer(url,type){
 		//如果创建人是管理员，那么他的视频则要权限控制，如果是企业管理员创建的，则不需要控制
 		if('${course.createUserId}' == '${userAdminId}' && ('${sessionUser.isAdmin}'!='1')){
-			if(userCourseTypes.indexOf('${course.courseTypeId}')>=0){
+			if(userCourseTypes.indexOf('${course.courseTypeIds}')>=0){
 				if(type==1){
 					$("#main_video_div").css("display","");
 				}else if(type==2){

@@ -3,16 +3,12 @@ package com.winnerbook.web.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.winnerbook.activity.service.ReadBookClubService;
 import com.winnerbook.base.common.JSONResponse;
 import com.winnerbook.book.dto.BookTypeLabel;
@@ -20,12 +16,14 @@ import com.winnerbook.book.service.BookListTypeService;
 import com.winnerbook.book.service.BookTypeLabelService;
 import com.winnerbook.course.service.BookListService;
 import com.winnerbook.course.service.CourseService;
+import com.winnerbook.course.service.CourseTypeService;
 import com.winnerbook.course.service.ReadThoughtService;
 import com.winnerbook.web.service.BannerService;
 import com.winnerbook.web.service.BlockService;
 import com.winnerbook.web.service.NewsService;
 import com.winnerbook.web.utils.ConstantWebUtils;
 import com.winnerbook.web.utils.PageUtil;
+import com.winnerbook.web.utils.ValidateWebUtils;
 
 //查询banner图
 @Controller
@@ -58,13 +56,14 @@ public class IndexH5Web {
 	@Autowired
 	private BookListTypeService bookListTypeService;
 	
+	@Autowired
+	private CourseTypeService courseTypeService;
+	
 	//首页进入
 	@RequestMapping(value="index_h5.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String index_h5(String busId,String pageIndex,@RequestParam("callback") String callback){//busId即为企业用户id(userId)  type=1h5  2:pc
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		JSONResponse result = new JSONResponse();
 		Map<String,Object> resultData = new HashMap<>();
 		//查询banner图
@@ -75,9 +74,9 @@ public class IndexH5Web {
 		resultData.put("bannerList", bannerList);
 		
 		//最新课程...
-		Map<String, Object> parameter_course  = new HashMap<String, Object>();
+		/*Map<String, Object> parameter_course  = new HashMap<String, Object>();
 		Map<String, Object> course = courseService.getCourses(PageUtil.getParam(parameter_course, busId, pageIndex));
-		resultData.put("course", course);
+		resultData.put("course", course);*/
 		
 		result.setSuccess(true);
 		result.setMsg("获取banenr图成功");
@@ -85,16 +84,33 @@ public class IndexH5Web {
 		return callback+"("+JSONObject.fromObject(result)+")";
 	}
 	
-	//点击课程列表
+	//查询该企业下的课程包和免费课程包
+	@RequestMapping(value="getCourseTypes.jhtml",produces = {"application/json;charset=utf-8"})
+	@ResponseBody
+	public String getCourseTypes(String busId,@RequestParam("callback") String callback){
+		JSONResponse result = new JSONResponse();
+		busId = ValidateWebUtils.defaultBus(busId);
+		List<Map<String, Object>> courseTypeList = courseTypeService.getCourseTypes(busId);
+		
+		result.setSuccess(true);
+		result.setMsg("获取课程类型成功");
+		result.setData(courseTypeList);
+		return callback+"("+JSONObject.fromObject(result)+")";
+	}
+	
+	//点击精选课程
 	@RequestMapping(value="getCourses.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
-	public String getCourses(String busId,String pageIndex,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+	public String getCourses(String busId,String courseTypeId,String pageIndex,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
+		/*if(!StringUtils.isNotBlank(courseTypeId)){
+			result.setMsg("课程类型为必输项");
+			return callback+"("+JSONObject.fromObject(result)+")";
+		}*/
+		busId = ValidateWebUtils.defaultBus(busId);
 		//最新课程...
 		Map<String, Object> parameter_course  = new HashMap<String, Object>();
+		parameter_course.put("courseTypeId", courseTypeId);
 		Map<String, Object> courseList = courseService.getCourses(PageUtil.getParam(parameter_course, busId, pageIndex));
 		
 		result.setSuccess(true);
@@ -108,9 +124,7 @@ public class IndexH5Web {
 	@RequestMapping(value="getMainGuests.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String getMainGuests(String busId,String pageIndex,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		JSONResponse result = new JSONResponse();
 		//最新课程...
 		Map<String, Object> parameter_course  = new HashMap<String, Object>();
@@ -127,9 +141,7 @@ public class IndexH5Web {
 	@RequestMapping(value="getBooks.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String getBooks(String busId,String userId,String pageIndex,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		JSONResponse result = new JSONResponse();
 		/*Map<String, Object> parameter  = new HashMap<String, Object>();
 		parameter.put("userId", userId);
@@ -152,9 +164,7 @@ public class IndexH5Web {
 	@RequestMapping(value="getBusBooks.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String getBusBooks(String busId,String userId,String pageIndex,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		JSONResponse result = new JSONResponse();
 		Map<String, Object> parameter  = new HashMap<String, Object>();
 		parameter.put("userId", userId);
@@ -170,9 +180,7 @@ public class IndexH5Web {
 	@RequestMapping(value="getVideos.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String getVideos(String busId,String pageIndex,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		JSONResponse result = new JSONResponse();
 		Map<String, Object> parameter  = new HashMap<String, Object>();
 		//根据bus查询
@@ -188,9 +196,7 @@ public class IndexH5Web {
 	@RequestMapping(value="getList.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String getList(@RequestParam String list_type,String busId,String pageIndex,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		JSONResponse result = new JSONResponse();
 		Map<String, Object> parameter  = new HashMap<String, Object>();
 		parameter.put("busId",busId);
@@ -217,9 +223,7 @@ public class IndexH5Web {
 	@ResponseBody
 	public String getBlocks(String busId,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		
 		Map<String, Object> resultData  = new HashMap<String, Object>();//返回数据
 		
@@ -249,9 +253,7 @@ public class IndexH5Web {
 	@RequestMapping(value="getDetail.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
 	public String getDetail(@RequestParam String list_type,String id,String busId,String pageIndex,@RequestParam("callback") String callback){
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		JSONResponse result = new JSONResponse();
 		Map<String, Object> parameter  = new HashMap<String, Object>();
 		parameter.put("busId",busId);
@@ -273,9 +275,5 @@ public class IndexH5Web {
 		result.setData(map);
 		return callback+"("+JSONObject.fromObject(result)+")";
 	}
-	
-	
-	//我的学习  登录以后...
-	
 	
 }

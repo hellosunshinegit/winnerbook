@@ -35,6 +35,8 @@ public class Article {
 
 	private String blockStr;
 
+	private Integer articleSort;
+
 	public Integer getArticleId() {
 		return articleId;
 	}
@@ -173,6 +175,14 @@ public class Article {
 
 	public void setArticleImg(String articleImg) {
 		this.articleImg = articleImg;
+	}
+
+	public Integer getArticleSort() {
+		return articleSort;
+	}
+
+	public void setArticleSort(Integer articleSort) {
+		this.articleSort = articleSort;
 	}
 
 }

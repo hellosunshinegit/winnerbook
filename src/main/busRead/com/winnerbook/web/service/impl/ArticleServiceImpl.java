@@ -23,6 +23,7 @@ import com.winnerbook.web.dto.Article;
 import com.winnerbook.web.dto.ArticleBlock;
 import com.winnerbook.web.dto.ArticleTag;
 import com.winnerbook.web.dto.ArticleType;
+import com.winnerbook.web.dto.Block;
 import com.winnerbook.web.service.ArticleService;
 
 @Service("articleService")
@@ -89,6 +90,10 @@ public class ArticleServiceImpl extends BaseServiceImpl implements ArticleServic
 	
 	@Override
 	public void insert(Article article) {
+		
+		if(StringUtils.isNotBlank(article.getArticleSort()+"")){
+			article.setArticleSort(0);
+		}
 		User sessionUser = getSessionUser();
 		article.setCreateDate(new Date());
 		article.setCreateUserId(Integer.parseInt(sessionUser.getUserId().toString()));
@@ -103,6 +108,7 @@ public class ArticleServiceImpl extends BaseServiceImpl implements ArticleServic
 			String[] tagIds = article.getArticleTagIds().split(",");
 			articleTagDao.insertArticleTag(getArticleTag(tagIds, article.getArticleId()));
 		}
+		
 		
 		logRecord("2","文章添加，："+article.getArticleTitle());
 	}
@@ -172,6 +178,28 @@ public class ArticleServiceImpl extends BaseServiceImpl implements ArticleServic
 		Map<String, Object> map = new HashMap<>();
 		List<Map<String, Object>> articleList = articleDao.getArticles(parameter);
 		int articleCount = articleDao.getArticlesCount(parameter);
+		if(articleCount>0){
+			//获取文章对应的板块的值
+			List<Map<String, Object>> blockList = articleBlockDao.getAllArticleBlock();
+			Map<Integer,Object> blockMap = new HashMap<>();
+			for(Map mapb:blockList){
+				blockMap.put(Integer.parseInt(mapb.get("articleId").toString()), mapb.get("blockStr"));
+			}
+			for(Map<String,Object> articleMap:articleList){
+				if(null!=blockMap.get(Integer.parseInt(articleMap.get("articleId").toString()))){
+					articleMap.put("blockName", blockMap.get(Integer.parseInt(articleMap.get("articleId").toString())));
+				}
+			}
+			
+			if(null!=parameter.get("blockId")){
+				Map<String, Object> parameter_block  = new HashMap<String, Object>();
+				parameter_block.put("blockId", Integer.parseInt(parameter.get("blockId").toString()));
+				Block block = blockDao.findById(parameter_block);
+				if(null!=block){
+					map.put("blockName", block.getBlockName());
+				}
+			}
+		}
 		map.put("articleList", articleList);
 		map.put("articleCount", articleCount);
 		return map;

@@ -35,5 +35,11 @@ public interface CourseTypeService {
 	void update(CourseType courseType);
 	
 	List<CourseType> getCourseTypeAll(Map<String, Object> parameter);
+	List<CourseType> getCourseTypeAdmin(Map<String, Object> parameter);//课程包定制
+	List<CourseType> getCourseTypeAllSelect();//课程列表下拉选项
+	
+	//web端使用，查询某企业下的课程类型
+	List<Map<String, Object>> getCourseTypes(String busId);
+	List<Map<String, Object>> getAdminCourseTypes(String busId,String typeLabelId);
 	
 }

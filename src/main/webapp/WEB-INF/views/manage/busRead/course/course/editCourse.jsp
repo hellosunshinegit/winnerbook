@@ -28,6 +28,12 @@
 		//下拉选择搜索框
 	    $('#courseTypeId').select2();
 	    $('#bookListId').select2();
+	    
+	    if('${course.courseId}'!=null && '${course.courseId}'!=''){
+	    	var typeIds = '${course.courseTypeIds}'.split(",");
+	    	$("#courseTypeId").val(typeIds).trigger('change');
+	    }
+	    
 	});
 	
 	function submitForm(){
@@ -37,6 +43,7 @@
 				alert("主视频地址或者主视频至少输入一项");
 				return false;
 			} */
+			$("#courseTypeIds").val($("#courseTypeId").val().join(","));
 			document.editForm.submit();
 		}
 	}
@@ -51,14 +58,14 @@
 	<form name="editForm" id="editForm" action="<c:if test="${empty(course.courseId)}">${basePath }courseController/addSubmitCourse.html</c:if><c:if test="${!empty(course.courseId)}">${basePath }courseController/updateSubmitCourse.html</c:if>" method="post">
     <input type="hidden" name="courseId" id="courseId" value="${course.courseId }"/>
     <input type="hidden" name="courseStatus" id="courseStatus" value="${course.courseStatus }"/>
+    <input type="hidden" name="courseTypeIds" id="courseTypeIds" value="${course.courseTypeIds }"/>
     <div class="form_main">
     		<dl>
-	            <dt>课程类型：</dt>
+	            <dt><i>*</i>课程类型：</dt>
 	            <dd>
-	            	<select name="courseTypeId" id="courseTypeId" class="courseIdSelect" style="width: 210px;">
-	            		<option value="">---请选择---</option>
+	            	<select name="courseTypeId" id="courseTypeId" class="courseIdSelect" multiple="multiple" style="width: 210px;" require="true" requireMsg="课程类型为必填项!" dataType="Require">
 	            		<c:forEach items="${courseTypeList}" var="item">
-	            			<option value="${item.typeId }" <c:if test="${item.typeId eq course.courseTypeId}"> selected </c:if> >${item.typeName}</option>
+	            			<option value="${item.typeId }" >${item.typeName}</option>
 	            		</c:forEach>
 	            	</select>
 	            	<c:if test="${courseTypeList.size()==0 }">
@@ -92,12 +99,12 @@
 	            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=wbImg&path=course/wb&typeExts=5" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
 				</dd>
 			</dl>
-	        <dl>
+	        <%-- <dl>
 	            <dt><i>*</i>总裁课程类型：</dt>
 	            <dd>
 	                <exp:select code="COURSE_TYPE" name="courseType" id="courseType" value="${course.courseType}"  require="true" requireMsg="课程类型为必填项!" dataType="Require" style="width: 310px;"></exp:select>
 	            </dd>
-	        </dl>
+	        </dl> --%>
 	        <dl>
 	            <dt>描述：</dt>
 	            <dd>
@@ -105,8 +112,8 @@
 	            </dd>
 	        </dl>
 	        <dl>
-	            <dt><i>*</i>主讲嘉宾：</dt>
-	            <dd><input type="text" name="mainGuest" id="mainGuest" value="${course.mainGuest }" maxlength="50" require="true" requireMsg="主讲嘉宾为必填项!" dataType="Require" /></dd>
+	            <dt>主讲嘉宾：</dt>
+	            <dd><input type="text" name="mainGuest" id="mainGuest" value="${course.mainGuest }" maxlength="50" /></dd>
 	        </dl>
 	        <dl>
 	            <dt>主嘉宾介绍：</dt>
@@ -130,8 +137,8 @@
 	            </dd>
 	        </dl>
 	        <dl>
-	            <dt><i>*</i>主讲嘉宾职务：</dt>
-	            <dd><input type="text" name="mainGuestPost" id="mainGuestPost" value="${course.mainGuestPost }" require="true" requireMsg="主讲嘉宾职务为必填项!" dataType="Require"/></dd>
+	            <dt>主讲嘉宾职务：</dt>
+	            <dd><input type="text" name="mainGuestPost" id="mainGuestPost" value="${course.mainGuestPost }"/></dd>
 	        </dl>
 	        <dl>
 	            <dt>对话嘉宾：</dt>
@@ -146,9 +153,9 @@
 	            <dd><input type="text" name="presenter" id="presenter" value="${course.presenter }" maxlength="50"/></dd>
 	        </dl>
 	        <dl>
-	            <dt><i>*</i>推荐书目：</dt>
+	            <dt>推荐书目：</dt>
 	            <dd>
-	            	<select name="bookListId" id="bookListId" style="width: 210px;" require="true" requireMsg="推荐书目为必填项!" dataType="Require">
+	            	<select name="bookListId" id="bookListId" style="width: 210px;">
 	            		<option value="">---请选择---</option>
 	            		<c:forEach items="${bookList}" var="item">
 	            			<option value="${item.bookId }" <c:if test="${item.bookId eq course.bookListId}"> selected </c:if> >${item.bookName}</option>
@@ -199,7 +206,7 @@
 	            <dt>主视频地址：</dt>
 	            <dd>
 	            	<input type="text" name="mainVideoLink" id="mainVideoLink" value="${course.mainVideoLink}" maxlength="200" style="width: 300px;"/>
-	            	<span style="color: red;">&nbsp;&nbsp;&nbsp;&nbsp;注：主视频太大建议直接输入视频地址。主视频地址和视频至少输入一项哦!</span>
+	            	<span style="color: red;">&nbsp;&nbsp;&nbsp;&nbsp;注：主视频太大建议直接输入视频地址。<!-- 主视频地址和视频至少输入一项哦! --></span>
 	            </dd>
 	        </dl>
 	        <dl>
@@ -230,6 +237,12 @@
 	            <dt>主视频时长：</dt>
 	            <dd>
 		            <input type="text" name="mainVideoTime" id="mainVideoTime" value="${course.mainVideoTime }" maxlength="20" />
+	            </dd>
+	        </dl>
+	        <dl>
+	            <dt>排序：</dt>
+	            <dd>
+	            	<input type="number" name="courseSort" id="courseSort" value="${course.courseSort }" />
 	            </dd>
 	        </dl>
 	        <dl>

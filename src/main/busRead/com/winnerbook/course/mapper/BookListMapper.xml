@@ -123,8 +123,8 @@
   </select>
   
   <!-- 根据bookName查询 -->
-  <select id="getBookListByName" parameterType="hashmap" resultType="com.winnerbook.course.dto.BookList">
-  	select book_id bookId, book_name bookName from bus_book_list where book_status=1 and book_name = #{bookName}
+  <select id="getBookListByName" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from bus_book_list where book_status=1 and book_name = #{bookName}
   </select>
   
   <select id="getBookListByNameLogin" parameterType="hashmap" resultType="com.winnerbook.course.dto.BookList">
@@ -184,19 +184,18 @@
     where blu_id = #{bluId,jdbcType=INTEGER}
   </update>
   
-  
   <!-- web端使用   企业端书籍列表 -->
   <select id="getBooks" parameterType="hashmap" resultType="hashmap">
   	select * from (
 	select 0 bluId,bl.book_id bookId, bl.book_name bookName, bl.book_author bookAuthor, bl.book_class bookClass,bl.book_img bookImg,bl.book_content_des bookContentDes,bl.create_date,c.course_id courseId,c.main_guest mainGuest
 	from bus_book_list bl left join bus_course c on bl.book_id=c.book_list_id where book_status=1
-	  	 <if test="userId != null and userId  != '' "> and FIND_IN_SET(bl.create_user_id,getChildrenUser(${busId}))  </if>
+	  	 <if test="busId != null and busId  != '' "> and FIND_IN_SET(bl.create_user_id,getChildrenUser(${busId}))  </if>
 	union 
 	select blu.blu_id bluId,bl.book_id bookId,blu.book_name bookName,blu.book_author bookAuthor,blu.book_class bookClass,blu.book_img bookImg,blu.book_content_des bookContentDes,blu.create_date,c.course_id courseId,c.main_guest mainGuest
 	from bus_book_list_user_id blu left join bus_book_list bl on blu.book_list_id=bl.book_id 
 	left join bus_course c on bl.book_id=c.book_list_id
 	where 1=1 
-	<if test="userId != null and userId  != '' "> and  FIND_IN_SET(blu.user_id,getChildrenUser(${busId}))</if>
+	<if test="busId != null and busId  != '' "> and  FIND_IN_SET(blu.user_id,getChildrenUser(${busId}))</if>
 	) a order by courseId desc,create_date desc
   	<if test="start != null "> limit ${start},${limit} </if>
   </select>
@@ -204,10 +203,10 @@
   <select id="getBooksCount" parameterType="hashmap" resultType="java.lang.Integer">
   	select sum(count) from (
 		select count(1) count from bus_book_list bl left join bus_course c on bl.book_id=c.book_list_id where book_status=1  
-		<if test="userId != null and userId  != '' "> and FIND_IN_SET(bl.create_user_id,getChildrenUser(${busId})) </if>
+		<if test="busId != null and busId  != '' "> and FIND_IN_SET(bl.create_user_id,getChildrenUser(${busId})) </if>
 		union 
 		select count(1) count from bus_book_list_user_id blu left join bus_course c on blu.book_list_id=c.book_list_id where 1=1
-		<if test="userId != null and userId  != '' "> and FIND_IN_SET(blu.user_id,getChildrenUser(${busId})) </if>
+		<if test="busId != null and busId  != '' "> and FIND_IN_SET(blu.user_id,getChildrenUser(${busId})) </if>
 	) a
   </select>
   

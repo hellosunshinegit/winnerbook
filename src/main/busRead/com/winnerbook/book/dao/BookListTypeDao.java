@@ -32,4 +32,12 @@ public interface BookListTypeDao {
 	List<Map<String, Object>> getBookListTypes(Map<String, Object> parameter);
 	
 	int getBookListTypesCount(Map<String, Object> parameter);
+	
+	List<Map<String, Object>> getBusBookListTypes(Map<String, Object> parameter);
+	
+	int getBusBookListTypesCount(Map<String, Object> parameter);
+	
+	int getBookNameByUserId(Map<String, Object> parameter);
+	
+	
 }

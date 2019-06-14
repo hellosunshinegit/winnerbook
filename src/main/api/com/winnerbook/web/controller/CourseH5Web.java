@@ -1,6 +1,5 @@
 package com.winnerbook.web.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,13 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.winnerbook.base.common.JSONResponse;
-import com.winnerbook.course.dto.CourseComment;
 import com.winnerbook.course.service.CourseCommentService;
 import com.winnerbook.course.service.CourseService;
 import com.winnerbook.web.service.ClickInfoService;
 import com.winnerbook.web.service.CourseCommentServiceWeb;
-import com.winnerbook.web.utils.ConstantWebUtils;
 import com.winnerbook.web.utils.PageUtil;
+import com.winnerbook.web.utils.ValidateWebUtils;
 
 @Controller
 public class CourseH5Web {
@@ -45,9 +43,7 @@ public class CourseH5Web {
 	@ResponseBody
 	public String getCourseDetail(@RequestParam String courseId,String busId,String userId,String type,HttpServletRequest request,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		if("2".equals(type)){//记录导师点击次数
 			clickInfoService.mainGuestClick(userId, courseId, request);
 		}
@@ -76,9 +72,7 @@ public class CourseH5Web {
 	@ResponseBody
 	public String getCourseComments(String courseId,String busId,String userId,String pageIndex,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		
 		Map<String, Object> parameter = new HashMap<String, Object>();
 		parameter.put("courseId", courseId);
@@ -96,9 +90,7 @@ public class CourseH5Web {
 	@ResponseBody
 	public String addCourseComments(@RequestParam String courseId,String busId,String userId,String comment,@RequestParam("callback") String callback){
 		JSONResponse result = new JSONResponse();
-		if(!StringUtils.isNotBlank(busId)){
-			busId = ConstantWebUtils.busIdDefulat;
-		}
+		busId = ValidateWebUtils.defaultBus(busId);
 		if(!StringUtils.isNotBlank(comment)){
 			result.setMsg("评论内容不可为空");
 			return callback+"("+JSONObject.fromObject(result)+")";

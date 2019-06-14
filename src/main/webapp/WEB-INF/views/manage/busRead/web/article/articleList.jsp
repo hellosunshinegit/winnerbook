@@ -67,6 +67,7 @@
 				<td>所属版块</td>
 				<td>推送频道</td>
 				<td>状态</td>
+				<td>排序</td>
 				<td>创建时间</td>
 				<td>创建人</td>
 				<td>操作</td>
@@ -83,6 +84,7 @@
 						<td>${item.blockStr}</td>
 						<td><exp:code code="CHANNEL" value="${item.articleChannel }"></exp:code> </td>
 						<td><a href="javascript:updateStatue('${item.articleId }','${item.articleStatus }')" style="color: blue;"><exp:code code="ARTICLE_STATUS" value="${item.articleStatus }"></exp:code></a></td>
+						<td>${item.articleSort}</td>
 						<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
 						<td>${item.createUserName}</td>
 						<td>

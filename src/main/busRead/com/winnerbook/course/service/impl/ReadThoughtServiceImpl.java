@@ -77,7 +77,7 @@ public class ReadThoughtServiceImpl extends BaseServiceImpl implements ReadThoug
 	@Override
 	public void insert(ReadThought readThought) {
 				
-		readThought = getReadThought(readThought, readThought.getBookListName());
+		readThought = getReadThought(readThought, readThought.getBookListName(),bookListDao,bookListService,courseDao);
 		
 		User sessionUser = getSessionUser();
 		readThought.setCreateDate(new Date());
@@ -103,14 +103,14 @@ public class ReadThoughtServiceImpl extends BaseServiceImpl implements ReadThoug
 		readThought2.setThoughtTitle(readThought.getThoughtTitle());
 		readThought2.setUpdateDate(new Date());
 		
-		readThought2 = getReadThought(readThought2,readThought.getBookListName());
+		readThought2 = getReadThought(readThought2,readThought.getBookListName(),bookListDao,bookListService,courseDao);
 		
 		readThoughtDao.update(readThought2);
 		logRecord("3","读后感信息更新，id："+readThought2.getThoughtId());
 	}
 	
 	
-	public ReadThought getReadThought(ReadThought readThought2,String bookName){
+	public ReadThought getReadThought(ReadThought readThought2,String bookName,BookListDao bookListDao,BookListService bookListService,CourseDao courseDao){
 		//根据书籍名称查询对应的书籍id，如果不存在，去爬
 		Map<String, Object> parameter  = new HashMap<String, Object>();
 		parameter.put("bookName", bookName);

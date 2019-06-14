@@ -1,5 +1,6 @@
 package com.winnerbook.book.service.impl;
 
+import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,7 +25,9 @@ import com.winnerbook.book.dto.BookListTypeId;
 import com.winnerbook.book.service.BookListTypeService;
 import com.winnerbook.course.dao.BookListDao;
 import com.winnerbook.course.dto.BookList;
+import com.winnerbook.course.dto.BookListUserId;
 import com.winnerbook.course.service.BookListService;
+import com.winnerbook.course.service.impl.BookListServiceImpl;
 import com.winnerbook.system.dto.User;
 
 @Service("bookListTypeService")
@@ -73,6 +76,7 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		String status = jsonObject.getString("status");
 		String bookTags = jsonObject.getString("bookTags");
 		String typeImg = jsonObject.getString("typeImg");
+		String typeSort = jsonObject.getString("typeSort");
 		
 		BookListType bookListType = new BookListType();
 		bookListType.setTypeName(typeName);
@@ -85,6 +89,7 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		bookListType.setCreateDate(new Date());
 		bookListType.setCreateUserId(Integer.parseInt(sessionUser.getUserId().toString()));
 		bookListType.setCreateUserName(sessionUser.getUserUnitName());
+		bookListType.setTypeSort(!StringUtils.isNotBlank(typeSort)?0:Integer.parseInt(typeSort));
 		bookListTypeDao.insert(bookListType);
 		
 		//添加书籍和标签
@@ -144,6 +149,7 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		String status = jsonObject.getString("status");
 		String bookTags = jsonObject.getString("bookTags");
 		String typeImg = jsonObject.getString("typeImg");
+		String typeSort = jsonObject.getString("typeSort");
 		
 		BookListType bookListType = new BookListType();
 		bookListType.setId(typeId);
@@ -155,6 +161,7 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		bookListType.setStatus(status);
 		bookListType.setTypeImg(typeImg);
 		bookListType.setUpdateDate(new Date());
+		bookListType.setTypeSort(Integer.parseInt(typeSort));
 		bookListTypeDao.update(bookListType);
 		
 		//删除书籍和标签表
@@ -202,6 +209,15 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 				bookListTypeId.setBookListId(bookList.getBookId());
 				bookListTypeId.setCreateDate(new Date());
 				bookListTypeIds.add(bookListTypeId);
+				//判断在书籍库中存在的情况下-是否在此企业中存在，如果在该企业中不存在，则添加到中间表中
+				HashMap<String, Object> hashmap = new HashMap<>();
+				hashmap.put("sessionUser", getSessionUser());
+				hashmap.put("bookName", bookName);
+				int busCount = bookListTypeDao.getBookNameByUserId(hashmap);
+				if(busCount==0){
+					bookListDao.insertBookListUser(new BookListServiceImpl().getBookListUserId(bookList, bookList));
+				}
+				
 			}else{
 				//调用当当网去查下默认获取第一条数据，先插入到书籍表中返回的id放入bookListTypeId中
 				Map<String, Object> mapName = new HashMap<>();
@@ -275,6 +291,16 @@ public class BookListTypeServiceImpl extends BaseServiceImpl implements BookList
 		int bookListCount = bookListTypeDao.getBookListTypesCount(parameter);
 		map.put("bookListType", bookListType);
 		map.put("bookListCount", bookListCount);
+		return map;
+	}
+
+	@Override
+	public Map<String, Object> getBusBookListTypes(Map<String, Object> parameter) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> bookListType = bookListTypeDao.getBusBookListTypes(parameter);
+		int bookListCount = bookListTypeDao.getBusBookListTypesCount(parameter);
+		map.put("bookBusListType", bookListType);
+		map.put("bookBusListCount", bookListCount);
 		return map;
 	}
 

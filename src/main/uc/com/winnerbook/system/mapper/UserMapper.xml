@@ -44,13 +44,13 @@
   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
   	select count(*) from uc_user where FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId}))
  	<if test="userStatue != null and userStatue  != '' ">and USER_STATUE = '${userStatue}' </if>
-	<if test="userName != null and userName  != '' ">and USER_NAME like '%${userName}%' </if>
+	<if test="userName != null and userName  != '' ">and (USER_NAME like '%${userName}%' or user_unit_name like '%${userName}%') </if>
   </select>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
 	 SELECT * FROM uc_user where FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId}))
 	 <if test="userStatue != null and userStatue  != '' ">and USER_STATUE = '${userStatue}' </if>
-	 <if test="userName != null and userName  != '' ">and USER_NAME like '%${userName}%' </if>
+	 <if test="userName != null and userName  != '' ">and (USER_NAME like '%${userName}%' or user_unit_name like '%${userName}%') </if>
 	  order by user_id desc 
 	 <if test="limit != null and limit != ''">
 		limit ${start},${limit} 

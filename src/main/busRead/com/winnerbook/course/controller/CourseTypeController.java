@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.frame.controller.BaseController;
 import com.winnerbook.course.dto.CourseType;
+import com.winnerbook.course.service.CourseTypeLabelService;
 import com.winnerbook.course.service.CourseTypeService;
 import com.winnerbook.system.service.UserService;
 
@@ -33,6 +34,11 @@ public class CourseTypeController extends BaseController{
 	
 	@Autowired
 	private UserService userService;
+	
+	
+	@Autowired
+	private CourseTypeLabelService courseTypeLabelService;
+	
 	
 	private static final Logger logger = LoggerFactory.getLogger(CourseTypeController.class);
 	
@@ -54,6 +60,8 @@ public class CourseTypeController extends BaseController{
 	//点击添加跳转
 	@RequestMapping(value="addCourseType.html")
 	public String addCourseType(ModelMap modelMap){
+		//查询标签列表
+		modelMap.addAttribute("courseTypeLabel", courseTypeLabelService.findCourseTypeLabels());
 		return "manage/busRead/course/courseType/editCourseType";
 	}
 	
@@ -67,6 +75,8 @@ public class CourseTypeController extends BaseController{
 	//点击修改
 	@RequestMapping(value="updateCourseType.html")
 	public String updateCourseType(@RequestParam String typeId,ModelMap modelMap){
+		//查询标签列表
+		modelMap.addAttribute("courseTypeLabel", courseTypeLabelService.findCourseTypeLabels());
 		modelMap.addAttribute("courseType",courseTypeService.findById(typeId));
 		return "manage/busRead/course/courseType/editCourseType";
 	}

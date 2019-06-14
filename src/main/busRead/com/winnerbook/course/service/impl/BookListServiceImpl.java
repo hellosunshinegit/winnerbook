@@ -142,11 +142,11 @@ public class BookListServiceImpl extends BaseServiceImpl implements BookListServ
 		bookListUserId.setBookIsbn(bookList.getBookIsbn());
 		bookListUserId.setBookClass(bookList.getBookClass());
 		
-		if(StringUtils.isNotBlank(bookList.getBookImg())){
+		/*if(StringUtils.isNotBlank(bookList.getBookImg())){
 			String urlPath = FileUtils.saveUrlImg(bookList.getBookImg());
 			bookListUserId.setBookImg(urlPath);
-		}
-		
+		}*/
+		bookListUserId.setBookImg(bookList.getBookImg());
 		bookListUserId.setBookUrl(bookList.getBookUrl());
 		bookListUserId.setBookContentDes(bookList.getBookContentDes());
 		bookListUserId.setBookAuthorDes(bookList.getBookAuthorDes());
@@ -175,22 +175,33 @@ public class BookListServiceImpl extends BaseServiceImpl implements BookListServ
 
 	@Override
 	public void update(BookList bookList) {
-		if(null!=bookList.getBluId() && bookList.getBluId()>0){
-			bookList.setUpdateDate(new Date());
-			if(StringUtils.isNotBlank(bookList.getBookUrl()) && StringUtils.isNotBlank(bookList.getBookImg()) && bookList.getBookImg().indexOf("http")>=0){
-				String urlPath = FileUtils.saveUrlImg(bookList.getBookImg());
-				bookList.setBookImg(urlPath);
-			}
-			bookListDao.updateBookListUser(bookList);
-			logRecord("3","书籍信息中间表更新，id："+bookList.getBluId());
+		List<BookList> bookLists = getBookListByName(bookList.getBookName());//得到已经保存的id，然后存入中间表
+		if(bookLists.size()>0){//系统中已经存在此书，直接存入中间表
+			BookList bookListName = bookLists.get(0);
+			logRecord("2","书籍中间表信息添加："+bookList.getBookName());
+			bookListDao.insertBookListUser(getBookListUserId(bookListName, bookList));
+			
+			//删除原添加的数据  如果getBluId不为空
+			//bookListDao.delete()
+			
 		}else{
-			bookList.setUpdateDate(new Date());
-			if(StringUtils.isNotBlank(bookList.getBookUrl()) && StringUtils.isNotBlank(bookList.getBookImg()) && bookList.getBookImg().indexOf("http")>=0){
-				String urlPath = FileUtils.saveUrlImg(bookList.getBookImg());
-				bookList.setBookImg(urlPath);
+			if(null!=bookList.getBluId() && bookList.getBluId()>0){//删除原添加的数据
+				bookList.setUpdateDate(new Date());
+				if(StringUtils.isNotBlank(bookList.getBookUrl()) && StringUtils.isNotBlank(bookList.getBookImg()) && bookList.getBookImg().indexOf("http")>=0){
+					String urlPath = FileUtils.saveUrlImg(bookList.getBookImg());
+					bookList.setBookImg(urlPath);
+				}
+				bookListDao.updateBookListUser(bookList);
+				logRecord("3","书籍信息中间表更新，id："+bookList.getBluId());
+			}else{
+				bookList.setUpdateDate(new Date());
+				if(StringUtils.isNotBlank(bookList.getBookUrl()) && StringUtils.isNotBlank(bookList.getBookImg()) && bookList.getBookImg().indexOf("http")>=0){
+					String urlPath = FileUtils.saveUrlImg(bookList.getBookImg());
+					bookList.setBookImg(urlPath);
+				}
+				bookListDao.update(bookList);
+				logRecord("3","书籍信息更新，id："+bookList.getBookId());
 			}
-			bookListDao.update(bookList);
-			logRecord("3","书籍信息更新，id："+bookList.getBookId());
 		}
 	}
 

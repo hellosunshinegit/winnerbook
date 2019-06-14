@@ -60,16 +60,20 @@ public class CourseController extends BaseController{
 	@RequestMapping(value="/courseList.html")
 	public String busInfoList(HttpServletRequest request,Model model, Integer pageIndex,Integer pageSize){
 		String title =request.getParameter("title");
+		String courseTypeId =request.getParameter("courseTypeId");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("title", title);
+		map.put("courseTypeId", courseTypeId);
 		//如果不是admin和企业管理员，则是企业用户，那么需要查询企业用户对应的企业管理员id
 		
 		map.put("sessionUser",getSessionUser());
+		
 		PageDTO<Course> pageDTO  = courseService.listByPage(map, pageIndex,10);//默认每页显示10条数据
  
 		model.addAttribute("pageDTO", pageDTO);
 		//获取微博appid
 		map.put("wxInfo", wxInfoService.getWxInfo("2"));
+		map.put("courseTypeList",courseTypeService.getCourseTypeAllSelect());
 		model.addAllAttributes(map);
 		return "manage/busRead/course/course/courseList";
 	}

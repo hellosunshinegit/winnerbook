@@ -94,7 +94,7 @@ public class UserLoginController {
 			}
 			
 			if(userMapList.size()>1){
-				json.setMsg("您登陆的手机号存在多个个企业中，请选择!");
+				json.setMsg("您登陆的手机号存在多个企业中，请选择!");
 				json.setData(JSONArray.fromObject(userMapList));
 				return json;
 			}  

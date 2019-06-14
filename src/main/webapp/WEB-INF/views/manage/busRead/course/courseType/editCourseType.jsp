@@ -44,15 +44,53 @@
 					</dd>
 				</dl>
 				<dl>
+		            <dt>缩略图：</dt>
+		            <dd>
+		            	<div id="upload_typeImg"></div>
+		            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=typeImg&path=courseType&typeExts=1" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
+		            	<input type="hidden" name="typeImg" id="typeImg" value="${courseType.typeImg }" maxlength="100"/>
+		            	<c:if test="${!empty(courseType.typeImg)}">
+		            		<a href="${basePath}${courseType.typeImg}" target="_blank"><img alt="" src="${basePath}${courseType.typeImg}" width="60" height="60"></a>	
+		            	</c:if>
+		            </dd>
+		        </dl>
+				<c:if test="${sessionUser.userId eq 1 }">
+			        <dl>
+			            <dt>课程类型标签：</dt>
+			            <dd>
+			            	<select name="typeLabelId" id="typeLabelId">
+			            		<option value="">----请选择---</option>
+			            		<c:forEach items="${courseTypeLabel }" var="item">
+				            		<option value="${item.id }" <c:if test="${item.id eq courseType.typeLabelId }">selected="selected"</c:if>>${item.name }</option>
+				            	</c:forEach>
+			            	</select>
+			            </dd>
+			        </dl>
+		        </c:if>
+				<dl>
 					<dt>课程类型描述：</dt>
 					<dd>
 						<textarea rows="8" cols="50" name="typeDesc" id="typeDesc" maxlength="300">${courseType.typeDesc}</textarea>
 					</dd>
 				</dl>
 				 <dl>
-		            <dt><i>*</i>使用状态：</dt>
+		            <dt>使用状态：</dt>
 		            <dd>		
-		                <exp:select code="STATUS" name="typeStatus" id="typeStatus" value="${courseType.typeStatus}"  require="true" requireMsg="使用状态为必填项!" dataType="Require"></exp:select>
+		                <exp:select code="STATUS" name="typeStatus" id="typeStatus" value="${courseType.typeStatus}"></exp:select>
+		            </dd>
+		        </dl>
+		        <c:if test="${sessionUser.userId eq 1 }">
+				 <dl>
+		            <dt>是否免费：</dt>
+		            <dd>		
+		                <exp:select code="COURSE_TYPE_ISFREE" name="typeIsFree" id="typeIsFree" value="${courseType.typeIsFree}"  require="true" requireMsg="使用状态为必填项!" dataType="Require"></exp:select>
+		            </dd>
+		        </dl>
+		        </c:if>
+		        <dl>
+		            <dt>排序：</dt>
+		            <dd>
+		            	<input type="number" name="typeSort" id="typeSort" value="${courseType.typeSort }" />
 		            </dd>
 		        </dl>
 				<dl>

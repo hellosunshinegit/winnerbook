@@ -54,6 +54,9 @@ public interface CourseService {
     Map<String, Object> getCourseDetail(Map<String, Object> parameter);
     
     int updateClickNum(Map<String, Object> parameter);
+    
+    //课程超市列表
+    Map<String, Object> getAdminCourses(Map<String, Object> parameter);
 
 	
 }
