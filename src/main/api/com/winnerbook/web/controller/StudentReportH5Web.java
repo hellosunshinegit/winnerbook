@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.winnerbook.base.common.JSONResponse;
 import com.winnerbook.report.service.StudentReportService;
+import com.winnerbook.system.dto.User;
+import com.winnerbook.system.service.UserService;
 import com.winnerbook.web.utils.PageUtil;
 
 @Controller
@@ -23,6 +25,9 @@ public class StudentReportH5Web {
 	
 	@Autowired
 	private StudentReportService studentReportService;
+	
+	@Autowired
+	private UserService userService;
 
 	//点击我的学习报告 和企业学习报告
 	@RequestMapping(value="getMyReports.jhtml",produces = {"application/json;charset=utf-8"})
@@ -60,6 +65,12 @@ public class StudentReportH5Web {
 		mapResult.put("studentMap", studentMap);
 		mapResult.put("readThougthMap", readThougthMap);
 		mapResult.put("courseCommentMap", courseCommentMap);
+		
+		if(StringUtils.isNotBlank(userId)){
+			 User user = userService.findUserById(userId);
+			 mapResult.put("userName", StringUtils.isNotBlank(user.getUserUnitName())?user.getUserUnitName():"");
+			
+		}
 		
  		result.setSuccess(true);
 		result.setMsg("获取我的报告成功");
