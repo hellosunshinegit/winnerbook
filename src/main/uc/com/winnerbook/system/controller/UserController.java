@@ -60,11 +60,13 @@ public class UserController extends BaseController{
 		String userName =request.getParameter("userName");
 		String userContactMobile =request.getParameter("userContactMobile");
 		String userStatue =request.getParameter("userStatue");
+		String busName =request.getParameter("busName");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("userName", userName);
 		map.put("userContactMobile", userContactMobile);
 		map.put("userStatue", userStatue);
 		map.put("sessionUser",getSessionUser());
+		map.put("busName",busName);
 		PageDTO<User> pageDTO  = userService.listByPage(map, pageIndex,10);
  
 		model.addAttribute("pageDTO", pageDTO);

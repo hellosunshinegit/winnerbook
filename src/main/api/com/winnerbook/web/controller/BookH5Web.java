@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.winnerbook.base.common.JSONResponse;
+import com.winnerbook.book.dto.BookListType;
 import com.winnerbook.book.service.BookListTypeService;
 import com.winnerbook.book.service.BookTypeLabelService;
 import com.winnerbook.course.service.BookListService;
@@ -73,16 +74,20 @@ public class BookH5Web {
 	@ResponseBody
 	public String getBookLists(String busId,String pageIndex,String typeId,String userId,HttpServletRequest request,@RequestParam("callback") String callback){
 		busId = ValidateWebUtils.defaultBus(busId);
-		
+		Map<String, Object> bookList = new HashMap<>();
 		JSONResponse result = new JSONResponse();
+		if("0".equals(typeId)){//是企业书籍中没有归类的书籍列表
+			Map<String, Object> parameter  = new HashMap<String, Object>();
+			bookList = bookListService.getBooks(PageUtil.getParam(parameter, busId, pageIndex));
+		}else{
+			//记录书单点击次数
+			clickInfoService.bookListTypeClick(userId, typeId, request);
+			
+			Map<String, Object> parameter  = new HashMap<String, Object>();
+			parameter.put("typeId", typeId);
+			bookList = bookListService.getLabelBookLists(PageUtil.getParam(parameter, busId, pageIndex));
+		}
 		
-		//记录书单点击次数
-		clickInfoService.bookListTypeClick(userId, typeId, request);
-		
-		Map<String, Object> parameter  = new HashMap<String, Object>();
-		parameter.put("typeId", typeId);
-		Map<String, Object> bookList = bookListService.getLabelBookLists(PageUtil.getParam(parameter, busId, pageIndex));
-	
 		result.setSuccess(true);
 		result.setMsg("获取书籍信息成功");
 		result.setData(bookList);
@@ -120,6 +125,10 @@ public class BookH5Web {
 		
 		Map<String, Object> parameter_bookTypeList  = new HashMap<String, Object>();
 		Map<String, Object> bookTypes = bookListTypeService.getBusBookListTypes(PageUtil.getParam(parameter_bookTypeList, busId, pageIndex));
+		//获取查询企业书单中是否有未归类的书籍，如果有，则直接归类到企业全员书单中  2019-06-24
+		Map<String, Object> parameter  = new HashMap<String, Object>();
+		Map<String, Object> bookList = bookListService.getBooks(PageUtil.getParam(parameter, busId, pageIndex));
+		bookTypes.put("isDefaultBookList",null!=bookList.get("bookCount")?bookList.get("bookCount"):0);
 		result.setData(bookTypes);
  		result.setSuccess(true);
  		result.setMsg("获取企业书单成功");

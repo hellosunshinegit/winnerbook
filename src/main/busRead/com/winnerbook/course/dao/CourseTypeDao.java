@@ -42,4 +42,6 @@ public interface CourseTypeDao {
     Map<String, Object> getFreeCouresType();
     
     List<Map<String, Object>> findBusCourseType(Map<String, Object> parameter);
+    
+    List<Map<String, Object>> getCoursePackage(Map<String, Object> parameter);
 }

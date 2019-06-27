@@ -101,7 +101,7 @@
   
   <!-- 定制课程 -->
   <select id="getCourseTypeAdmin"  parameterType="hashmap" resultType="com.winnerbook.course.dto.CourseType">
-  	select type_id typeId, type_name typeName,create_user_name createUserName from bus_course_type where type_status=1 
+  	select type_id typeId, type_name typeName,create_user_name createUserName from bus_course_type where type_status=1
   	and create_user_id=1
   	order by type_id desc
   </select>
@@ -125,7 +125,7 @@
   
   <!-- 查询admin课程类型 -->
   <select id="getAdminCourseTypes" parameterType="hashmap" resultType="hashmap">
-  	select type_id typeId, type_name typeName,type_img typeImg from bus_course_type where type_status=1 
+  	select type_id typeId, type_name typeName,type_img typeImg from bus_course_type where type_status=1
   	and create_user_id=1 and type_label_id = #{typeLabelId}
   	order by type_sort desc,type_id desc
   </select>
@@ -133,6 +133,13 @@
   <!-- 查询对应的企业的课程包权限 -->
   <select id="findBusCourseType" parameterType="hashmap" resultType="hashmap">
   	select user_id userId,course_type_id courseTypeId from uc_user_bus_course_type where user_id=#{busId}
+  </select>
+  
+  <!-- 企业调研查询的课程包 -->
+    <select id="getCoursePackage"  parameterType="hashmap" resultType="hashmap">
+  	select type_id typeId, type_name typeName from bus_course_type where type_status=1
+  	and create_user_id=1
+  	order by type_sort desc,type_id desc
   </select>
   
   

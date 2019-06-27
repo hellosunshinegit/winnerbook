@@ -184,7 +184,7 @@
     where blu_id = #{bluId,jdbcType=INTEGER}
   </update>
   
-  <!-- web端使用   企业端书籍列表 -->
+  <!-- web端使用   企业端书籍列表,不在书单中归类的书籍 -->
   <select id="getBooks" parameterType="hashmap" resultType="hashmap">
   	select * from (
 	select 0 bluId,bl.book_id bookId, bl.book_name bookName, bl.book_author bookAuthor, bl.book_class bookClass,bl.book_img bookImg,bl.book_content_des bookContentDes,bl.create_date,c.course_id courseId,c.main_guest mainGuest
@@ -194,20 +194,23 @@
 	select blu.blu_id bluId,bl.book_id bookId,blu.book_name bookName,blu.book_author bookAuthor,blu.book_class bookClass,blu.book_img bookImg,blu.book_content_des bookContentDes,blu.create_date,c.course_id courseId,c.main_guest mainGuest
 	from bus_book_list_user_id blu left join bus_book_list bl on blu.book_list_id=bl.book_id 
 	left join bus_course c on bl.book_id=c.book_list_id
-	where 1=1 
+	where 1=1
 	<if test="busId != null and busId  != '' "> and  FIND_IN_SET(blu.user_id,getChildrenUser(${busId}))</if>
-	) a order by courseId desc,create_date desc
+	) a where 1=1 and bookId not in (select book_list_id from bus_book_list_type_id where type_id in (select id from bus_book_list_type where create_user_id=${busId}))
+	order by courseId desc,create_date desc
   	<if test="start != null "> limit ${start},${limit} </if>
   </select>
   <!-- 共多少条数 -->
   <select id="getBooksCount" parameterType="hashmap" resultType="java.lang.Integer">
-  	select sum(count) from (
-		select count(1) count from bus_book_list bl left join bus_course c on bl.book_id=c.book_list_id where book_status=1  
+  	select count(*) from (
+		select bl.book_id bookId from bus_book_list bl left join bus_course c on bl.book_id=c.book_list_id where book_status=1  
 		<if test="busId != null and busId  != '' "> and FIND_IN_SET(bl.create_user_id,getChildrenUser(${busId})) </if>
 		union 
-		select count(1) count from bus_book_list_user_id blu left join bus_course c on blu.book_list_id=c.book_list_id where 1=1
+		select bl.book_id bookId from bus_book_list_user_id blu left join bus_book_list bl on blu.book_list_id=bl.book_id 
+		left join bus_course c on bl.book_id=c.book_list_id
+		where 1=1
 		<if test="busId != null and busId  != '' "> and FIND_IN_SET(blu.user_id,getChildrenUser(${busId})) </if>
-	) a
+	) a where 1=1 and bookId not in (select book_list_id from bus_book_list_type_id where type_id in (select id from bus_book_list_type where create_user_id=${busId}))
   </select>
   
   <!-- 书单详情 -->

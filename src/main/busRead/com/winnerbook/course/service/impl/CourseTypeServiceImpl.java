@@ -141,5 +141,11 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
 		return courseTypeDao.getCourseTypeAllSelect(parameter);
 	}
 
+	@Override
+	public List<Map<String, Object>> getCoursePackage() {
+		Map<String, Object> parameter  = new HashMap<String, Object>();
+		return courseTypeDao.getCoursePackage(parameter);
+	}
+
 
 }

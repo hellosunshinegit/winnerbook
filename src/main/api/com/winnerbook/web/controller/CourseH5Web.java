@@ -58,6 +58,7 @@ public class CourseH5Web {
 		Map<String, Object> parameter = new HashMap<String, Object>();
 		parameter.put("busId", busId);
 		parameter.put("courseId", courseId);
+		parameter.put("userId", userId);
  		Map<String, Object> courseDetail = courseService.getCourseDetail(parameter);
 		
  		result.setSuccess(true);
@@ -111,6 +112,5 @@ public class CourseH5Web {
 		result.setData(courseComment);
 		return callback+"("+JSONObject.fromObject(result)+")";
 	}
-	
 	
 }

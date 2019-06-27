@@ -34,7 +34,7 @@ public class CourseType implements Serializable {
 	private Integer typeSort;
 	
 	private String typeIsFree;
-
+	
 	public Integer getTypeId() {
 		return typeId;
 	}
@@ -139,6 +139,5 @@ public class CourseType implements Serializable {
 	public void setTypeIsFree(String typeIsFree) {
 		this.typeIsFree = typeIsFree;
 	}
-
 	
 }

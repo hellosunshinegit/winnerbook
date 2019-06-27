@@ -42,4 +42,6 @@ public interface CourseTypeService {
 	List<Map<String, Object>> getCourseTypes(String busId);
 	List<Map<String, Object>> getAdminCourseTypes(String busId,String typeLabelId);
 	
+	List<Map<String, Object>> getCoursePackage();
+	
 }

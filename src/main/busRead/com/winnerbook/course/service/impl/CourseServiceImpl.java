@@ -37,6 +37,7 @@ import com.winnerbook.course.dto.CourseType;
 import com.winnerbook.course.dto.CourseTypeId;
 import com.winnerbook.course.dto.StudentRecord;
 import com.winnerbook.course.service.CourseService;
+import com.winnerbook.system.dao.UserDao;
 import com.winnerbook.system.dto.User;
 import com.winnerbook.system.service.UserService;
 
@@ -63,6 +64,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 	
 	@Autowired
 	private	UserService userService;
+	
+	@Autowired
+	private UserDao userDao;
 
 	@Override
 	public Course findById(String courseId) {
@@ -368,33 +372,35 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 			//首先判断是不是免费课程，如果是免费课程，直接是0，可以直接观看
 			Map<String, Object> freeCourseType = courseTypeDao.getFreeCouresType();
 			if(null!=freeCourseType.get("typeId") && courseTypeIds.equals(freeCourseType.get("typeId")+"")){
-				couresMap.put("isBuy", "0");//已购买
+				couresMap.put("isBuy", "0");//免费课程，可以直接看
 			}else{
-				//查询企业id对应购买的课程
-				Map<String, Object> map_courseType = new HashMap<>();
-				map_courseType.put("busId", busId);
-				List<Map<String, Object>> courseTypeList = courseTypeDao.findBusCourseType(map_courseType);
-				Map<String, Object> bus_courseType = new HashMap<>();
-				for(Map<String, Object> courseType:courseTypeList){
-					bus_courseType.put(courseType.get("courseTypeId")+"",courseType.get("courseTypeId")+"");
-				}
-				
-				
-				if(StringUtils.isNotBlank(courseTypeIds)){
-					String[] courseTypeIdsArray = courseTypeIds.split(",");
+				//必须要登录
+				if(StringUtils.isNotBlank(parameter.get("userId")+"")){
+					//查询企业id对应购买的课程
+					Map<String, Object> map_courseType = new HashMap<>();
+					map_courseType.put("busId", busId);
+					List<Map<String, Object>> courseTypeList = courseTypeDao.findBusCourseType(map_courseType);
+					Map<String, Object> bus_courseType = new HashMap<>();
+					for(Map<String, Object> courseType:courseTypeList){
+						bus_courseType.put(courseType.get("courseTypeId")+"",courseType.get("courseTypeId")+"");
+					}
 					int isLook = 0;
-					for(int j = 0;j<courseTypeIdsArray.length;j++){ //比较该企业是否买了这个课程对应的课程包
-						if(null!=bus_courseType.get(courseTypeIdsArray[j]+"")){
-							isLook++;
+					if(StringUtils.isNotBlank(courseTypeIds)){
+						String[] courseTypeIdsArray = courseTypeIds.split(",");
+						for(int j = 0;j<courseTypeIdsArray.length;j++){ //比较该企业是否买了这个课程对应的课程包
+							if(null!=bus_courseType.get(courseTypeIdsArray[j]+"")){
+								isLook++;
+							}
 						}
 					}
-					if(isLook>0){
+					
+					//查询该企业对应的登录用户是否是该企业的用户，如果不是，则不可以查看
+					Map<String, Object> userMap = userDao.isBelongBus(parameter);
+					if(null!=userMap && isLook>0){//证明企业购买了课程（isLook>0） 并且登录的人也是此企业的人
 						couresMap.put("isBuy", "0");//已购买
 					}else{
 						couresMap.put("isBuy", "1");//未购买
 					}
-				}else{
-					couresMap.put("isBuy", "1");//未购买
 				}
 			}
 		}

@@ -37,6 +37,10 @@ public class Article {
 
 	private Integer articleSort;
 
+	private String wbTitle;
+	
+	private String wbImg;
+	
 	public Integer getArticleId() {
 		return articleId;
 	}
@@ -184,5 +188,22 @@ public class Article {
 	public void setArticleSort(Integer articleSort) {
 		this.articleSort = articleSort;
 	}
+
+	public String getWbTitle() {
+		return wbTitle;
+	}
+
+	public void setWbTitle(String wbTitle) {
+		this.wbTitle = wbTitle;
+	}
+
+	public String getWbImg() {
+		return wbImg;
+	}
+
+	public void setWbImg(String wbImg) {
+		this.wbImg = wbImg;
+	}
+	
 
 }

@@ -21,6 +21,7 @@ import com.winnerbook.web.service.ArticleService;
 import com.winnerbook.web.service.ArticleTypeService;
 import com.winnerbook.web.service.BlockService;
 import com.winnerbook.web.service.TagsService;
+import com.winnerbook.wx.service.WxInfoService;
 
 /**
  * 文章信息
@@ -42,6 +43,9 @@ public class ArticleController extends BaseController{
 	@Autowired
 	private BlockService blockService;
 	
+	@Autowired
+	private WxInfoService wxInfoService;
+	
 	private static final Logger logger = LoggerFactory.getLogger(ArticleController.class);
 	
 	//查询列表
@@ -55,6 +59,8 @@ public class ArticleController extends BaseController{
 		PageDTO<Article> pageDTO  = articleService.listByPage(map, pageIndex,10);//默认每页显示10条数据
  
 		model.addAttribute("pageDTO", pageDTO);
+		//获取微博appid
+		map.put("wxInfo", wxInfoService.getWxInfo("2"));
 		model.addAllAttributes(map);
 		return "manage/busRead/web/article/articleList";
 	}

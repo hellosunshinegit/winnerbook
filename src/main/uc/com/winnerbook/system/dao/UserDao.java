@@ -102,4 +102,7 @@ public interface UserDao {
 	User getUserByUserBus(Map<String,Object> parameter);
 	
 	User isExistsByBusId(Map<String,Object> parameter);
+	
+	//查询该用户是否属于这个企业的员工，排除体验用户
+	Map<String,Object> isBelongBus(Map<String,Object> parameter);
 }

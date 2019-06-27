@@ -81,4 +81,10 @@ public class CourseTypeDaoImpl  extends BaseDAO implements CourseTypeDao{
 		return this.sqlSession.selectOne(COURSETYPE_MAPPER+"getFreeCouresType");
 	}
 
+	@Override
+	public List<Map<String, Object>> getCoursePackage(
+			Map<String, Object> parameter) {
+		return this.sqlSession.selectList(COURSETYPE_MAPPER+"getCoursePackage",parameter);
+	}
+
 }

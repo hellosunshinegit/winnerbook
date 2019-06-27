@@ -37,6 +37,7 @@ import com.winnerbook.course.service.CourseService;
 import com.winnerbook.system.dto.User;
 import com.winnerbook.system.service.UserService;
 import com.winnerbook.web.dto.News;
+import com.winnerbook.web.service.ArticleService;
 import com.winnerbook.web.service.NewsService;
 import com.winnerbook.wx.dao.WxInfoDao;
 import com.winnerbook.wx.dto.WxInfo;
@@ -69,6 +70,9 @@ public class WxInfoServiceImpl extends BaseServiceImpl implements WxInfoService{
 	
 	@Autowired
 	private BookListTypeService bookListTypeService;
+	
+	@Autowired
+	private ArticleService articleService;
 	
 	@Override
 	public WxInfo getWxInfo(String id) {
@@ -195,7 +199,13 @@ public class WxInfoServiceImpl extends BaseServiceImpl implements WxInfoService{
 			//发微博
 			title = (StringUtils.isNotBlank(bookListType.getWbTitle())?bookListType.getWbTitle():bookListType.getTypeName())+"\n请点击"+ConstantUtils.H5_URL+"page/list/bookList.html?busId="+user.getBelongBusUserId()+"&userId=&typeId="+bookListType.getId()+"&sourse=wb";
 			pic = bookListType.getWbImg();
+		}else if("article".equals(type)){
+			Map<String, Object> articleMap = articleService.findById(id);
+			User user = userService.findUserById(articleMap.get("createUserId")+"");
+			title = (StringUtils.isNotBlank(articleMap.get("wbTitle")+"")?articleMap.get("wbTitle")+"":articleMap.get("articleTitle")+"")+"\n请点击"+ConstantUtils.H5_URL+"page/more/articleDetail.html?busId="+user.getBelongBusUserId()+"&userId=&articleId="+articleMap.get("articleId")+""+"&sourse=wb";
+			pic = articleMap.get("wbImg")+"";
 		}
+		
 		
 		status = sendPost(accessToken, title, pic);
 		
@@ -207,13 +217,39 @@ public class WxInfoServiceImpl extends BaseServiceImpl implements WxInfoService{
 		return "";
 	}
 	
+	/*public String sendPost(String accessToken,String title,String filePath){
+		
+		String url = "https://api.weibo.com/2/statuses/share.json";
+		
+		try {
+			String status = URLEncoder.encode(title, "UTF-8");
+			//String status = title;
+			byte[] imgByte = getImageFromNetByUrl(ConstantUtils.BASE_PATH_URL+filePath);
+			
+			//String result = HttpRequestUtil.setWbPost(url, "access_token="+accessToken+"&status="+status+"&pic="+imgByte,imgByte);
+			Map<String, String> map = new HashMap<>();
+			map.put("access_token", accessToken);
+			map.put("status", status);
+			//String result = HttpRequestUtil.sendPostMap(url, map,imgByte);
+			String result = HttpRequestUtil.postFile(url, imgByte, "pic", map);
+			System.out.println("返回结果："+result);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return "";
+	}
+	 
+	*/
 	
 	public Status sendPost(String accessToken,String title,String filePath){
 		System.out.println("开始发送请求。。。。");
 		Status status = null;
 		try {
 			title = title.replace("#", "");//title title限制在140字以内
-			/*if(title.length()>140){
+			/*if(title.length()>140){ 
 				title = title.substring(0, 135)+"...";
 			}*/
 						

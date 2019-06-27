@@ -131,4 +131,9 @@ public class UserDaoImpl extends BaseDAO implements UserDao{
 		return this.sqlSession.selectOne(USER_MAPPER+"isExistsByBusId",parameter);
 	}
 
+	@Override
+	public Map<String, Object> isBelongBus(Map<String, Object> parameter) {
+		return this.sqlSession.selectOne(USER_MAPPER+"isBelongBus",parameter);
+	}
+
 }

@@ -142,11 +142,12 @@ public class BookListServiceImpl extends BaseServiceImpl implements BookListServ
 		bookListUserId.setBookIsbn(bookList.getBookIsbn());
 		bookListUserId.setBookClass(bookList.getBookClass());
 		
-		/*if(StringUtils.isNotBlank(bookList.getBookImg())){
+		if(StringUtils.isNotBlank(bookList.getBookImg()) && bookList.getBookImg().indexOf("http")>=0){
 			String urlPath = FileUtils.saveUrlImg(bookList.getBookImg());
 			bookListUserId.setBookImg(urlPath);
-		}*/
-		bookListUserId.setBookImg(bookList.getBookImg());
+		}else{
+			bookListUserId.setBookImg(bookList.getBookImg());
+		}
 		bookListUserId.setBookUrl(bookList.getBookUrl());
 		bookListUserId.setBookContentDes(bookList.getBookContentDes());
 		bookListUserId.setBookAuthorDes(bookList.getBookAuthorDes());
@@ -217,6 +218,11 @@ public class BookListServiceImpl extends BaseServiceImpl implements BookListServ
 		map.put("bookList", bookList);
 		int bookCount = bookListDao.getBooksCount(parameter);
 		map.put("bookCount", bookCount);
+		
+		BookListType bookListType = new BookListType();
+		bookListType.setTypeName("企业全员书单");
+		map.put("bookListType", bookListType);
+		
 		return map;
 	}
 

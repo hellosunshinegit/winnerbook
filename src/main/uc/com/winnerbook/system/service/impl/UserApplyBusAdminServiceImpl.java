@@ -113,6 +113,7 @@ public class UserApplyBusAdminServiceImpl extends BaseServiceImpl implements Use
 				user_insert.setUserUnitName(userApplyBusAdmin.getApplyBusName()+"-"+user.getUserUnitName());
 				user_insert.setUserStatue("1");
 				user_insert.setIsBusinessAdmin("1");
+				user_insert.setSourceType("5");//通过申请成为企业管理员添加
 				userService.insert(user_insert);
 				
 				//所属企业id

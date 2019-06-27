@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BusLookInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.activity.dto.BusLookInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="bus_name" property="busName" jdbcType="VARCHAR" />
+    <result column="public_num" property="publicNum" jdbcType="VARCHAR" />
+    <result column="homepage_url" property="homepageUrl" jdbcType="VARCHAR" />
+    <result column="emp_num" property="empNum" jdbcType="VARCHAR" />
+    <result column="company_address" property="companyAddress" jdbcType="VARCHAR" />
+    <result column="company_industry" property="companyIndustry" jdbcType="VARCHAR" />
+    <result column="book_list_name" property="bookListName" jdbcType="VARCHAR" />
+    <result column="course_list" property="courseList" jdbcType="VARCHAR" />
+    <result column="read_book_plan" property="readBookPlan" jdbcType="VARCHAR" />
+    <result column="must_read_num" property="mustReadNum" jdbcType="VARCHAR" />
+    <result column="select_read_num" property="selectReadNum" jdbcType="VARCHAR" />
+    <result column="is_read_thought" property="isReadThought" jdbcType="VARCHAR" />
+    <result column="is_read_clud" property="isReadClud" jdbcType="VARCHAR" />
+    <result column="long_read_clud" property="longReadClud" jdbcType="VARCHAR" />
+    <result column="is_share_wb" property="isShareWb" jdbcType="VARCHAR" />
+    <result column="is_read_book" property="isReadBook" jdbcType="VARCHAR" />
+    <result column="is_write_book" property="isWriteBook" jdbcType="VARCHAR" />
+    <result column="is_share_book" property="isShareBook" jdbcType="VARCHAR" />
+    <result column="telphone" property="telphone" jdbcType="VARCHAR" />
+    <result column="is_use_book_yun" property="isUseBookYun" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="status_reason" property="statusReason" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="success_date" property="successDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, bus_name,public_num, homepage_url, emp_num, company_address, company_industry, book_list_name, 
+    course_list, read_book_plan, must_read_num, select_read_num, is_read_thought, is_read_clud, 
+    long_read_clud, is_share_wb, is_read_book, is_write_book, is_share_book, telphone, 
+    is_use_book_yun, status, status_reason, create_date, update_date,success_date
+  </sql>
+  
+  <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
+  	select <include refid="Base_Column_List"/> from bus_look_info where 1=1
+  	<if test="status != null and status  != '' "> and status like '%${status}%' </if>
+	order by id desc 
+	<if test="limit != null and limit  != '' ">
+		limit ${start},${limit}
+	</if>
+  </select>
+  
+   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*) from bus_look_info where 1=1 
+  	<if test="status != null and status  != '' "> and status like '%${status}%' </if>
+  </select>
+  
+   <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List"/>
+    from bus_look_info
+    where id = #{id}
+  </select>
+
+  <insert id="insert" parameterType="com.winnerbook.activity.dto.BusLookInfo" >
+    insert into bus_look_info (bus_name,public_num, homepage_url, 
+      emp_num, company_address, company_industry, 
+      book_list_name, course_list, read_book_plan, 
+      must_read_num, select_read_num, is_read_thought, 
+      is_read_clud, long_read_clud, is_share_wb, 
+      is_read_book, is_write_book, is_share_book, 
+      telphone, is_use_book_yun, status, 
+      status_reason, create_date)
+    values (#{busName,jdbcType=VARCHAR},#{publicNum,jdbcType=VARCHAR}, #{homepageUrl,jdbcType=VARCHAR}, 
+      #{empNum,jdbcType=VARCHAR}, #{companyAddress,jdbcType=VARCHAR}, #{companyIndustry,jdbcType=VARCHAR}, 
+      #{bookListName,jdbcType=VARCHAR}, #{courseList,jdbcType=VARCHAR}, #{readBookPlan,jdbcType=VARCHAR}, 
+      #{mustReadNum,jdbcType=VARCHAR}, #{selectReadNum,jdbcType=VARCHAR}, #{isReadThought,jdbcType=VARCHAR}, 
+      #{isReadClud,jdbcType=VARCHAR}, #{longReadClud,jdbcType=VARCHAR}, #{isShareWb,jdbcType=VARCHAR}, 
+      #{isReadBook,jdbcType=VARCHAR}, #{isWriteBook,jdbcType=VARCHAR}, #{isShareBook,jdbcType=VARCHAR}, 
+      #{telphone,jdbcType=VARCHAR}, #{isUseBookYun,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{statusReason,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="update" parameterType="com.winnerbook.activity.dto.BusLookInfo" >
+    update bus_look_info
+    set 
+      status = #{status,jdbcType=VARCHAR},
+      status_reason = #{statusReason,jdbcType=VARCHAR},
+      success_date = #{successDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
