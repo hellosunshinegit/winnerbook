@@ -89,16 +89,16 @@
     			url:"${basePath}busInfoController/getBusQrcode.html",
     			success:function(data){
     				var content = "";
-    				var busUrl = "<a href="+'<%=ConstantUtils.H5_URL%>?busId='+data.busId+''+" target='_black'> PC预览 </a>";
+    				var busUrl = "PC预览链接：<br/><a href="+'<%=ConstantUtils.H5_URL%>?busId='+data.busId+''+" target='_black' title=点击预览><%=ConstantUtils.H5_URL%>?busId="+data.busId+"</a>";
     				if(data.isNewGenerate=="1"){//新生成
-    					content = "<span style='text-align: center;display: block;margin: 5px;font-size: 14px;'>二维码生成成功</span><div style='text-align: center;margin-top:10px;'>"+busUrl+"<br/><img src="+data.img+" width='200' heigth='200'></div>";
+    					content = "<span style='text-align: center;display: block;margin: 5px;font-size: 14px;'>二维码生成成功</span><div style='text-align: center;margin-top:10px;'><img src="+data.img+" width='200' heigth='200'><br/>"+busUrl+"</div>";
     				}else{
-	    				content="<div style='text-align: center;margin-top:10px;'>"+busUrl+"<br/><img src="+data.img+" width='200' heigth='200'></div>";
+	    				content="<div style='text-align: center;margin-top:10px;'><img src="+data.img+" width='200' heigth='200'><br/>"+busUrl+"</div>";
     				}
     				layer.open({
     				  title:busName!=''?busName:"手机端二维码",
 		   			  type: 1,
-		   			  area: ['300px', '300px'], //宽高
+		   			  area: ['320px', '320px'], //宽高
 		   			  content: content
 		   			});
     			}

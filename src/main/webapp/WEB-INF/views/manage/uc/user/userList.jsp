@@ -29,6 +29,7 @@
 			$("#userName").val("");	
 			$("#userContactMobile").val("");
 			$("#userStatue").val("");
+			$("#busName").val("");
 			//document.searchForm.submit();
 		}
 	//点击重置密码
@@ -68,6 +69,12 @@
             <dd>	
                 <exp:select code="STATUS" name="userStatue"  id="userStatue" value="${userStatue}" headerKey="" headerValue="---请选择---"></exp:select>
 			</dd>
+			<dt>
+             	企业名称：
+            </dt>
+            <dd>
+              <input type="text" name="busName" id="busName" value="${busName }">
+            </dd>
             <dt>
               &nbsp;
             </dt>
@@ -96,6 +103,7 @@
 				</c:if>
 				<td>所属部门</td>
 				<td>是否部门主管</td>
+				<td>所属企业</td>
 				<td>创建时间</td>
 				<td>创建人</td>
 				<td>启用状态</td>
@@ -113,6 +121,7 @@
 						</c:if>
 						<td>${user.department}</td>
 						<td>${user.isDepartLeader}</td>
+						<td>${user.busName}</td>
 						<td><fmt:formatDate value="${user.userCreateDate}" type="both"/></td>
 						<td>${user.userCreateUserName}</td>
 						<td><exp:code code="STATUS" value="${user.userStatue}" /></td>

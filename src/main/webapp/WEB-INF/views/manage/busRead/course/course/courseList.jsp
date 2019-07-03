@@ -37,7 +37,7 @@
 			}else{
 				courseReleaseStatus = 1;
 			}
-			window.location.href="${basePath }courseController/updateCourseChannel.html?courseId="+courseId+"&courseReleaseId="+courseReleaseId+"&courseReleaseStatus="+courseReleaseStatus;
+			window.location.href="${basePath }courseController/updateCourseChannel.html?courseId="+courseId+"&courseReleaseId="+courseReleaseId+"&courseReleaseStatus="+courseReleaseStatus+"&pageIndex=${pageDTO.pageIndex}";
 		}
 		
 	</script>

@@ -166,9 +166,11 @@
   	select course_id courseId,title from bus_course where book_list_id=#{bookListId}
   </select>
   
-  <!-- 查询admin添加的课程，并且是已经发布的数据，用于创建企业的时候，默认推荐一条 -->
+  <!-- 查询admin添加的课程，并且是已经发布的数据，而且是有小视频的数据，用于创建企业的时候，默认推荐一条 -->
   <select id="getCourseAdminCreate" resultType="hashmap">
-  	select course_id courseId from bus_course where create_user_id=1 and course_status=2 and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where FIND_IN_SET(course_type_id,(select type_id from bus_course_type where create_user_id=1 and type_status=1 and type_is_free=1 order by type_id asc limit 1)))) limit 3
+  	select DISTINCT courseId from (
+	select c.course_id courseId,f.file_id fileId from bus_course c left join bus_course_file f on c.course_id=f.course_id where c.create_user_id=1 and c.course_status=2 and FIND_IN_SET(c.course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where FIND_IN_SET(course_type_id,(select type_id from bus_course_type where create_user_id=1 and type_status=1 and type_is_free=1 order by type_id asc limit 1)))) 
+	and f.file_type=1 order by c.course_id desc) a limit 3
   </select>
   
   <!-- 删除中间表表 -->

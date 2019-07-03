@@ -61,9 +61,7 @@
    <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
   	select count(*) from uc_user u
 	left join uc_user_bus_info ub on u.user_id=ub.user_id where u.is_business_admin=1
-	<where>
-		<if test="busName != null and busName  != '' "> and ub.bus_name like '%${busName}%' </if>
-	</where>
+	<if test="busName != null and busName  != '' "> and ub.bus_name like '%${busName}%' </if>
   </select>
   
   <!-- 根据id查询信息 -->

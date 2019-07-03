@@ -92,6 +92,9 @@
 								<a href="${basePath }articleController/updateArticle.html?articleId=${item.articleId}">修改</a>
 							</c:if>
 							<a href="${basePath }articleController/viewArticle.html?articleId=${item.articleId}">详情</a>
+							<c:if test="${sessionUser.userId eq 1 }">
+								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=article_${item.articleId}" target="_blank">发微博</a>
+							</c:if>
 						</td>
 					</tr>
 				</c:forEach>

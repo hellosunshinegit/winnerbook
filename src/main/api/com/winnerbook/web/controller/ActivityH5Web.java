@@ -50,6 +50,7 @@ public class ActivityH5Web {
  		result.setSuccess(true);
 		result.setMsg("获取活动列表成功");
 		result.setData(article);
+		System.out.println("result ====="+callback+"("+JSONObject.fromObject(result)+")");
 		return callback+"("+JSONObject.fromObject(result)+")";
 	}
 	

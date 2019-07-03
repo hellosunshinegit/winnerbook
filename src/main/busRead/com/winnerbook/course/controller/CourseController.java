@@ -193,9 +193,9 @@ public class CourseController extends BaseController{
 	
 	//是否推送到h5
 	@RequestMapping("updateCourseChannel.html")
-	public String updateCourseChannel(@RequestParam String courseId,@RequestParam String courseReleaseStatus,String courseReleaseId){
+	public String updateCourseChannel(@RequestParam String courseId,@RequestParam String courseReleaseStatus,String courseReleaseId,String pageIndex){
 		courseService.updateCourseChannel(courseId, courseReleaseStatus,courseReleaseId);
-		return "redirect:/courseController/courseList.html";
+		return "redirect:/courseController/courseList.html?pageIndex="+pageIndex;
 	}
 	
 }

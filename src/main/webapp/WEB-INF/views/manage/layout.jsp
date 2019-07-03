@@ -84,16 +84,16 @@ request.setAttribute("menuLists",menuLists);
     			data:JSON.stringify(str),
     			url:"${basePath}userController/getBusQrcode.html",
     			success:function(data){
-    				var busUrl = "<a href="+'<%=ConstantUtils.H5_URL%>?busId='+data.busId+''+" target='_black'> PC预览 </a>";
+    				var busUrl = "PC预览链接：<br/><a href="+'<%=ConstantUtils.H5_URL%>?busId='+data.busId+''+" target='_black' title=点击预览><%=ConstantUtils.H5_URL%>?busId="+data.busId+"</a>";
     				var content = "<div style='padding:10px 20px 20px 20px;font-size:14px;'>该企业没有生成二维码，请联系管理员。</div>";
     				if(data!=null){
-    					content = "<div style='text-align: center;margin-top:10px;'>"+busUrl+"<br/><img src="+data.img+" width='200' heigth='200'></div>";
+    					content = "<div style='text-align: center;'><br/><img src="+data.img+" width='200' heigth='200'><br/>"+busUrl+"</div>";
     				}
     				layer.open({
     				  title:"手机端二维码",
 		   			  type: 1,
 		   			  /* skin: 'layui-layer-rim', //加上边框 */
-		   			  area: ['300px', '300px'], //宽高
+		   			  area: ['320px', '320px'], //宽高
 		   			  content: content
 		   			});
     			}

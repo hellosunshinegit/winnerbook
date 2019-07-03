@@ -164,6 +164,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 			user.setBelongBusUserId(userone.getBelongBusUserId());
 		}
 		
+		user.setSourceType("1");
 		userDao.insert(user);
 		//企业管理员添加企业用户，则需要给用户赋权限
 		if(userone.getIsBusinessAdmin().equals("1")){

@@ -1,6 +1,5 @@
 package com.winnerbook.web.service;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.winnerbook.base.frame.service.impl.WebBaseServiceImpl;
@@ -23,11 +22,11 @@ public class StudentRecordServiceWeb extends WebBaseServiceImpl{
 		
 		int recordId_return = studentRecordService.addStudentRecordByVideo(user, courseId, time, type, recordId, isEnd, fileId, totalTime,"2");
 		
-		if(StringUtils.isNotBlank(recordId)){
+		/*if(StringUtils.isNotBlank(recordId)){
 			logRecord(user.getUserId()+"","2","H5-学习记录修改，id："+recordId_return);
 		}else{
 			logRecord(user.getUserId()+"","2","H5-学习记录添加，id："+recordId_return);
-		}
+		}*/
 		
 		return recordId_return;
 	}

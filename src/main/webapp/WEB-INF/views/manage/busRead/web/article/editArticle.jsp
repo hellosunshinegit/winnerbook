@@ -119,6 +119,27 @@
 					</dd>
 				</dl>
 				<dl>
+					<dt>微博正文：</dt>
+					<dd>
+						<input type="text" name="wbTitle" id="wbTitle" value="${article.wbTitle }" maxlength="140" />
+						<span style="color: red;">注：如果‘微博正文’内容为空，则发微博时采用‘标题’的内容</span>
+					</dd>
+				</dl>
+				<dl>
+					<dt>
+						微博正文图：
+					</dt>
+					<dd>
+						<input type="hidden" name="wbImg" id="wbImg" value="${article.wbImg }"/>
+						<img alt="" id="wbImg" src="" width="150" height="150">
+						<c:if test="${!empty(article.wbImg) }">
+							<a href="${basePath}${article.wbImg}" target="_blank"><img src="${basePath}${article.wbImg}" width="50" height="50"></a>
+						</c:if>
+						<div id="upload_wbImg"></div>
+		            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=wbImg&path=article/wb&typeExts=5" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
+					</dd>
+				</dl>
+				<dl>
 		            <dt><i>*</i>作者：</dt>
 		            <dd>
 		            	<input type="text" name="articleAuthor" id="articleAuthor" value="${article.articleAuthor }" maxlength="50" require="true" requireMsg="文章作者为必填项!" dataType="Require" style="width: 200px;"/>

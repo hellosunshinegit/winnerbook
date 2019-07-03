@@ -43,9 +43,9 @@ public class CourseCommentServiceWeb extends WebBaseServiceImpl{
 		String userId = null!=map.get("userId")?map.get("userId").toString():"";
 		User user = getLoginUser(userId);
 		
-		Integer courseId = null!=map.get("courseId")?Integer.parseInt(map.get("courseId").toString()):0;
+		Integer courseId = null!=map.get("courseId")?Integer.parseInt(map.get("courseId")+""):0;
 		
-		Integer userId_integer = null!=map.get("userId")?Integer.parseInt(map.get("userId").toString()):0;
+		Integer userId_integer = null!=map.get("userId")?Integer.parseInt(map.get("userId")+""):0;
 		
 		CourseComment courseComment = new CourseComment();
 		courseComment.setCourseId(courseId);
