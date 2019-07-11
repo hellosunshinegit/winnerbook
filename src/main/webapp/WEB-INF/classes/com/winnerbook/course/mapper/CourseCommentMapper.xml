@@ -41,5 +41,16 @@
       #{comment,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR})
   </insert>
+  
+  <!-- 交换权限延伸 查询-->
+  <select id="getCommentByUserId" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from bus_course_comment where create_user_id=#{userId}
+  </select>
+  
+  <!-- 交换权限延伸  更新记录的userid和username -->
+  <update id="updateCommentById" parameterType="hashmap">
+  	update bus_course_comment set user_id=#{userId},create_user_id=#{userId},create_user_name=#{userName} where FIND_IN_SET(id,${commentIds})
+  </update>
+  
  
 </mapper>

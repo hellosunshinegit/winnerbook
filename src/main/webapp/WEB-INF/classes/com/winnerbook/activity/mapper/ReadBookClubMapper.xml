@@ -4,6 +4,8 @@
   <resultMap id="BaseResultMap" type="com.winnerbook.activity.dto.ReadBookClub" >
     <id column="club_id" property="clubId" jdbcType="INTEGER" />
     <result column="club_title" property="clubTitle" jdbcType="VARCHAR" />
+    <result column="wb_title" property="wbTitle" jdbcType="VARCHAR" />
+    <result column="wb_img" jdbcType="VARCHAR" property="wbImg" />
     <result column="club_img" property="clubImg" jdbcType="VARCHAR" />
     <result column="club_date" property="clubDate" jdbcType="VARCHAR" />
     <result column="club_place" property="clubPlace" jdbcType="VARCHAR" />
@@ -20,8 +22,8 @@
   </resultMap>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
-  	select club_id, club_title, club_img,club_date, club_place, club_main_guest, club_main_guest_book,
-    club_presenter, club_status, create_date, create_user_id, create_user_name
+  	select club_id, club_title, wb_title,wb_img,club_img,club_date, club_place, club_main_guest, club_main_guest_book,
+    club_presenter, club_status, create_date, create_user_id, create_user_name,(select count(*) from wb_send_info where main_type='club' and main_id=club_id) wbCount
   	from read_book_club where 1=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
   		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
@@ -43,8 +45,8 @@
   
   <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-     club_id, club_title, club_img,club_date, club_place, club_main_guest, club_main_guest_book, club_main_guest_introduce,
-     club_presenter,club_des,club_status
+     club_id, club_title, wb_title,wb_img,club_img,club_date, club_place, club_main_guest, club_main_guest_book, club_main_guest_introduce,
+     club_presenter,club_des,club_status,create_date, create_user_id, create_user_name
     from read_book_club
     where club_id = #{clubId,jdbcType=INTEGER}
   </select>
@@ -55,12 +57,12 @@
   </delete>
   
   <insert id="insert" parameterType="com.winnerbook.activity.dto.ReadBookClub" >
-    insert into read_book_club (club_title,club_img, club_date, 
+    insert into read_book_club (club_title,wb_title,wb_img,club_img, club_date, 
       club_place, club_main_guest, club_main_guest_book, club_main_guest_introduce,
       club_presenter, club_des,club_status,create_date, 
       create_user_id, create_user_name
       )
-    values ( #{clubTitle,jdbcType=VARCHAR}, #{clubImg,jdbcType=VARCHAR},#{clubDate,jdbcType=VARCHAR}, 
+    values ( #{clubTitle,jdbcType=VARCHAR},#{wbTitle,jdbcType=VARCHAR},#{wbImg,jdbcType=VARCHAR}, #{clubImg,jdbcType=VARCHAR},#{clubDate,jdbcType=VARCHAR}, 
       #{clubPlace,jdbcType=VARCHAR}, #{clubMainGuest,jdbcType=VARCHAR}, #{clubMainGuestBook,jdbcType=VARCHAR}, #{clubMainGuestIntroduce,jdbcType=VARCHAR}, 
       #{clubPresenter,jdbcType=VARCHAR}, #{clubDes,jdbcType=VARCHAR}, #{clubStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
@@ -71,6 +73,8 @@
     update read_book_club
     set 
       club_title = #{clubTitle,jdbcType=VARCHAR},
+      wb_title = #{wbTitle,jdbcType=VARCHAR},
+      wb_img = #{wbImg,jdbcType=VARCHAR},
       club_img = #{clubImg,jdbcType=VARCHAR},
       club_date = #{clubDate,jdbcType=VARCHAR},
       club_place = #{clubPlace,jdbcType=VARCHAR},
@@ -86,7 +90,7 @@
   
   <!-- web使用 -->
   <select id="getBookClubs" parameterType="hashmap" resultType="hashmap">
-  	select club_id id, club_title title, club_img img,DATE_FORMAT(create_date,'%Y-%m-%d') createDate
+  	select club_id id, club_title title,wb_title wbTitle, club_img img,DATE_FORMAT(create_date,'%Y-%m-%d') createDate
   	from read_book_club where club_status=1 
   	 <if test="busId != null and busId  != '' "> and create_user_id = #{busId} </if>
   	 order by club_id desc

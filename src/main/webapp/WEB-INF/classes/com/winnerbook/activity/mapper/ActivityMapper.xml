@@ -4,6 +4,8 @@
   <resultMap id="BaseResultMap" type="com.winnerbook.activity.dto.Activity" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="wb_title" property="wbTitle" jdbcType="VARCHAR" />
+    <result column="wb_img" property="wbImg" jdbcType="VARCHAR" />
     <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
     <result column="start_date" property="startDate" jdbcType="VARCHAR" />
     <result column="start_date_time" property="startDateTime" jdbcType="VARCHAR" />
@@ -20,11 +22,13 @@
     <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
     <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="belong_bus_user_id" property="belongBusUserId" jdbcType="VARCHAR" />
   </resultMap>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
-  	select id, title, img_url, start_date,start_date_time, end_date, end_date_time,address,detail_address, status, create_date, create_user_id, create_user_name
-  	from bus_activity where 1=1 
+  	select id, title, wb_title,img_url, start_date,start_date_time, end_date, end_date_time,address,detail_address, status, create_date, create_user_id, create_user_name,u.belong_bus_user_id,
+  	(select count(*) from wb_send_info where main_type='activity' and main_id=a.id) wbCount
+  	from bus_activity a left join uc_user u on a.create_user_id=u.user_id where 1=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
   		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))
   	</if>
@@ -44,17 +48,17 @@
   </select>
   
   <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select id, title, img_url,start_date,start_date_time, end_date, end_date_time,province,city,address,detail_address,lng_lat,end_date, content, status
+    select id, title, wb_title,wb_img,img_url,start_date,start_date_time, end_date, end_date_time,province,city,address,detail_address,lng_lat,end_date, content, status,create_date, create_user_id, create_user_name
     from bus_activity
     where id = #{id}
   </select>
   
   <insert id="insert" parameterType="com.winnerbook.activity.dto.Activity" >
-    insert into bus_activity (title, img_url, start_date , start_date_time, end_date, end_date_time,province,city,address,detail_address,lng_lat,
+    insert into bus_activity (title, wb_title,wb_img,img_url, start_date , start_date_time, end_date, end_date_time,province,city,address,detail_address,lng_lat,
       status, create_date, create_user_id, 
       create_user_name, content
       )
-    values (#{title,jdbcType=VARCHAR}, #{imgUrl,jdbcType=VARCHAR}, #{startDate,jdbcType=VARCHAR}, #{startDateTime,jdbcType=VARCHAR},
+    values (#{title,jdbcType=VARCHAR}, #{wbTitle,jdbcType=VARCHAR},#{wbImg,jdbcType=VARCHAR},#{imgUrl,jdbcType=VARCHAR}, #{startDate,jdbcType=VARCHAR}, #{startDateTime,jdbcType=VARCHAR},
     	#{endDate,jdbcType=VARCHAR}, #{endDateTime,jdbcType=VARCHAR},
     	#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{detailAddress,jdbcType=VARCHAR},#{lngLat,jdbcType=VARCHAR},
         #{status,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, 
@@ -65,6 +69,8 @@
   <update id="update" parameterType="com.winnerbook.activity.dto.Activity" >
     update bus_activity
     set title = #{title,jdbcType=VARCHAR},
+      wb_title = #{wbTitle,jdbcType=VARCHAR},
+      wb_img = #{wbImg,jdbcType=VARCHAR},
       img_url = #{imgUrl,jdbcType=VARCHAR},
       start_date = #{startDate,jdbcType=VARCHAR},
       start_date_time = #{startDateTime,jdbcType=VARCHAR},

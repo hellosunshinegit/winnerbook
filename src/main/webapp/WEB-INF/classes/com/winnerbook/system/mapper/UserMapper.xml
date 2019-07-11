@@ -5,6 +5,7 @@
     <id column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="user_parent_id" property="userParentId" jdbcType="INTEGER" />
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="bus_name" property="busName" jdbcType="VARCHAR" />
     <result column="user_password" property="userPassword" jdbcType="VARCHAR" />
     <result column="user_unit_name" property="userUnitName" jdbcType="VARCHAR" />
     <result column="user_login_count" property="userLoginCount" jdbcType="VARCHAR" />
@@ -24,13 +25,14 @@
     <result column="user_update_user_id" property="userUpdateUserId" jdbcType="INTEGER" />
     <result column="user_update_user_name" property="userUpdateUserName" jdbcType="VARCHAR" />
   </resultMap>
-  
+  <!-- 用户和企业的关系设计有问题，以用户的id作为企业的标识，导致企业的管理员在替换的时候，这个用户无法改变，因为好多信息都跟用户挂钩了，其实应该是跟企业挂钩的。。。。
+    大错特错了以后一定要考虑到企业管理员迁移的情况。。。。。-->
    <select id="findUserByUserName" parameterType="hashmap" resultType="hashmap">
-	select a.user_id userId,a.user_unit_name userName,belong_bus_user_id busId,b.user_unit_name busName from (
-	(select user_id,user_unit_name,belong_bus_user_id from uc_user WHERE user_name = #{userName}) a
+	select a.user_id userId,a.user_unit_name userName,belong_bus_user_id busId,IF(b.bus_name!='',b.bus_name,b.user_unit_name) busName  from (
+	(select u.user_id,u.user_unit_name,u.belong_bus_user_id,b.bus_name from uc_user u left join uc_user_bus_info b on u.user_id=b.user_id WHERE user_name = #{userName} and user_statue=1) a
 	left join 
-	(select user_id,user_unit_name from uc_user where user_id in (select belong_bus_user_id from uc_user WHERE user_name = #{userName}))
-	b on a.belong_bus_user_id=b.user_id) 
+	(select u.user_id,u.user_unit_name,b.bus_name from uc_user u left join uc_user_bus_info b on u.user_id=b.user_id where u.user_id in (select belong_bus_user_id from uc_user WHERE user_name = #{userName} and user_statue=1))
+	b on a.belong_bus_user_id=b.user_id)
 	
   </select>
   
@@ -42,15 +44,19 @@
   </select>
   
   <select id="selectCount" parameterType="hashmap" resultType="java.lang.Integer">
-  	select count(*) from uc_user where FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId}))
- 	<if test="userStatue != null and userStatue  != '' ">and USER_STATUE = '${userStatue}' </if>
-	<if test="userName != null and userName  != '' ">and USER_NAME like '%${userName}%' </if>
+  	SELECT count(*) FROM uc_user u left join uc_user_bus_info b on u.belong_bus_user_id=b.user_id where FIND_IN_SET(u.user_id,getChildrenUser(${sessionUser.userId}))
+ 	<if test="userStatue != null and userStatue  != '' ">and u.USER_STATUE = '${userStatue}' </if>
+	<if test="userName != null and userName  != '' ">and (u.USER_NAME like '%${userName}%' or u.user_unit_name like '%${userName}%') </if>
+	<if test="busName != null and busName  != '' ">and b.bus_name like '%${busName}%' </if>
+	<if test="isBusinessAdmin != null and isBusinessAdmin  != '' ">and u.is_business_admin = #{isBusinessAdmin} </if>
   </select>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
-	 SELECT * FROM uc_user where FIND_IN_SET(user_id,getChildrenUser(${sessionUser.userId}))
-	 <if test="userStatue != null and userStatue  != '' ">and USER_STATUE = '${userStatue}' </if>
-	 <if test="userName != null and userName  != '' ">and USER_NAME like '%${userName}%' </if>
+	 SELECT u.*,b.bus_name FROM uc_user u left join uc_user_bus_info b on u.belong_bus_user_id=b.user_id where FIND_IN_SET(u.user_id,getChildrenUser(${sessionUser.userId}))
+	 <if test="userStatue != null and userStatue  != '' ">and u.USER_STATUE = '${userStatue}' </if>
+	 <if test="userName != null and userName  != '' ">and (u.USER_NAME like '%${userName}%' or u.user_unit_name like '%${userName}%') </if>
+	 <if test="busName != null and busName  != '' ">and b.bus_name like '%${busName}%' </if>
+	 <if test="isBusinessAdmin != null and isBusinessAdmin  != '' ">and u.is_business_admin = #{isBusinessAdmin} </if>
 	  order by user_id desc 
 	 <if test="limit != null and limit != ''">
 		limit ${start},${limit} 
@@ -72,20 +78,20 @@
       <if test="userPassword != null and userPassword != '' ">USER_PASSWORD = #{userPassword,jdbcType=VARCHAR},</if>
       <if test="department != null and department != '' ">department = #{department,jdbcType=VARCHAR},</if>
       <if test="isDepartLeader != null and isDepartLeader != '' ">is_depart_leader = #{isDepartLeader,jdbcType=VARCHAR},</if>
-      user_update_date = NOW(),
       <if test="userUpdateUserId != null and userUpdateUserId != '' ">user_update_user_id = #{userUpdateUserId,jdbcType=INTEGER},</if>
-      <if test="userUpdateUserName != null and userUpdateUserName != '' ">user_update_user_name = #{userUpdateUserName,jdbcType=VARCHAR}</if>
+      <if test="userUpdateUserName != null and userUpdateUserName != '' ">user_update_user_name = #{userUpdateUserName,jdbcType=VARCHAR},</if>
+      user_update_date = NOW()
     where USER_ID = #{userId,jdbcType=INTEGER}
   </update>
   
   <insert id="insert" useGeneratedKeys="true" keyProperty="userId" parameterType="com.winnerbook.system.dto.User">
     insert into uc_user (user_name,user_unit_name,user_parent_id,user_statue,is_business_admin,department,is_depart_leader,
-    	user_create_date,user_create_user_id,user_create_user_name,user_password,belong_bus_user_id)
+    	user_create_date,user_create_user_id,user_create_user_name,user_password,belong_bus_user_id,source_type)
     values (#{userName,jdbcType=VARCHAR}, #{userUnitName,jdbcType=VARCHAR}, #{userParentId,jdbcType=INTEGER},
     		#{userStatue,jdbcType=VARCHAR},#{isBusinessAdmin,jdbcType=VARCHAR},
     		#{department,jdbcType=VARCHAR},#{isDepartLeader,jdbcType=VARCHAR},
     		#{userCreateDate,jdbcType=TIMESTAMP},#{userCreateUserId,jdbcType=INTEGER},#{userCreateUserName,jdbcType=VARCHAR},#{userPassword,jdbcType=VARCHAR},
-    		#{belongBusUserId,jdbcType=VARCHAR})
+    		#{belongBusUserId,jdbcType=VARCHAR},#{sourceType,jdbcType=VARCHAR})
   </insert>
   <!--修改密码  -->
   <update id="updateUserPassword" parameterType="com.winnerbook.system.dto.User" >
@@ -155,7 +161,12 @@
   	update uc_user set belong_bus_user_id=#{belongBusUserId} where user_id=#{userId}
   </update>
   
-  <!-- 查询该企业下的用户 -->
+  <!-- 获取该企业的用户是新增或者导入的用户并且是启用的 20190703 -->
+  <select id="getBusEmp" parameterType="hashmap" resultMap="BaseResultMap">
+  	 select user_id,user_name,user_unit_name from uc_user where belong_bus_user_id=#{busId} and user_id &lt;>#{busId} and user_statue=1 and source_type in (1,2)	
+  </select>
+  
+  <!-- web查询该企业下的用户 -->
   <select id="getUserByBusinessId" parameterType="hashmap" resultType="hashmap">
   	  select user_name userName from uc_user where 1=1 
   	  <if test="sessionUser != null and sessionUser.isBusinessAdmin == '1'.toString()">
@@ -170,6 +181,11 @@
  <!-- 查询该企业下是否有此手机号 -->
   <select id="isExistsByBusId" parameterType="hashmap" resultMap="BaseResultMap">
   	select * from uc_user where belong_bus_user_id=#{busId} and user_name = #{phone} 
+  </select>
+  
+  <!-- 查询该用户是否属于这个企业，排除体验用户 -->
+  <select id="isBelongBus" parameterType="hashmap" resultType="hashmap">
+  	select * from uc_user where user_id=#{userId} and belong_bus_user_id=#{busId} and source_type in (1,2)
   </select>
   
 </mapper>

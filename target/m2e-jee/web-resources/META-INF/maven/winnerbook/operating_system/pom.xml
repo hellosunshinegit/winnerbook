@@ -231,11 +231,11 @@
 			<classifier>jdk15</classifier>
 		</dependency>
 
-		<dependency>
+	<!-- 	<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.2.1</version>
-		</dependency>
+			<version>4.5.9</version>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -353,6 +353,13 @@
 		    <groupId>net.coobird</groupId>
 		    <artifactId>thumbnailator</artifactId>
 		    <version>0.4.8</version>
+		</dependency>
+		
+		<!-- 引入httpmime会依赖的引入httpclient的相同版本和httpcore -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpmime</artifactId>
+		    <version>4.5.9</version>
 		</dependency>
 				
 	</dependencies>

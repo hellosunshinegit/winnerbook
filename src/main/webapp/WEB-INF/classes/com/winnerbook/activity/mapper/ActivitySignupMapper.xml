@@ -39,6 +39,17 @@
   </select>
   
   
+  <!-- 交换权限延伸 查询-->
+  <select id="getActivitySignupByUserId" parameterType="hashmap" resultMap="BaseResultMap">
+  	select * from bus_activity_signup where create_user_id=#{userId}
+  </select>
+  
+  <!-- 交换权限延伸  更新学习记录的userid和username -->
+  <update id="updateActivitySignupById" parameterType="hashmap">
+  	update bus_activity_signup set user_id=#{userId},create_user_id=#{userId},create_user_name=#{userName} where FIND_IN_SET(id,${signupIds})
+  </update>
+  
+  
     <!-- web使用 -->
   <insert id="insert" parameterType="com.winnerbook.activity.dto.ActivitySignup" useGeneratedKeys="true" keyProperty="id">
     insert into bus_activity_signup (bus_id, 
