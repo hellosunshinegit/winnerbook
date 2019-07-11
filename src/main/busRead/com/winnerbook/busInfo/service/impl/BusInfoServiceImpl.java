@@ -224,7 +224,7 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 		}else if("1".equals(brandType)){
 			imgUrl = "brand_img_region_max.jpg";
 		}else if("2".equals(brandType)){
-			imgUrl = "brand_img_province_max..jpg";
+			imgUrl = "brand_img_province_max.jpg";
 		}else if("3".equals(brandType)){
 			imgUrl = "brand_img_country_max.jpg";
 		}
