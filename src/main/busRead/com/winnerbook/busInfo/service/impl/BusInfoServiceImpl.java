@@ -26,8 +26,10 @@ import com.winnerbook.base.common.util.Tools;
 import com.winnerbook.base.common.util.WaterMarkUtils;
 import com.winnerbook.base.frame.service.impl.BaseServiceImpl;
 import com.winnerbook.busInfo.dao.BusInfoDao;
+import com.winnerbook.busInfo.dao.BusPayUserDao;
 import com.winnerbook.busInfo.dao.UserBusCourseTypeDao;
 import com.winnerbook.busInfo.dto.BusInfo;
+import com.winnerbook.busInfo.dto.BusPayUser;
 import com.winnerbook.busInfo.dto.UserBusCourseType;
 import com.winnerbook.busInfo.dto.UserBusInfo;
 import com.winnerbook.busInfo.service.BusInfoService;
@@ -50,6 +52,9 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private BusPayUserDao busPayUserDao;
 
 	@Override
 	public UserBusInfo findById(String userId) {
@@ -91,6 +96,9 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 		userBusInfo.setBusAddress(busInfo.getBusAddress());
 		userBusInfo.setBrandBusName(busInfo.getBrandBusName());
 		userBusInfo.setMobileBusName(busInfo.getMobileBusName());
+		userBusInfo.setSendWbCount(busInfo.getSendWbCount());
+		userBusInfo.setEmpUseNum(busInfo.getEmpUseNum());
+		userBusInfo.setIsGenerateApp(busInfo.getIsGenerateApp());
 		int userBusInfoCount = findBusInfoById(busInfo.getUserId().toString());
 		if(userBusInfoCount==0){
 			busInfoDao.insert(userBusInfo);
@@ -201,7 +209,7 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 	}
 
 	@Override
-	public void uploadBrandImg(String busId,HttpServletResponse response) {
+	public void uploadBrandImg(String busId,String brandType,HttpServletResponse response) {
 		UserBusInfo userBusInfo = findById(busId);
 		if(StringUtils.isNotBlank(userBusInfo.getBrandDate())){
 			userBusInfo.setBrandDateChinese(DateTimeUtils.transformDateChinese(userBusInfo.getBrandDate()));
@@ -210,9 +218,19 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 		if(null!=qrcode && StringUtils.isNotBlank(qrcode.getImg())){
 			qrcode.setImg(ConstantUtils.BASE_PATH_URL+qrcode.getImg()); 
 		}
+		String imgUrl = "";
+		if("0".equals(brandType)){
+			imgUrl = "bus_brand_custom_max.jpg";
+		}else if("1".equals(brandType)){
+			imgUrl = "brand_img_region_max.jpg";
+		}else if("2".equals(brandType)){
+			imgUrl = "brand_img_province_max..jpg";
+		}else if("3".equals(brandType)){
+			imgUrl = "brand_img_country_max.jpg";
+		}
 		
-		String imgPath = QrcodeZxing.class.getClassLoader().getResource("bus_brand_custom_max.jpg").getPath();
-		String urlPath = WaterMarkUtils.addWaterMark(imgPath, userBusInfo.getBusName(), userBusInfo.getBusNumber(), qrcode.getImg(), userBusInfo.getBrandDateChinese());
+		String imgPath = QrcodeZxing.class.getClassLoader().getResource(imgUrl).getPath();
+		String urlPath = WaterMarkUtils.addWaterMark(imgPath, userBusInfo.getBrandBusName(), userBusInfo.getBusNumber(), qrcode.getImg(), userBusInfo.getBrandDateChinese());
 		//urlPath 保存数据库
 		if(StringUtils.isNotBlank(urlPath)){
 			//判断数据库中是否已经有值，有值则删除
@@ -220,9 +238,22 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 				FileUtils.delFile(userBusInfo.getBrandImg());
 			}
 			//保存数据库并下载
-			userBusInfo.setBrandImg(urlPath);
+			String str = "";
+			if("0".equals(brandType)){
+				userBusInfo.setBrandImg(urlPath);
+				str = "企业会员单位";
+			}else if("1".equals(brandType)){
+				userBusInfo.setBrandImgRegion(urlPath);
+				str = "学区示范单位";
+			}else if("2".equals(brandType)){
+				userBusInfo.setBrandImgProvince(urlPath);
+				str = "省级示范单位";
+			}else if("3".equals(brandType)){
+				userBusInfo.setBrandImgCountry(urlPath);
+				str = "全国示范单位";
+			}
 			busInfoDao.update(userBusInfo);
- 			FileUtils.downloadFilename(FileUtils.getRealtyPathName(urlPath),userBusInfo.getBusName()+"-企业名牌.jpg", response);
+ 			FileUtils.downloadFilename(FileUtils.getRealtyPathName(urlPath),userBusInfo.getBusName()+"-"+str+"铭牌.jpg", response);
 		}
 	}
 
@@ -238,6 +269,47 @@ public class BusInfoServiceImpl extends BaseServiceImpl implements BusInfoServic
 			getBusNumber();
 		}
 		return busNumber;
+	}
+
+	@Override
+	public List<Map<String, Object>> getBusSendWbList(String mainType, String busId) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("mainType", mainType);
+		map.put("busId", busId);
+		return busInfoDao.getBusSendWbList(map);
+	}
+
+	@Override
+	public void updateSubmitBusInfoBus(UserBusInfo busInfo) {
+		//企业管理员修改的信息
+		UserBusInfo userBusInfo = findById(busInfo.getUserId().toString());
+		userBusInfo.setBusName(busInfo.getBusName());
+		userBusInfo.setMobileBusName(busInfo.getMobileBusName());
+		userBusInfo.setBrandBusName(busInfo.getBrandBusName());
+		userBusInfo.setBusLogo(busInfo.getBusLogo());
+		userBusInfo.setBusIndustry(busInfo.getBusIndustry());
+		userBusInfo.setBusProvince(busInfo.getBusProvince());
+		userBusInfo.setBusCity(busInfo.getBusCity());
+		userBusInfo.setBusCounty(busInfo.getBusCounty());
+		userBusInfo.setBusDes(busInfo.getBusDes());
+		userBusInfo.setBusDetail(busInfo.getBusDetail());
+		busInfoDao.update(userBusInfo);
+		logRecord("2","企业信息更新，id："+busInfo.getUserId());
+	}
+
+	@Override
+	public List<Map<String, Object>> getBusList() {
+		return busInfoDao.getBusList();
+	}
+
+	@Override
+	public List<Map<String, Object>> getBusEmpList(String busId) {
+		return busInfoDao.getBusEmpList(busId);
+	}
+
+	@Override
+	public List<BusPayUser> selectUserByBusId(String busId) {
+		return busPayUserDao.selectUserByBusId(busId);
 	}
 
 }

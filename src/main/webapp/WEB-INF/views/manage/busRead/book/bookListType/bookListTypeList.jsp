@@ -57,6 +57,7 @@
                 </c:if>
 				<td>状态</td>
 				<td>排序</td>
+				<td>发微博次数</td>
 				<td>创建时间</td>
 				<td>创建人</td>
 				<td>操作</td>
@@ -70,11 +71,12 @@
 						<c:if test="${user.userId eq 1 }"><td>${item.typeLabel}</td></c:if>
 						<td><exp:code code="STATUS" value="${item.status }"></exp:code> </td>
 						<td>${item.typeSort}</td>
+						<td>${item.wbCount }</td>
 						<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
 						<td>${item.createUserName}</td>
 						<td>
 							<a href="${basePath }bookListTypeController/updateBookListType.html?id=${item.id}">修改</a>
-							<c:if test="${sessionUser.userId eq 1 }">
+							<c:if test="${sessionUser.userId eq 1 || sessionUser.isBusinessAdmin eq 1}"><!-- 是admin或者是企业管理员 -->
 								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=booklisttype_${item.id}" target="_blank">发微博</a>
 							</c:if>
 						</td>

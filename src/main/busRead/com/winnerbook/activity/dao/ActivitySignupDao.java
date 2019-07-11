@@ -21,6 +21,10 @@ public interface ActivitySignupDao {
 	 */
 	List<ActivitySignup> listByPage(Map<String, Object> parameter);
 	
+	
+	List<ActivitySignup> getActivitySignupByUserId(String userId);
+	int updateActivitySignupById(Map<String, Object> parameter);
+	
 	//web
     int insert(ActivitySignup record);
     List<Map<String, Object>> getActivitySignups(Map<String, Object> parameter);

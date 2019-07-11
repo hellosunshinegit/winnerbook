@@ -59,7 +59,7 @@
 完善企业信息
 </h5></div>
 <div class="page_main">
-<form name="editForm" id="editForm" action="${basePath }busInfoController/updateSubmitBusInfo.html" method="post" enctype="multipart/form-data">
+<form name="editForm" id="editForm" action="${basePath }busInfoController/updateSubmitBusInfoBus.html" method="post" enctype="multipart/form-data">
     <div class="form_main">
 	        <dl>
 	            <dt>企业管理员：</dt>
@@ -75,8 +75,8 @@
 	            </dd>
 	        </dl>
 	        <dl>
-	            <dt>企业短名称：</dt>
-	            <dd><input type="text" name="mobileBusName" id="mobileBusName" value="${busInfo.mobileBusName }" maxlength="5"/>
+	            <dt><i>*</i>企业短名称：</dt>
+	            <dd><input type="text" name="mobileBusName" id="mobileBusName" value="${busInfo.mobileBusName }" maxlength="5" require="true" requireMsg="企业短名称为必填项!" dataType="Require"/>
 	            	<span style="color: red;">(注：用于手机端显示企业名称)</span>
 	            </dd>
 	        </dl>
@@ -98,11 +98,21 @@
 	            <dt>企业名牌：</dt>
 	            <dd>
 	            	<c:if test="${busInfo.brandImg ne '' && busInfo.brandImg ne null && busInfo.brandImg ne undefined}">
-	            		<a href="${basePath}busInfoController/uploadBrandImg.html?busId=${busInfo.userId}" style="color:blue;text-decoration: underline;" title="点击下载读书会铭牌">下载企业名牌</a>
+	            		<a href="${basePath}busInfoController/uploadBrandImg.html?busId=${busInfo.userId}&brandType=0" style="color:blue;text-decoration: underline;" title="点击下载读书会铭牌">下载企业会员单位铭牌</a>&nbsp;&nbsp;&nbsp;&nbsp;
 	            	</c:if>
-	            	<c:if test="${busInfo.brandImg eq '' || busInfo.brandImg eq null || busInfo.brandImg eq undefined}">
+	            	<c:if test="${busInfo.brandImgRegion ne '' && busInfo.brandImgRegion ne null && busInfo.brandImgRegion ne undefined}">
+	            		<a href="${basePath}busInfoController/uploadBrandImg.html?busId=${busInfo.userId}&brandType=1" style="color:blue;text-decoration: underline;" title="点击下载读书会铭牌">下载学区示范单位铭牌</a>&nbsp;&nbsp;&nbsp;&nbsp;
+	            	</c:if>
+	            	<c:if test="${busInfo.brandImgProvince ne '' && busInfo.brandImgProvince ne null && busInfo.brandImgProvince ne undefined}">
+	            		<a href="${basePath}busInfoController/uploadBrandImg.html?busId=${busInfo.userId}&brandType=2" style="color:blue;text-decoration: underline;" title="点击下载读书会铭牌">下载省级示范单位铭牌</a>&nbsp;&nbsp;&nbsp;&nbsp;
+	            	</c:if>
+	            	<c:if test="${busInfo.brandImgCountry ne '' && busInfo.brandImgCountry ne null && busInfo.brandImgCountry ne undefined}">
+	            		<a href="${basePath}busInfoController/uploadBrandImg.html?busId=${busInfo.userId}&brandType=3" style="color:blue;text-decoration: underline;" title="点击下载读书会铭牌">下载全国示范单位铭牌</a>&nbsp;&nbsp;&nbsp;&nbsp;
+	            	</c:if>
+	            	<%-- <c:if test="${busInfo.brandImg eq '' || busInfo.brandImg eq null || busInfo.brandImg eq undefined}">
 	            		请联系管理员生成读书会铭牌
-	            	</c:if>
+	            	</c:if> --%>
+	            	<span style="color: red;margin-left: 20px;">注：如没有铭牌下载，请联系管理员。</span>
 	            	<input type="hidden" name="brandImg" value="${busInfo.brandImg }"/>
 	            </dd>
 	        </dl>
@@ -112,7 +122,7 @@
 		           	<input type="hidden" name="busLogo" id="busLogo" value="${busInfo.busLogo }"/>
 					<img alt="" id="wbImg" src="" width="150" height="150">
 					<c:if test="${!empty(busInfo.busLogo) }">
-						<a href="${basePath}${busInfo.busLogo}" target="_blank"><img src="${basePath}${busInfo.busLogo}" width="50" height="50"></a>
+						<a href="${basePath}${busInfo.busLogo}" target="_blank"><img src="${basePath}${busInfo.busLogo}" height="50"></a>
 					</c:if>
 					<div id="upload_busLogo"></div>
 	            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=busLogo&path=bus&typeExts=1" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
@@ -144,6 +154,18 @@
 	            <dd>
 	            	${busInfo.brandDateChinese }
 	            	<input type="hidden" name="brandDate" value="${busInfo.brandDate }"/>
+	        	</dd>
+	        </dl>
+	        <dl>
+            <dt>发微博次数：</dt>
+	            <dd>
+	            	${busInfo.sendWbCount}次
+	        	</dd>
+	        </dl>
+	        <dl>
+            <dt>员工使用人数：</dt>
+	            <dd>
+	            	${busInfo.empUseNum}个
 	        	</dd>
 	        </dl>
 	        <dl>

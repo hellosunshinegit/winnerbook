@@ -34,7 +34,7 @@ html,body { background:url(${basePath}resources/new_images/bj.jpg);}
 .xcConfirm .popBox .ttBox{height: 30px; line-height: 30px; padding: 14px 30px; border-bottom: solid 1px #eef0f1;}
 .xcConfirm .popBox .ttBox .tt{font-size: 18px; display: block; float: left; height: 30px; position: relative;}
 .xcConfirm .popBox .ttBox .clsBtn{display: block; cursor: pointer; width: 12px; height: 12px; position: absolute; top: 22px; right: 30px; background: url(${basePath}resources/images/icons.png) -48px -96px no-repeat;}
-.xcConfirm .popBox .txtBox{margin: 40px 65px; height: 100px; overflow: hidden;width: 100%;font-size: 13px;font-weight: normal;}
+.xcConfirm .popBox .txtBox{margin: 40px 65px; height: 100px; overflow-y: auto;font-size: 13px;font-weight: normal;}
 .xcConfirm .popBox .txtBox ul li {height: 30px;line-height: 30px;}
 .xcConfirm .popBox .txtBox ul li span{margin-right: 20px;}
 .xcConfirm .popBox .txtBox ul li .checkcss{width: 16px;height: 16px;}

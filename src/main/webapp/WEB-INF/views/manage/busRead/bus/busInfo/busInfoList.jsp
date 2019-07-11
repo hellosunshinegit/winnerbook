@@ -24,7 +24,7 @@
     	}
     	.bus_num{
     		    position: absolute;
-			    top: 336px;
+			    top: 356px;
 			    left: 402px;
 			    font-size: 18px;
 			    font-family: 楷体;
@@ -33,7 +33,7 @@
     	}
     	.brandDate{
     		    position: absolute;
-			    top: 360px;
+			    top: 380px;
 			    left: 402px;
 			    font-size: 18px;
 			    font-family: 楷体;
@@ -52,7 +52,7 @@
     	
     	.bus_name{
     		position: absolute;
-		    top: 70px;
+		    top: 90px;
 		    left: 86px;
 		    font-size: 21px;
 		    color: #000;
@@ -66,6 +66,19 @@
 		    color: blue;
 		    text-decoration: underline;
 		    padding-top: 10px;
+		}
+		
+		.radioDiv{
+			text-align: center;font-size: 14px;
+		}
+		
+		.radioDiv span{
+			margin-left:15px;
+		}
+		
+		.notice{
+			color: red;
+			font-size: 13px;
 		}
     	
     </style>
@@ -121,17 +134,41 @@
     				var busNumber = data.userBusInfo.busNumber!=null?data.userBusInfo.busNumber:"";
     				var brandDateChinese = data.userBusInfo.brandDateChinese!=null?data.userBusInfo.brandDateChinese:"";
     				/* var busLogo = data.userBusInfo.busLogo!=null?"<img src='"+data.userBusInfo.busLogo+"'/>":""; */
-    				var content = "<div style='margin: 5px 50px 0px 50px;'><div style='text-align: center;width:600px;height:440px;background:url(${basePath}resources/images/bus_brand_custom.jpg) no-repeat;background-size:600px;'>"+
+    				var content = "<div class='radioDiv'><span><input type='radio' name='brandType' value='0' checked onclick='brandSelect(0)'/>企业会员单位</span><span><input type='radio' name='brandType' value='1' onclick='brandSelect(1)'/>学区示范单位</span><span><input type='radio' name='brandType' value='2' onclick='brandSelect(2)'/>省级示范单位</span><span><input type='radio' name='brandType' value='3' onclick='brandSelect(3)'/>全国示范单位</span></div>"+
+    				"<div style='margin: 5px 50px 0px 50px;'><div id='brandImg' style='text-align: center;width:600px;height:440px;background:url(${basePath}resources/images/bus_brand_custom.jpg) no-repeat;background-size:600px;'>"+
     				"<span class='bus_name'>授予："+busName+"</span><span class='bus_num'>编号："+busNumber+"</span><span class='brandDate'>"+brandDateChinese+"</span><span class='bus_qrcode'><img src='"+data.qrcode.img+"'></span>"+
-    				"</div><div class='brand_upload'><a href='${basePath}busInfoController/uploadGenerateBrandImg.html?busId="+busId+"'>生成读书会铭牌图片并下载</a></div></div>";
+    				"</div><div class='brand_upload'><a href='javascript:brandDown(\""+busId+"\")'>生成读书会铭牌图片并下载</a></div></div>";
     				layer.open({
-    				  title:busName!=''?busName:"读书会铭牌",
+    				  title:(busName!=''?busName:"读书会铭牌")+"<span class='notice'>(管理员点击生成铭牌后，企业管理员才可以下载)</span>",
 		   			  type: 1,
-		   			  area: ['700px', '550px'], //宽高
+		   			  area: ['700px', '580px'], //宽高
 		   			  content: content
 		   			});
     			}
     		});
+		}
+		
+		function brandSelect(brandType){
+			if(brandType==0){
+				$("#brandImg").css("background","url(${basePath}resources/images/bus_brand_custom.jpg) no-repeat");
+				$("#brandImg").css("background-size","600px");
+			}else if(brandType==1){
+				$("#brandImg").css("background","url(${basePath}resources/images/brand_img_region.jpg) no-repeat");
+				$("#brandImg").css("background-size","600px");
+			}else if(brandType==2){
+				$("#brandImg").css("background","url(${basePath}resources/images/brand_img_province.jpg) no-repeat");
+				$("#brandImg").css("background-size","600px");
+			}else if(brandType==3){
+				$("#brandImg").css("background","url(${basePath}resources/images/brand_img_country.jpg) no-repeat");
+				$("#brandImg").css("background-size","600px");
+			}
+		}
+		
+		//点击下载
+		function brandDown(busId){
+			//判断下选择的是哪个
+			 var brandType = $(':radio[name="brandType"]:checked').val();
+			window.location.href="${basePath}busInfoController/uploadGenerateBrandImg.html?busId="+busId+"&brandType="+brandType;
 		}
 		
 	</script>
@@ -163,7 +200,9 @@
                 <td>登录名</td>
                 <td>企业名</td>
 				<td>企业logo</td>
-				<td>企业描述</td>
+				<td>限制发微博次数</td>
+				<td>企业员工使用数</td>
+				<td>是否生成app</td>
 				<td>操作</td>
               </tr>
             </thead>
@@ -173,15 +212,10 @@
 						<td>${(pageDTO.pageIndex-1)*pageDTO.pageSize+status.index+1}</td>
 						<td>${item.userName}</td>
 						<td>${item.busName}</td>
-						<td><c:if test="${!empty(item.busLogo) }"><img src="${basePath}${item.busLogo}" width="30" height="30"></c:if></td>
-						<td title="${item.busDes}">
-							<c:if test="${fn:length(item.busDes)>15}">
-								${fn:substring(item.busDes,0,15)}...
-							</c:if>
-							<c:if test="${fn:length(item.busDes)<=15}">
-								${item.busDes}
-							</c:if>
-						</td>
+						<td><c:if test="${!empty(item.busLogo) }"><img src="${basePath}${item.busLogo}" height="30"></c:if></td>
+						<td>${item.sendWbCount }</td>
+						<td>${item.empUseNum }</td>
+						<td><c:if test="${item.isGenerateApp eq 1}">是</c:if><c:if test="${item.isGenerateApp ne 1}">否</c:if></td>
 						<td>
 							<a href="${basePath }busInfoController/updateBusInfo.html?userId=${item.userId}">完善企业信息</a>
 							<a href="${basePath }busInfoController/viewBusInfo.html?userId=${item.userId}">详情</a>

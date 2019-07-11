@@ -53,8 +53,9 @@
               	<td>序号</td>
                 <td>主题</td>
                 <td>录制时间</td>
-				<td>主讲人</td>
+				<!-- <td>主讲人</td> -->
 				<td>推荐书目</td>
+				<td>发微博次数</td>
 				<td>状态</td>
 				<td>创建时间</td>
 				<td>创建人</td>
@@ -67,8 +68,16 @@
 						<td>${(pageDTO.pageIndex-1)*pageDTO.pageSize+status.index+1}</td>
 						<td>${item.clubTitle}</td>
 						<td>${item.clubDate}</td>
-						<td>${item.clubMainGuest}</td>
-						<td>${item.clubMainGuestBook}</td>
+						<%-- <td>${item.clubMainGuest}</td> --%>
+						<td title="${item.clubMainGuestBook}">
+							<c:if test="${fn:length(item.clubMainGuestBook)>5}">
+								${fn:substring(item.clubMainGuestBook,0,5)}...
+							</c:if>
+							<c:if test="${fn:length(item.clubMainGuestBook)<=5}">
+								${item.clubMainGuestBook}
+							</c:if>
+						</td>
+						<td>${item.wbCount}</td>
 						<td><exp:code code="STATUS" value="${item.clubStatus }"></exp:code> </td>
 						<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
 						<td>${item.createUserName}</td>
@@ -76,7 +85,7 @@
 							<a href="${basePath }readBookClubController/updateReadBookClub.html?clubId=${item.clubId}">修改</a>
 							<a href="${basePath }readBookClubController/deleteReadBookClub.html?clubId=${item.clubId}">删除</a>
 							<a href="${basePath }readBookClubController/viewReadBookClub.html?clubId=${item.clubId}">详情</a>
-							<c:if test="${sessionUser.userId eq 1 }">
+							<c:if test="${sessionUser.userId eq 1 || sessionUser.isBusinessAdmin eq 1}"><!-- 是admin或者是企业管理员 -->
 								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=club_${item.clubId}" target="_blank">发微博</a>
 							</c:if>
 						</td>

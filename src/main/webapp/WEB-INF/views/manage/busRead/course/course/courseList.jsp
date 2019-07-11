@@ -15,6 +15,7 @@
 		function resetFun(){
 			$("#title").val("");
 			$("#courseTypeId").val("");
+			$("#courseStatus").val("");
 		}
 		
 		//添加
@@ -44,7 +45,7 @@
   </head>
   <body>
     <div class="page_title">
-      <h5>企业客户列表 </h5>
+      <h5>课程列表 </h5>
     </div>
       <div class="page_main">
 	    <form id="searchForm" name="searchForm" action="${basePath}courseController/courseList.html" method="post">
@@ -62,6 +63,10 @@
 		              	<option value="${item.typeId }" <c:if test="${courseTypeId eq item.typeId }">selected="selected"</c:if>>${item.typeName }&nbsp;&nbsp;&nbsp;&nbsp;(${item.createUserName })</option>
 		            </c:forEach>
             	</select>
+            </dd>
+            <dt>课程发布状态：</dt>
+            <dd>
+            	<exp:select code="COURSE_STATUS" name="courseStatus" id="courseStatus" headerKey="" headerValue="---请选择---" value="${courseStatus }"></exp:select>
             </dd>
             <dd>
               <input type="submit" class="btn btn-blue" id="search" value="搜索"></input>
@@ -93,6 +98,7 @@
 					<td>排序</td>
 					<td>创建人/推送手机</td>
 				</c:if>
+				<td>发微博次数</td>
 				<td>操作</td>
               </tr>
             </thead>
@@ -142,6 +148,7 @@
 							</c:if>
 							</td>
 						</c:if>
+						<td>${item.wbCount }</td>
 						<td>
 							<c:choose>
 								<c:when test="${sessionUser.isAdmin eq '1' || item.createUserId eq sessionUser.userId}">
@@ -150,7 +157,7 @@
 									<c:if test="${sessionUser.isAdmin eq '1' }"><!-- 不是超级管理员，也不是企业管理员，则可以学习 -->
 										<a href="${basePath }courseController/studentCourse.html?courseId=${item.courseId}">开始学习</a>
 									</c:if>
-									<c:if test="${sessionUser.userId eq 1 }">
+									<c:if test="${sessionUser.userId eq 1 || sessionUser.isBusinessAdmin eq 1}"><!-- 是admin或者是企业管理员 -->
 										<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=course_${item.courseId}" target="_blank">发微博</a>
 									</c:if>
 								</c:when>

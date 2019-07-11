@@ -45,6 +45,11 @@
 		window.location.href="${basePath }userController/importUser.html?type=1";
 	}
 	
+	//点击转让
+	function busAdminTransfer(userId){
+		window.location.href="${basePath}userController/busAdminTransfer.html?userId="+userId;
+	}
+	
 	</script>
   </head>
   <body>
@@ -75,9 +80,16 @@
             <dd>
               <input type="text" name="busName" id="busName" value="${busName }">
             </dd>
-            <dt>
-              &nbsp;
+			<dt>
+             	企业管理员：
             </dt>
+            <dd>
+             <select name="isBusinessAdmin" id="isBusinessAdmin">
+             	<option value="">---请选择---</option>
+             	<option value="1" <c:if test="${isBusinessAdmin eq '1'}">selected="selected"</c:if>>是</option>
+             	<option value="0" <c:if test="${isBusinessAdmin eq '0'}">selected="selected"</c:if>>否</option>
+             </select>
+            </dd>
             <dd>
               <input type="submit" class="btn btn-blue" id="search" value="搜索"></input>
               <input type="button" class="btn btn-blue" value="重置" onclick="resetFun()">    
@@ -102,7 +114,7 @@
 					<td>是否企业管理员</td>
 				</c:if>
 				<td>所属部门</td>
-				<td>是否部门主管</td>
+				<!-- <td>是否部门主管</td> -->
 				<td>所属企业</td>
 				<td>创建时间</td>
 				<td>创建人</td>
@@ -120,7 +132,7 @@
 							<td>${user.isBusinessAdmin eq "1"?"是":"否"}</td>
 						</c:if>
 						<td>${user.department}</td>
-						<td>${user.isDepartLeader}</td>
+						<%-- <td>${user.isDepartLeader}</td> --%>
 						<td>${user.busName}</td>
 						<td><fmt:formatDate value="${user.userCreateDate}" type="both"/></td>
 						<td>${user.userCreateUserName}</td>
@@ -142,6 +154,10 @@
 									  </c:if>
  								</c:otherwise>
  							</c:choose>
+ 							<!-- 如果是企业管理员，则可以把权限移交给其他员工
+ 							<c:if test="${user.isBusinessAdmin eq '1'}">
+ 								 &nbsp;&nbsp;&nbsp;<a href="javascript:busAdminTransfer('${user.userId}')">权限转让</a>
+ 							</c:if> -->
 						</td>
 					</tr>
 				</c:forEach>

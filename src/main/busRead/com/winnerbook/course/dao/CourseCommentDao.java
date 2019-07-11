@@ -7,6 +7,10 @@ import com.winnerbook.course.dto.CourseComment;
 
 public interface CourseCommentDao {
 	
+	
+	List<CourseComment> getCommentByUserId(String userId);
+	int updateCommentById(Map<String, Object> parameter);
+	
     //查询课程评论web端
     List<Map<String, Object>> getCourseCommnets(Map<String, Object> parameter);
     int getCourseCommnetsCount(Map<String, Object> parameter);

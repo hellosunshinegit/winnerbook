@@ -101,4 +101,8 @@ public interface UserService {
 	
 	Qrcode getBusQrcode(String busId);
 	
+	//权限转让员工下拉选择
+	List<User> getBusEmp(String busId);
+	//点击权限转让提交
+	String busAdminTransferSubmit(String userId,String selectUserId);
 }

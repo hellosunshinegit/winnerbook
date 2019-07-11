@@ -57,4 +57,20 @@ private static final String BUSINFO_MAPPER = "BusInfoMapper.";
 		Object obj = this.sqlSession.selectOne(BUSINFO_MAPPER+"getNumber",busNumber);
 		return obj == null ? 0 : Integer.parseInt(obj.toString());
 	}
+
+	@Override
+	public List<Map<String, Object>> getBusSendWbList(
+			Map<String, Object> parameter) {
+		return this.sqlSession.selectList(BUSINFO_MAPPER+"getBusSendWbList",parameter);
+	}
+
+	@Override
+	public List<Map<String, Object>> getBusList() {
+		return this.sqlSession.selectList(BUSINFO_MAPPER+"getBusList");
+	}
+
+	@Override
+	public List<Map<String, Object>> getBusEmpList(String busId) {
+		return this.sqlSession.selectList(BUSINFO_MAPPER+"getBusEmpList",busId);
+	}
 }

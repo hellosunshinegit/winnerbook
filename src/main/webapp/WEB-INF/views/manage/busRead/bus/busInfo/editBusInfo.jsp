@@ -87,7 +87,7 @@
             <dd><input type="text" name="busName" id="busName" value="${busInfo.busName }" maxlength="30" require="true" requireMsg="企业名称为必填项!" dataType="Require"/></dd>
         </dl>
         <dl>
-            <dt>企业短名称：</dt>
+            <dt><i>*</i>企业短名称：</dt>
             <dd><input type="text" name="mobileBusName" id="mobileBusName" value="${busInfo.mobileBusName }" maxlength="5" require="true" requireMsg="企业短名称为必填项!" dataType="Require"/>
             	<span style="color: red;">(注：用于手机端显示企业名称，最多5个字)</span>
             </dd>
@@ -98,7 +98,7 @@
             	<input type="hidden" name="busLogo" id="busLogo" value="${busInfo.busLogo }"/>
 				<img alt="" id="wbImg" src="" width="150" height="150">
 				<c:if test="${!empty(busInfo.busLogo) }">
-					<a href="${basePath}${busInfo.busLogo}" target="_blank"><img src="${basePath}${busInfo.busLogo}" width="50" height="50"></a>
+					<a href="${basePath}${busInfo.busLogo}" target="_blank"><img src="${basePath}${busInfo.busLogo}" height="50"></a>
 				</c:if>
 				<div id="upload_busLogo"></div>
             	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=busLogo&path=bus&typeExts=1" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
@@ -121,6 +121,25 @@
             <dt>铭牌授予时间：</dt><!-- startDate:'%y-%M-01 00:00:00' -->
             <dd>
             	<input type="text" name="brandDate" id="brandDate" value="${busInfo.brandDate}" class="Wdate" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" style="width: 150px;"/>
+        	</dd>
+        </dl>
+        <dl>
+            <dt>发微博次数：</dt>
+            <dd>
+            	<input type="number" name="sendWbCount" id="sendWbCount" value="${busInfo.sendWbCount}" />
+        	</dd>
+        </dl>
+        <dl>
+            <dt>员工使用人数：</dt>
+            <dd>
+            	<input type="number" name="empUseNum" id="empUseNum" value="${busInfo.empUseNum}" />
+        	</dd>
+        </dl>
+        <dl>
+            <dt>是否生成app：</dt>
+            <dd>
+            	<input type="radio" name="isGenerateApp" id="isGenerateApp" value="1" <c:if test="${busInfo.isGenerateApp eq 1}">checked</c:if>/>是
+            	<input type="radio" name="isGenerateApp" id="isGenerateApp" value="" <c:if test="${busInfo.isGenerateApp ne 1}">checked</c:if>/>否
         	</dd>
         </dl>
         <dl>

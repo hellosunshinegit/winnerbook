@@ -5,6 +5,8 @@
 */ 
 package com.winnerbook.system.service.impl; 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import com.sun.org.apache.bcel.internal.generic.DADD;
+import com.winnerbook.activity.dao.ActivitySignupDao;
+import com.winnerbook.activity.dto.ActivitySignup;
 import com.winnerbook.base.common.GlobalConfigure;
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.common.util.ConstantUtils;
@@ -36,7 +41,13 @@ import com.winnerbook.busInfo.dao.BusInfoDao;
 import com.winnerbook.busInfo.dao.UserBusCourseTypeDao;
 import com.winnerbook.busInfo.dto.UserBusCourseType;
 import com.winnerbook.busInfo.dto.UserBusInfo;
+import com.winnerbook.course.dao.CourseCommentDao;
 import com.winnerbook.course.dao.CourseDao;
+import com.winnerbook.course.dao.ReadThoughtDao;
+import com.winnerbook.course.dao.StudentRecordDao;
+import com.winnerbook.course.dto.CourseComment;
+import com.winnerbook.course.dto.ReadThought;
+import com.winnerbook.course.dto.StudentRecord;
 import com.winnerbook.share.dto.Qrcode;
 import com.winnerbook.share.service.QrcodeService;
 import com.winnerbook.system.dao.DefaultParamterDao;
@@ -44,11 +55,13 @@ import com.winnerbook.system.dao.RoleDao;
 import com.winnerbook.system.dao.RoleMenuDao;
 import com.winnerbook.system.dao.UserDao;
 import com.winnerbook.system.dao.UserRoleDao;
+import com.winnerbook.system.dao.UserTransferLogDao;
 import com.winnerbook.system.dto.DefaultParamter;
 import com.winnerbook.system.dto.Role;
 import com.winnerbook.system.dto.RoleMenu;
 import com.winnerbook.system.dto.User;
 import com.winnerbook.system.dto.UserRole;
+import com.winnerbook.system.dto.UserTransferLog;
 import com.winnerbook.system.service.UserService;
 @Service("userService")
 public class UserServiceImpl extends BaseServiceImpl implements UserService{
@@ -85,6 +98,21 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 	
 	@Autowired
 	private BookListTypeDao bookListTypeDao;
+	
+	@Autowired
+	private StudentRecordDao studentRecordDao;
+	
+	@Autowired
+	private ReadThoughtDao readThoughtDao;
+	
+	@Autowired
+	private CourseCommentDao courseCommentDao;
+	
+	@Autowired
+	private ActivitySignupDao activitySignupDao;
+	
+	@Autowired
+	private UserTransferLogDao userTransferLogDao;
 	
 	@Override
 	public List<Map<String, Object>> findUserByUserName(String userName) {
@@ -519,6 +547,197 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService{
 	@Override
 	public Qrcode getBusQrcode(String busId) {
 		return null;
+	}
+
+	@Override
+	public List<User> getBusEmp(String busId) {
+		return userDao.getBusEmp(busId);
+	}
+
+	@Override
+	public String busAdminTransferSubmit(String userId, String selectUserId) {//做的太low了没办法，一开始使用的时候应该用busid，不应该用userid，现在改不回来了，。工作量太大了。将错就错吧
+		try {
+			//step1:交换两个用户名和密码
+			User user = findUserById(userId);//要转移的企业管理员
+			String userName = user.getUserName();
+			String userUnitName = user.getUserUnitName();
+			String password = user.getUserPassword();
+			
+			User selectUser = findUserById(selectUserId);//被选中的企业管理员
+			String selectUserName = selectUser.getUserUnitName();
+			
+			user.setUserName(selectUser.getUserName());
+			user.setUserUnitName(selectUser.getUserUnitName());
+			user.setUserPassword(selectUser.getUserPassword());
+			user.setUserParentId(Long.parseLong(user.getBelongBusUserId()));
+			user.setIsBusinessAdmin("0");
+			userDao.update(user);
+			
+			selectUser.setUserName(userName);
+			selectUser.setUserUnitName(userUnitName);
+			selectUser.setUserPassword(password);
+			selectUser.setUserParentId(1L);
+			selectUser.setIsBusinessAdmin("1");
+			userDao.update(selectUser);
+			
+			//step2: 交换学习记录bus_student_record   学习分值bus_score_record
+			List<StudentRecord> studentRecords = studentRecordDao.getRecordByUserId(userId);//要转移的企业管理员学习记录
+			List<StudentRecord> selectStudentRecords = studentRecordDao.getRecordByUserId(selectUserId);//要转移的企业管理员学习记录
+			if(studentRecords.size()>0){
+				//更新
+				String recordIds = "";
+				for(int i = 0;i<studentRecords.size();i++){
+					if(i!=0){
+						recordIds+=",";
+					}
+					recordIds+=studentRecords.get(i).getRecordId();
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("recordIds", recordIds);
+				map.put("userId", selectUserId);
+				map.put("userName", selectUserName);
+				studentRecordDao.updateRecordById(map);
+			}
+			
+			if(selectStudentRecords.size()>0){//要荣升为企业管理员的人
+				//更新
+				String recordIds = "";
+				for(int i = 0;i<selectStudentRecords.size();i++){
+					if(i!=0){
+						recordIds+=",";
+					}
+					recordIds+=selectStudentRecords.get(i).getRecordId();
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("recordIds", recordIds);
+				map.put("userId", userId);
+				map.put("userName", userUnitName);
+				studentRecordDao.updateRecordById(map);
+			}
+			
+			//step3:交换读后感
+			List<ReadThought> readThoughts = readThoughtDao.getReadThoughtByUserId(userId);
+			List<ReadThought> selectReadThoughts = readThoughtDao.getReadThoughtByUserId(selectUserId);
+			if(readThoughts.size()>0){
+				//更新
+				String recordIds = "";
+				for(int i = 0;i<readThoughts.size();i++){
+					if(i!=0){
+						recordIds+=",";
+					}
+					recordIds+=readThoughts.get(i).getThoughtId();
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("thoughtIds", recordIds);
+				map.put("userId", selectUserId);
+				map.put("userName", selectUserName);
+				readThoughtDao.updateReadThoughtById(map);
+			}
+			
+			if(selectReadThoughts.size()>0){
+				//更新
+				String recordIds = "";
+				for(int i = 0;i<selectReadThoughts.size();i++){
+					if(i!=0){
+						recordIds+=",";
+					}
+					recordIds+=selectReadThoughts.get(i).getThoughtId();
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("thoughtIds", recordIds);
+				map.put("userId", userId);
+				map.put("userName", userUnitName);
+				readThoughtDao.updateReadThoughtById(map);
+			}
+			
+			//step4:交换评论
+			List<CourseComment> comments = courseCommentDao.getCommentByUserId(userId);
+			List<CourseComment> selectComments = courseCommentDao.getCommentByUserId(selectUserId);
+			if(comments.size()>0){
+				//更新
+				String recordIds = "";
+				for(int i = 0;i<comments.size();i++){
+					if(i!=0){
+						recordIds+=",";
+					}
+					recordIds+=comments.get(i).getId();
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("commentIds", recordIds);
+				map.put("userId", selectUserId);
+				map.put("userName", selectUserName);
+				courseCommentDao.updateCommentById(map);
+			}
+			if(selectComments.size()>0){
+				//更新
+				String recordIds = "";
+				for(int i = 0;i<selectComments.size();i++){
+					if(i!=0){
+						recordIds+=",";
+					}
+					recordIds+=selectComments.get(i).getId();
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("commentIds", recordIds);
+				map.put("userId", userId);
+				map.put("userName", userUnitName);
+				courseCommentDao.updateCommentById(map);
+			}
+			
+			//step5:交换我的活动
+			List<ActivitySignup> activitySignups = activitySignupDao.getActivitySignupByUserId(userId);
+			List<ActivitySignup> selectActivitySignups = activitySignupDao.getActivitySignupByUserId(selectUserId);
+			if(activitySignups.size()>0){
+				//更新
+				String recordIds = "";
+				for(int i = 0;i<activitySignups.size();i++){
+					if(i!=0){
+						recordIds+=",";
+					}
+					recordIds+=activitySignups.get(i).getId();
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("signupIds", recordIds);
+				map.put("userId", selectUserId);
+				map.put("userName", selectUserName);
+				activitySignupDao.updateActivitySignupById(map);
+			}
+			if(selectActivitySignups.size()>0){
+				//更新
+				String recordIds = "";
+				for(int i = 0;i<selectActivitySignups.size();i++){
+					if(i!=0){
+						recordIds+=",";
+					}
+					recordIds+=selectActivitySignups.get(i).getId();
+				}
+				Map<String, Object> map = new HashMap<>();
+				map.put("signupIds", recordIds);
+				map.put("userId", userId);
+				map.put("userName", userUnitName);
+				activitySignupDao.updateActivitySignupById(map);
+			}
+			
+			//step6：交换申请成为管理员
+			
+			//step7:可能会添加书籍
+			
+			//记录交换权限
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date nowDate = new Date();
+			UserTransferLog userTransferLog = new UserTransferLog();
+			userTransferLog.setUserId(Integer.parseInt(userId));
+			userTransferLog.setRemarks(dateFormat.format(nowDate)+" "+userUnitName+" 进行权限转移，把管理权限交给了 "+selectUserName);
+			userTransferLog.setCreatedate(nowDate);
+			userTransferLog.setCreateUserId(Integer.parseInt(getSessionUser().getUserId()+""));
+			userTransferLog.setCreateUserName(getSessionUser().getUserUnitName());
+			userTransferLogDao.insert(userTransferLog);
+			
+			return "1";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "-1";
+		}
 	}
 	
 }

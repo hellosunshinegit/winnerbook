@@ -47,5 +47,12 @@ public interface BusInfoDao{
 	int findBusInfoById(String userId);
 
 	int getNumber(String busNumber);
+	
+	List<Map<String, Object>> getBusSendWbList(Map<String, Object> parameter);
+	
+	//查询所有企业
+	List<Map<String, Object>> getBusList();
+	
+	List<Map<String, Object>> getBusEmpList(String busId);
 
 }

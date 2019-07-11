@@ -30,4 +30,14 @@ public class CourseCommentDaoImpl  extends BaseDAO implements CourseCommentDao{
 		return this.sqlSession.insert(COURSECOMMENT_MAPPER+"insertCourseComment",comment);
 	}
 
+	@Override
+	public List<CourseComment> getCommentByUserId(String userId) {
+		return this.sqlSession.selectList(COURSECOMMENT_MAPPER+"getCommentByUserId", userId);
+	}
+
+	@Override
+	public int updateCommentById(Map<String, Object> parameter) {
+		return this.sqlSession.update(COURSECOMMENT_MAPPER+"updateCommentById",parameter);
+	}
+
 }

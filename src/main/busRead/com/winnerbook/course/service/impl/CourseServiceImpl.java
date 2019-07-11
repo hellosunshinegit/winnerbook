@@ -23,6 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.winnerbook.base.common.GlobalConfigure;
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.base.frame.service.impl.BaseServiceImpl;
+import com.winnerbook.busInfo.dao.BusPayUserDao;
 import com.winnerbook.course.dao.BookListDao;
 import com.winnerbook.course.dao.CourseClickInfoDao;
 import com.winnerbook.course.dao.CourseDao;
@@ -67,6 +68,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private BusPayUserDao busPayUserDao;
 
 	@Override
 	public Course findById(String courseId) {
@@ -397,7 +401,16 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 					//查询该企业对应的登录用户是否是该企业的用户，如果不是，则不可以查看
 					Map<String, Object> userMap = userDao.isBelongBus(parameter);
 					if(null!=userMap && isLook>0){//证明企业购买了课程（isLook>0） 并且登录的人也是此企业的人
-						couresMap.put("isBuy", "0");//已购买
+						//判断该客户是否在企业员工授权观看视频权限之中
+						HashMap<String, Object> map_userPay = new HashMap<>();
+						map_userPay.put("busId", busId);
+						map_userPay.put("userId", parameter.get("userId")+"");
+						List<Map<String, Object>> user_pay_list = busPayUserDao.getUserPay(map_userPay);
+						if(user_pay_list.size()>0){
+							couresMap.put("isBuy", "0");//已购买
+						}else{
+							couresMap.put("isBuy", "1");//已购买
+						}
 					}else{
 						couresMap.put("isBuy", "1");//未购买
 					}

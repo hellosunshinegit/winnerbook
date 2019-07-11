@@ -28,6 +28,9 @@ public interface StudentRecordDao {
 	
 	int update(StudentRecord record);
 	
+	List<StudentRecord> getRecordByUserId(String userId);
+	int updateRecordById(Map<String, Object> parameter);
+	
 	//web
 	List<Map<String, Object>> getStudentRecords(Map<String, Object> parameter);
 	int getStudentRecordsCount(Map<String, Object> parameter);

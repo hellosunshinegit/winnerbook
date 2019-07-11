@@ -51,5 +51,15 @@ public class StudentRecordDaoImpl  extends BaseDAO implements StudentRecordDao{
 		return obj == null ? 0 : Integer.parseInt(obj.toString());
 	}
 
+	@Override
+	public List<StudentRecord> getRecordByUserId(String userId) {
+		return this.sqlSession.selectList(STUDENTRECORD_MAPPER+"getRecordByUserId",userId);
+	}
+
+	@Override
+	public int updateRecordById(Map<String, Object> parameter) {
+		return this.sqlSession.update(STUDENTRECORD_MAPPER+"updateRecordById", parameter);
+	}
+
 
 }

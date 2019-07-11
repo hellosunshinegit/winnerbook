@@ -114,8 +114,9 @@ public class LoginService extends WebBaseServiceImpl{
 	public User insertDemoUser(String userName,String password,String busId){
 		User user = new User();
 		//查询2的企业
+		String busIdFind = StringUtils.isNotBlank(busId)?busId:"2";
 		Map<String,Object> map_user = new HashMap<>();
-		map_user.put("userId", Integer.parseInt("2"));
+		map_user.put("userId", Integer.parseInt(busIdFind));
 		User user_bus = userDao.findUserById(map_user);
 		
 		user.setUserName(userName);
@@ -133,15 +134,15 @@ public class LoginService extends WebBaseServiceImpl{
 		}
 		user.setUserPassword(EncryptUtil.hash(pwd));
 		user.setUserUnitName("体验用户"+unitNameNum);
-		user.setUserParentId(2l);//demo的企业id
+		user.setUserParentId(Long.parseLong(busIdFind));
 		user.setUserStatue("1");
 		user.setSourceType("3");//不是企业用户，但是通过系统登录的
 		user.setIsBusinessAdmin("0");//否
 		user.setDepartment("");
 		user.setIsDepartLeader("");
-		user.setBelongBusUserId(StringUtils.isNotBlank(busId)?busId:"2");
+		user.setBelongBusUserId(busIdFind);
 		user.setUserCreateDate(new Date());
-		user.setUserCreateUserId(2l);
+		user.setUserCreateUserId(Long.parseLong(busIdFind));
 		user.setUserCreateUserName(user_bus.getUserUnitName());
 		userDao.insert(user);
 		return user;

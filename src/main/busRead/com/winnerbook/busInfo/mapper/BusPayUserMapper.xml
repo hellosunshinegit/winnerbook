@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BusPayUserMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.busInfo.dto.BusPayUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="bus_id" property="busId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER"  />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectUserByBusId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, bus_id, user_id
+    from bus_pay_user
+    where bus_id = #{busId}
+  </select>
+  
+  <insert id="insertBath" parameterType="list" >
+    insert into bus_pay_user (bus_id, user_id, create_date,create_user_id,create_user_name) values
+    <foreach collection="list" item="item" separator=",">
+     (#{item.busId}, #{item.userId}, #{item.createDate},#{item.createUserId},#{item.createUserName})
+    </foreach>
+  </insert>
+  
+  <!-- web端判断此用户是否有权限看视频 -->
+  <select id="getUserPay" parameterType="hashmap" resultType="hashmap">
+  	select id from bus_pay_user where bus_id = #{busId} and user_id=#{userId}
+  </select>
+ 
+</mapper>

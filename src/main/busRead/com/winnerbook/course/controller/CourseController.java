@@ -61,9 +61,11 @@ public class CourseController extends BaseController{
 	public String busInfoList(HttpServletRequest request,Model model, Integer pageIndex,Integer pageSize){
 		String title =request.getParameter("title");
 		String courseTypeId =request.getParameter("courseTypeId");
+		String courseStatus =request.getParameter("courseStatus");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("title", title);
 		map.put("courseTypeId", courseTypeId);
+		map.put("courseStatus", courseStatus);
 		//如果不是admin和企业管理员，则是企业用户，那么需要查询企业用户对应的企业管理员id
 		
 		map.put("sessionUser",getSessionUser());

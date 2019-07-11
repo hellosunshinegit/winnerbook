@@ -19,7 +19,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     new_id, new_title,wb_title,wb_img,new_img, new_author, new_channel, new_des,new_content, new_status, create_date, create_user_id, 
-    create_user_name, update_date
+    create_user_name, update_date,(select count(*) from wb_send_info where main_type='new' and main_id=new_id) wbCount
   </sql>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">

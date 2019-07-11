@@ -37,6 +37,8 @@ public class ReadBookClub {
 
 	private Date updateDate;
 
+	private String wbCount;
+	
 	public Integer getClubId() {
 		return clubId;
 	}
@@ -176,5 +178,14 @@ public class ReadBookClub {
 	public void setWbImg(String wbImg) {
 		this.wbImg = wbImg;
 	}
+
+	public String getWbCount() {
+		return wbCount;
+	}
+
+	public void setWbCount(String wbCount) {
+		this.wbCount = wbCount;
+	}
+	
 
 }

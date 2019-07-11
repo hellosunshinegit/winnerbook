@@ -30,6 +30,8 @@ public class News {
 	private Date updateDate;
 
 	private String newContent;
+	
+	private String wbCount;
 
 	public Integer getNewId() {
 		return newId;
@@ -144,4 +146,13 @@ public class News {
 		this.wbImg = wbImg;
 	}
 
+	public String getWbCount() {
+		return wbCount;
+	}
+
+	public void setWbCount(String wbCount) {
+		this.wbCount = wbCount;
+	}
+
+	
 }

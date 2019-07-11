@@ -83,6 +83,8 @@ public class Course implements Serializable {
 	private String courseReleaseStatus;
 
 	private Integer courseSort;
+	
+	private String wbCount;
 
 	public Integer getCourseId() {
 		return courseId;
@@ -391,4 +393,13 @@ public class Course implements Serializable {
 		this.courseSort = courseSort;
 	}
 
+	public String getWbCount() {
+		return wbCount;
+	}
+
+	public void setWbCount(String wbCount) {
+		this.wbCount = wbCount;
+	}
+
+	
 }

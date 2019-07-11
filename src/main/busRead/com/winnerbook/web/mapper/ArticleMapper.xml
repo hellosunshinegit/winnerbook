@@ -23,7 +23,8 @@
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
   	select article_id, article_type_id, article_tags, article_channel, article_title, article_img,
-    article_author, article_des, article_content, article_status, create_date, create_user_id, create_user_name,article_sort
+    article_author, article_des, article_content, article_status, create_date, create_user_id, create_user_name,article_sort,
+    (select count(*) from wb_send_info where main_type='article' and main_id=article_id) wbCount
   	from web_article where 1=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
   		and (FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))

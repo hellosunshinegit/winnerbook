@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UserTransferLogMapper" >
+  <resultMap id="BaseResultMap" type="com.winnerbook.system.dto.UserTransferLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="selectLogByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    id, user_id, remarks, create_date, create_user_id, create_user_name
+    from uc_user_transfer_log
+    where user_id = #{userId}
+  </select>
+
+  <insert id="insert" parameterType="com.winnerbook.system.dto.UserTransferLog" >
+    insert into uc_user_transfer_log (user_id, remarks, 
+      create_date, create_user_id, create_user_name
+      )
+    values (#{userId,jdbcType=INTEGER}, #{remarks,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+</mapper>

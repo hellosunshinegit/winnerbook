@@ -45,7 +45,7 @@
     main_guest_img, main_guest_baidu_know,dialog_guest, dialog_guest_post, presenter, content,book_list_id,recommend_book, recommend_book_img, 
     recommend_book_introduce, recommend_reason, recommend_reason_img, recording_date, 
     main_video_url, main_video_filename,main_video_link, main_video_time ,main_audio_url, main_audio_filename, course_type, 
-    course_status, create_date, create_user_id, create_user_name,course_sort
+    course_status, create_date, create_user_id, create_user_name,course_sort,(select count(*) from wb_send_info where main_type='course' and main_id=course_id) wbCount
   </sql>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
@@ -58,6 +58,8 @@
   	
 	<if test="title != null and title  != '' "> and (title like '%${title}%' or main_guest like '%${title}%' or recommend_book like '%${title}%') </if>
 	<if test="courseTypeId != null and courseTypeId  != '' "> and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId}))</if>
+	<if test="courseStatus != null and courseStatus  != '' "> and course_status=#{courseStatus} </if>
+	
 	order by course_sort desc,course_id desc
 	<if test="limit != null and limit  != '' ">
 		limit ${start},${limit}
@@ -72,6 +74,7 @@
   	</if>
 	<if test="title != null and title  != '' "> and (title like '%${title}%' or main_guest like '%${title}%' or recommend_book like '%${title}%') </if>
 	<if test="courseTypeId != null and courseTypeId  != '' "> and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId}))</if>
+	<if test="courseStatus != null and courseStatus  != '' "> and course_status=#{courseStatus} </if>
   </select>
   
   <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

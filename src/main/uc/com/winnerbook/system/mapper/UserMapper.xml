@@ -25,7 +25,8 @@
     <result column="user_update_user_id" property="userUpdateUserId" jdbcType="INTEGER" />
     <result column="user_update_user_name" property="userUpdateUserName" jdbcType="VARCHAR" />
   </resultMap>
-  
+  <!-- 用户和企业的关系设计有问题，以用户的id作为企业的标识，导致企业的管理员在替换的时候，这个用户无法改变，因为好多信息都跟用户挂钩了，其实应该是跟企业挂钩的。。。。
+    大错特错了以后一定要考虑到企业管理员迁移的情况。。。。。-->
    <select id="findUserByUserName" parameterType="hashmap" resultType="hashmap">
 	select a.user_id userId,a.user_unit_name userName,belong_bus_user_id busId,IF(b.bus_name!='',b.bus_name,b.user_unit_name) busName  from (
 	(select u.user_id,u.user_unit_name,u.belong_bus_user_id,b.bus_name from uc_user u left join uc_user_bus_info b on u.user_id=b.user_id WHERE user_name = #{userName} and user_statue=1) a
@@ -47,6 +48,7 @@
  	<if test="userStatue != null and userStatue  != '' ">and u.USER_STATUE = '${userStatue}' </if>
 	<if test="userName != null and userName  != '' ">and (u.USER_NAME like '%${userName}%' or u.user_unit_name like '%${userName}%') </if>
 	<if test="busName != null and busName  != '' ">and b.bus_name like '%${busName}%' </if>
+	<if test="isBusinessAdmin != null and isBusinessAdmin  != '' ">and u.is_business_admin = #{isBusinessAdmin} </if>
   </select>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
@@ -54,6 +56,7 @@
 	 <if test="userStatue != null and userStatue  != '' ">and u.USER_STATUE = '${userStatue}' </if>
 	 <if test="userName != null and userName  != '' ">and (u.USER_NAME like '%${userName}%' or u.user_unit_name like '%${userName}%') </if>
 	 <if test="busName != null and busName  != '' ">and b.bus_name like '%${busName}%' </if>
+	 <if test="isBusinessAdmin != null and isBusinessAdmin  != '' ">and u.is_business_admin = #{isBusinessAdmin} </if>
 	  order by user_id desc 
 	 <if test="limit != null and limit != ''">
 		limit ${start},${limit} 
@@ -75,9 +78,9 @@
       <if test="userPassword != null and userPassword != '' ">USER_PASSWORD = #{userPassword,jdbcType=VARCHAR},</if>
       <if test="department != null and department != '' ">department = #{department,jdbcType=VARCHAR},</if>
       <if test="isDepartLeader != null and isDepartLeader != '' ">is_depart_leader = #{isDepartLeader,jdbcType=VARCHAR},</if>
-      user_update_date = NOW(),
       <if test="userUpdateUserId != null and userUpdateUserId != '' ">user_update_user_id = #{userUpdateUserId,jdbcType=INTEGER},</if>
-      <if test="userUpdateUserName != null and userUpdateUserName != '' ">user_update_user_name = #{userUpdateUserName,jdbcType=VARCHAR}</if>
+      <if test="userUpdateUserName != null and userUpdateUserName != '' ">user_update_user_name = #{userUpdateUserName,jdbcType=VARCHAR},</if>
+      user_update_date = NOW()
     where USER_ID = #{userId,jdbcType=INTEGER}
   </update>
   
@@ -158,7 +161,12 @@
   	update uc_user set belong_bus_user_id=#{belongBusUserId} where user_id=#{userId}
   </update>
   
-  <!-- 查询该企业下的用户 -->
+  <!-- 获取该企业的用户是新增或者导入的用户并且是启用的 20190703 -->
+  <select id="getBusEmp" parameterType="hashmap" resultMap="BaseResultMap">
+  	 select user_id,user_name,user_unit_name from uc_user where belong_bus_user_id=#{busId} and user_id &lt;>#{busId} and user_statue=1 and source_type in (1,2)	
+  </select>
+  
+  <!-- web查询该企业下的用户 -->
   <select id="getUserByBusinessId" parameterType="hashmap" resultType="hashmap">
   	  select user_name userName from uc_user where 1=1 
   	  <if test="sessionUser != null and sessionUser.isBusinessAdmin == '1'.toString()">

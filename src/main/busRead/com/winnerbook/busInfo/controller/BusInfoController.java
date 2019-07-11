@@ -176,14 +176,29 @@ public class BusInfoController extends BaseController{
 	
 	//点击下载名牌
 	@RequestMapping("uploadGenerateBrandImg.html")
-	public void uploadGenerateBrandImg(@RequestParam String busId,HttpServletResponse response){
-		busInfoService.uploadBrandImg(busId,response);
+	public void uploadGenerateBrandImg(@RequestParam String busId,@RequestParam String brandType,HttpServletResponse response){
+		busInfoService.uploadBrandImg(busId,brandType,response);
 	}
 	
 	@RequestMapping("uploadBrandImg.html")
-	public void uploadBrandImg(@RequestParam String busId,HttpServletResponse response){
+	public void uploadBrandImg(@RequestParam String busId,@RequestParam String brandType,HttpServletResponse response){
 		UserBusInfo userBusInfo = busInfoService.findById(busId);
-		FileUtils.downloadFilename(FileUtils.getRealtyPathName(userBusInfo.getBrandImg()),userBusInfo.getBusName()+"-企业名牌.jpg", response);
+		String imgUrl = "";
+		String str = "";
+		if("0".equals(brandType)){
+			imgUrl = userBusInfo.getBrandImg();
+			str = "企业会员单位";
+		}else if("1".equals(brandType)){
+			imgUrl = userBusInfo.getBrandImgRegion();
+			str = "学区示范单位";
+		}else if("2".equals(brandType)){
+			imgUrl = userBusInfo.getBrandImgProvince();
+			str = "省级示范单位";
+		}else if("3".equals(brandType)){
+			imgUrl = userBusInfo.getBrandImgCountry();
+			str = "全国示范单位";
+		}
+		FileUtils.downloadFilename(FileUtils.getRealtyPathName(imgUrl),userBusInfo.getBusName()+"-"+str+"铭牌.jpg", response);
 	}
 	
 	//获取编号
@@ -191,6 +206,13 @@ public class BusInfoController extends BaseController{
 	@ResponseBody
 	public String generateCode(){
 		return busInfoService.getGenerateCode();
+	}
+	
+	//企业修改自己的信息
+	@RequestMapping("updateSubmitBusInfoBus.html")
+	public String updateSubmitBusInfoBus(UserBusInfo userBusInfo){
+		busInfoService.updateSubmitBusInfoBus(userBusInfo);
+		return "redirect:/busInfoController/busInfoList.html";
 	}
 	
 

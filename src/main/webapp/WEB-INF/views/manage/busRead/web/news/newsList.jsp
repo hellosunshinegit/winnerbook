@@ -63,6 +63,7 @@
                 <td>标题</td>
                 <td>作者</td>
 				<td>描述</td>
+				<td>发微博次数</td>
 				<td>状态</td>
 				<td>创建时间</td>
 				<td>创建人</td>
@@ -83,13 +84,14 @@
 								${item.newDes}
 							</c:if>
 						</td>
+						<td>${item.wbCount }</td>
 						<td><a href="javascript:updateStatue('${item.newId }','${item.newStatus }')" style="color: blue;"><exp:code code="ARTICLE_STATUS" value="${item.newStatus }"></exp:code></a></td>
 						<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
 						<td>${item.createUserName}</td>
 						<td>
 							<a href="${basePath }newsController/updateNews.html?newId=${item.newId}">修改</a>
 							<a href="${basePath }newsController/viewNews.html?newId=${item.newId}">详情</a>
-							<c:if test="${sessionUser.userId eq 1 }">
+							<c:if test="${sessionUser.userId eq 1 || sessionUser.isBusinessAdmin eq 1}"><!-- 是admin或者是企业管理员 -->
 								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=new_${item.newId}" target="_blank">发微博</a>
 							</c:if>
 						</td>

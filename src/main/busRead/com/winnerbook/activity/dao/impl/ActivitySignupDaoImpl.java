@@ -45,4 +45,14 @@ public class ActivitySignupDaoImpl  extends BaseDAO implements ActivitySignupDao
 	public List<Map<String, Object>> isRepeatSingup(Map<String, Object> paramter) {
 		return this.sqlSession.selectList(ACTIVITYSIGNUP_MAPPER+"isRepeatSingup",paramter);
 	}
+
+	@Override
+	public List<ActivitySignup> getActivitySignupByUserId(String userId) {
+		return this.sqlSession.selectList(ACTIVITYSIGNUP_MAPPER+"getActivitySignupByUserId",userId);
+	}
+
+	@Override
+	public int updateActivitySignupById(Map<String, Object> parameter) {
+		return this.sqlSession.update(ACTIVITYSIGNUP_MAPPER+"updateActivitySignupById",parameter);
+	}
 }

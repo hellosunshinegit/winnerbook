@@ -58,6 +58,7 @@
 				<td>活动预览</td>
 				<td>是否失效</td>
 				<td>状态</td>
+				<td>发微博次数</td>
 				<!-- <td>创建时间</td> -->
 				<td>创建人</td>
 				<td>操作</td>
@@ -68,15 +69,16 @@
 					<tr>
 						<td>${(pageDTO.pageIndex-1)*pageDTO.pageSize+status.index+1}</td>
 						<td title="${item.title } ">
-							<c:if test="${fn:length(item.title)>15}">
-								${fn:substring(item.title,0,15)}...
+							<c:if test="${fn:length(item.title)>10}">
+								${fn:substring(item.title,0,10)}...
 							</c:if>
-							<c:if test="${fn:length(item.title)<=15}">
+							<c:if test="${fn:length(item.title)<=10}">
 								${item.title}
 							</c:if>
 						</td>
 						<td>${item.startDate} ${item.startDateTime } - ${item.endDate } ${item.endDateTime }</td>
-						<td>${item.address}
+						<td title="${item.address}">
+							${fn:substring(item.address,0,10)}...
 							<c:if test="${item.detailAddress ne ''}">
 								-${item.detailAddress}
 							</c:if>
@@ -94,12 +96,13 @@
 						</td>
 						<td><exp:code code="STATUS" value="${item.status }"></exp:code> </td>
 						<%-- <td><fmt:formatDate value="${item.createDate}" type="both"/></td> --%>
+						<td>${item.wbCount}</td>
 						<td>${item.createUserName}</td>
 						<td>
 							<a href="${basePath }activityController/updateActivity.html?id=${item.id}">修改</a>
 							<a href="${basePath }activityController/viewActivity.html?id=${item.id}">详情</a>
 							<a href="${basePath }activityController/singupActivityList.html?activityId=${item.id}">报名信息</a>
-							<c:if test="${sessionUser.userId eq 1 }">
+							<c:if test="${sessionUser.userId eq 1 || sessionUser.isBusinessAdmin eq 1}"><!-- 是admin或者是企业管理员 -->
 								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=activity_${item.id}" target="_blank">发微博</a>
 							</c:if>
 						</td>

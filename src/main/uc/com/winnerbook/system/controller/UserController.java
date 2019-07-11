@@ -61,12 +61,14 @@ public class UserController extends BaseController{
 		String userContactMobile =request.getParameter("userContactMobile");
 		String userStatue =request.getParameter("userStatue");
 		String busName =request.getParameter("busName");
+		String isBusinessAdmin =request.getParameter("isBusinessAdmin");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("userName", userName);
 		map.put("userContactMobile", userContactMobile);
 		map.put("userStatue", userStatue);
 		map.put("sessionUser",getSessionUser());
 		map.put("busName",busName);
+		map.put("isBusinessAdmin",isBusinessAdmin);
 		PageDTO<User> pageDTO  = userService.listByPage(map, pageIndex,10);
  
 		model.addAttribute("pageDTO", pageDTO);
@@ -223,6 +225,26 @@ public class UserController extends BaseController{
 		}
 		return qrcode;
 	}
+	
+	//点击转让
+	@RequestMapping(value="busAdminTransfer.html")
+	public String busAdminTransfer(@RequestParam String userId,ModelMap modelMap){
+		User user = userService.findUserById(userId);
+		modelMap.addAttribute("user", user);
+		//根据用户的所属企业id查询下属员工
+		List<User> empUserList = userService.getBusEmp(user.getBelongBusUserId());
+		modelMap.addAttribute("empUserList", empUserList);
+		return "manage/uc/user/busAdminTransfer";
+	}
+	
+	//点击转让提交
+	@RequestMapping("busAdminTransferSubmit.html")
+	@ResponseBody
+	public String busAdminTransferSubmit(@RequestParam String userId,@RequestParam String selectUserId){
+		return "";
+		//return userService.busAdminTransferSubmit(userId, selectUserId);
+	}
+	
 }
 
 	

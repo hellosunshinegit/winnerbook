@@ -30,6 +30,9 @@ public interface ReadThoughtDao {
 	
 	void deleteReadThought(Map<String, Object> parameter);
 	
+	List<ReadThought> getReadThoughtByUserId(String userId);
+	int updateReadThoughtById(Map<String, Object> parameter);
+	
 	//首页读后感列表 web
 	List<Map<String, Object>> getReadThoughts(Map<String, Object> parameter);
 	int getReadThoughtsCount(Map<String, Object> parameter);

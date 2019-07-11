@@ -74,4 +74,14 @@ public class ReadThoughtDaoImpl  extends BaseDAO implements ReadThoughtDao{
 		return obj == null ? 0 : Integer.parseInt(obj.toString());
 	}
 
+	@Override
+	public List<ReadThought> getReadThoughtByUserId(String userId) {
+		return this.sqlSession.selectList(READTHOUGHT_MAPPER+"getReadThoughtByUserId", userId);
+	}
+
+	@Override
+	public int updateReadThoughtById(Map<String, Object> parameter) {
+		return this.sqlSession.update(READTHOUGHT_MAPPER+"updateReadThoughtById",parameter);
+	}
+
 }

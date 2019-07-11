@@ -68,6 +68,7 @@
 				<td>推送频道</td>
 				<td>状态</td>
 				<td>排序</td>
+				<td>发微博次数</td>
 				<td>创建时间</td>
 				<td>创建人</td>
 				<td>操作</td>
@@ -77,7 +78,14 @@
 				<c:forEach items="${pageDTO.data}" var="item" varStatus="status">
 					<tr>
 						<td>${(pageDTO.pageIndex-1)*pageDTO.pageSize+status.index+1}</td>
-						<td>${item.articleTitle}</td>
+						<td title="${item.articleTitle}">
+							<c:if test="${fn:length(item.articleTitle)>10}">
+								${fn:substring(item.articleTitle,0,10)}...
+							</c:if>
+							<c:if test="${fn:length(item.articleTitle)<=10}">
+								${item.articleTitle}
+							</c:if>
+						</td>
 						<td>${item.articleAuthor}</td>
 						<td>${item.articleTypeName}</td>
 						<td>${item.articleTags}</td>
@@ -85,6 +93,7 @@
 						<td><exp:code code="CHANNEL" value="${item.articleChannel }"></exp:code> </td>
 						<td><a href="javascript:updateStatue('${item.articleId }','${item.articleStatus }')" style="color: blue;"><exp:code code="ARTICLE_STATUS" value="${item.articleStatus }"></exp:code></a></td>
 						<td>${item.articleSort}</td>
+						<td>${item.wbCount }</td>
 						<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
 						<td>${item.createUserName}</td>
 						<td>
@@ -92,7 +101,7 @@
 								<a href="${basePath }articleController/updateArticle.html?articleId=${item.articleId}">修改</a>
 							</c:if>
 							<a href="${basePath }articleController/viewArticle.html?articleId=${item.articleId}">详情</a>
-							<c:if test="${sessionUser.userId eq 1 }">
+							<c:if test="${sessionUser.userId eq 1 || sessionUser.isBusinessAdmin eq 1}"><!-- 是admin或者是企业管理员 -->
 								<a href="https://api.weibo.com/oauth2/authorize?client_id=${wxInfo.appid }&response_type=code&redirect_uri=${wxInfo.redirectUri }?id=article_${item.articleId}" target="_blank">发微博</a>
 							</c:if>
 						</td>

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.winnerbook.base.common.PageDTO;
 import com.winnerbook.busInfo.dto.BusInfo;
+import com.winnerbook.busInfo.dto.BusPayUser;
 import com.winnerbook.busInfo.dto.UserBusInfo;
 import com.winnerbook.share.dto.Qrcode;
 import com.winnerbook.system.dto.User;
@@ -33,6 +34,9 @@ public interface BusInfoService {
 	 * @param dictionary
 	 */
 	void update(UserBusInfo busInfo,HttpServletRequest request);
+	
+	void updateSubmitBusInfoBus(UserBusInfo busInfo);
+	
 	//查询企业管理员用户
 	List<User> findBusUserName();
 	
@@ -44,7 +48,16 @@ public interface BusInfoService {
 	
 	Qrcode getBusBrandQrcode(String busId);
 	
-	void uploadBrandImg(String busId,HttpServletResponse response);
+	void uploadBrandImg(String busId,String brandType,HttpServletResponse response);
 
 	String getGenerateCode();
+	
+	List<Map<String, Object>> getBusSendWbList(String type,String busId);
+	
+	//查询所有企业
+	List<Map<String, Object>> getBusList();
+	
+	List<Map<String, Object>> getBusEmpList(String busId);
+	
+	List<BusPayUser> selectUserByBusId(String busId);
 }

@@ -46,6 +46,8 @@ public class Activity {
 	private String isInvalid;
 	
 	private String belongBusUserId;
+	
+	private String wbCount;
 
 	public Integer getId() {
 		return id;
@@ -224,6 +226,15 @@ public class Activity {
 		this.wbImg = wbImg;
 	}
 
+	public String getWbCount() {
+		return wbCount;
+	}
+
+	public void setWbCount(String wbCount) {
+		this.wbCount = wbCount;
+	}
+
+	
 	
 	
 }

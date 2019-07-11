@@ -14,7 +14,7 @@ public class BookListType {
 	private String typeName;
 
 	private String wbTitle;
-	
+
 	private String wbImg;
 
 	private String typeLabel;
@@ -34,8 +34,10 @@ public class BookListType {
 	private String createUserName;
 
 	private Date updateDate;
-	
+
 	private Integer typeSort;
+
+	private String wbCount;
 
 	public Integer getId() {
 		return id;
@@ -149,6 +151,13 @@ public class BookListType {
 	public void setTypeSort(Integer typeSort) {
 		this.typeSort = typeSort;
 	}
-	
+
+	public String getWbCount() {
+		return wbCount;
+	}
+
+	public void setWbCount(String wbCount) {
+		this.wbCount = wbCount;
+	}
 
 }

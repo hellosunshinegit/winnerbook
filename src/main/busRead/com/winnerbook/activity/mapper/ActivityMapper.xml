@@ -26,7 +26,8 @@
   </resultMap>
   
   <select id="listByPage" parameterType="hashmap" resultMap="BaseResultMap">
-  	select id, title, wb_title,img_url, start_date,start_date_time, end_date, end_date_time,address,detail_address, status, create_date, create_user_id, create_user_name,u.belong_bus_user_id
+  	select id, title, wb_title,img_url, start_date,start_date_time, end_date, end_date_time,address,detail_address, status, create_date, create_user_id, create_user_name,u.belong_bus_user_id,
+  	(select count(*) from wb_send_info where main_type='activity' and main_id=a.id) wbCount
   	from bus_activity a left join uc_user u on a.create_user_id=u.user_id where 1=1 
   	<if test="sessionUser!=null and sessionUser.isAdmin != '1'.toString()">
   		and FIND_IN_SET(create_user_id,getChildrenUser(${sessionUser.userId}))

@@ -53,6 +53,16 @@ public class UserBusInfo implements Serializable {
 	
 	private String mobileBusName;
 	
+	private Integer sendWbCount;
+	
+	private Integer empUseNum;
+	
+	private String brandImgRegion;//20190711
+	private String brandImgProvince;
+	private String brandImgCountry;
+	
+	private String isGenerateApp;
+	
 	
 	public Integer getUserId() {
 		return userId;
@@ -238,5 +248,53 @@ public class UserBusInfo implements Serializable {
 		this.mobileBusName = mobileBusName;
 	}
 
+	public Integer getSendWbCount() {
+		return sendWbCount;
+	}
+
+	public void setSendWbCount(Integer sendWbCount) {
+		this.sendWbCount = sendWbCount;
+	}
+
+	public Integer getEmpUseNum() {
+		return empUseNum;
+	}
+
+	public void setEmpUseNum(Integer empUseNum) {
+		this.empUseNum = empUseNum;
+	}
+
+	public String getBrandImgRegion() {
+		return brandImgRegion;
+	}
+
+	public void setBrandImgRegion(String brandImgRegion) {
+		this.brandImgRegion = brandImgRegion;
+	}
+
+	public String getBrandImgProvince() {
+		return brandImgProvince;
+	}
+
+	public void setBrandImgProvince(String brandImgProvince) {
+		this.brandImgProvince = brandImgProvince;
+	}
+
+	public String getBrandImgCountry() {
+		return brandImgCountry;
+	}
+
+	public void setBrandImgCountry(String brandImgCountry) {
+		this.brandImgCountry = brandImgCountry;
+	}
+
+	public String getIsGenerateApp() {
+		return isGenerateApp;
+	}
+
+	public void setIsGenerateApp(String isGenerateApp) {
+		this.isGenerateApp = isGenerateApp;
+	}
+	
 	
 }
