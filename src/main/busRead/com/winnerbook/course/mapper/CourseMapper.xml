@@ -261,9 +261,9 @@
  	c.dialog_guest dialogGuest,(select GROUP_CONCAT(course_type_id) from bus_course_type_id where course_id=#{courseId}) courseTypeIds
   	from bus_course c left join bus_book_list l on c.book_list_id=l.book_id where course_id=#{courseId}
  </select>
- <!-- 查询附件信息   目前只查询小视频 -->
+ <!-- 查询附件信息 file_type=1 and   -->
  <select id="getCourseFile" parameterType="hashmap" resultType="hashmap">
- 	select file_id fileId,course_id courseId,file_title fileTitle,file_url fileUrl,file_type fileType from bus_course_file where file_type=1 and course_id=#{courseId}
+ 	select file_id fileId,course_id courseId,file_title fileTitle,file_url fileUrl,file_type fileType from bus_course_file where course_id=#{courseId} order by file_sort asc
  </select>
  
  <!-- 更新点击次数 -->
