@@ -104,7 +104,7 @@ request.setAttribute("menuLists",menuLists);
   </head>
   <body style="padding: 0;">
     <div class="header">
-    <%-- <img src="${basePath }resources/new_images/logo.png"> --%><a href="javascript:void(0);" class="logo" hidefocus="true">企业读书云平台</a>
+    <img src="${basePath }resources/images/def_logo.png"><a href="javascript:void(0);" class="logo" hidefocus="true">企业读书云平台</a>
     <div class="user"> 
 	    <!-- <span id="ordernew" class="ordernew"><a href="javascript:void(0);" ><span style="position: relative;color:#e6002d;">消息<b id="message_id">(2)</b></span></a></span> -->
 	    <c:if test="${user.userId ne 1}">
