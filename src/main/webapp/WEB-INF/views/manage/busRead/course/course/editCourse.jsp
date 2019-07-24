@@ -99,12 +99,12 @@
 	            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=wbImg&path=course/wb&typeExts=5" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
 				</dd>
 			</dl>
-	        <%-- <dl>
+	        <dl>
 	            <dt><i>*</i>总裁课程类型：</dt>
 	            <dd>
 	                <exp:select code="COURSE_TYPE" name="courseType" id="courseType" value="${course.courseType}"  require="true" requireMsg="课程类型为必填项!" dataType="Require" style="width: 310px;"></exp:select>
 	            </dd>
-	        </dl> --%>
+	        </dl>
 	        <dl>
 	            <dt>描述：</dt>
 	            <dd>

@@ -90,8 +90,8 @@
                 <td>课程标题</td>
 				<!-- <td>总裁课程类型</td> -->
 				<td>主讲嘉宾</td>
-				<!-- <td>主讲嘉宾职务</td> -->
-				<td>推荐书目</td>
+				<!-- <td>主讲嘉宾职务</td>
+				<td>推荐书目</td> -->
 				<c:if test="${sessionUser.isAdmin eq '1' || sessionUser.isBusinessAdmin eq '1'}">
 					<td>课程状态</td>
 					<td>创建时间</td>
@@ -115,9 +115,9 @@
 								${item.title}
 							</c:if>
 						</td>
-						<%-- <td><exp:code code="COURSE_TYPE" value="${item.courseType }"></exp:code></td> --%>
-						<td>${item.mainGuest}</td>
-						<%-- <td>${item.mainGuestPost}</td>--%>
+						<%-- <td><exp:code code="COURSE_TYPE" value="${item.courseType }"></exp:code></td>--%>
+						<td>${item.mainGuest}</td> 
+						<%-- <td>${item.mainGuestPost}</td>
 						<td title="${item.recommendBook}">
 							<c:if test="${fn:length(item.recommendBook)>10}">
 								${fn:substring(item.recommendBook,0,10)}...
@@ -125,7 +125,7 @@
 							<c:if test="${fn:length(item.recommendBook)<=10}">
 								${item.recommendBook}
 							</c:if>
-						</td> 
+						</td> --%>
 						<c:if test="${sessionUser.isAdmin eq '1' || sessionUser.isBusinessAdmin eq '1'}">
 							<td>
 								<c:choose>
@@ -140,7 +140,7 @@
 									</c:otherwise>
 								</c:choose>
 							</td>
-							<td><fmt:formatDate value="${item.createDate}" type="both"/></td>
+							<td><fmt:formatDate value="${item.createDate}" pattern="yyyy-MM-dd"/></td>
 							<td>${item.courseSort }</td>
 							<td>${item.createUserName}
 							<c:if test="${item.createUserId eq 1}">
