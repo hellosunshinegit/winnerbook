@@ -132,7 +132,7 @@
 	            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=mainGuestImg&path=course&typeExts=1" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
 	            	<input type="hidden" name="mainGuestImg" id="mainGuestImg" value="${course.mainGuestImg }" maxlength="50"/>
 	            	<c:if test="${!empty(course.mainGuestImg)}">
-		            	<span><a href="${basePath}${course.mainGuestImg}" target="_blank"><img alt="" src="${basePath}${course.mainGuestImg}" width="60" height="80"></a></span>
+		            	<span><a href="${basePath}${course.mainGuestImg}" target="_blank"><img alt="" src="${basePath}${course.mainGuestImg}" width="80" height="80"></a></span>
 	            	</c:if>
 	            </dd>
 	        </dl>
@@ -219,6 +219,13 @@
 	            	<c:if test="${!empty(course.mainVideoUrl)}">
 		            	<span>已上传视频：<a href="${basePath}${course.mainVideoUrl}" target="_blank" style="color: blue;">${course.mainVideoFilename}</a></span>
 	            	</c:if>
+	            </dd>
+	        </dl>
+	         <dl>
+	            <dt>主音频地址：</dt>
+	            <dd>
+	            	<input type="text" name="mainAudioLink" id="mainAudioLink" value="${course.mainAudioLink}" maxlength="200" style="width: 300px;"/>
+	            	<span style="color: red;">&nbsp;&nbsp;&nbsp;&nbsp;注：主音频太大建议直接输入音频地址。</span>
 	            </dd>
 	        </dl>
 	        <dl>

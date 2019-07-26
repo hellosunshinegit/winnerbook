@@ -65,6 +65,8 @@ public class Course implements Serializable {
 
 	private String mainAudioFilename;
 
+	private String mainAudioLink;
+
 	private String courseType;
 
 	private String courseStatus;
@@ -83,7 +85,7 @@ public class Course implements Serializable {
 	private String courseReleaseStatus;
 
 	private Integer courseSort;
-	
+
 	private String wbCount;
 
 	public Integer getCourseId() {
@@ -401,5 +403,12 @@ public class Course implements Serializable {
 		this.wbCount = wbCount;
 	}
 
-	
+	public String getMainAudioLink() {
+		return mainAudioLink;
+	}
+
+	public void setMainAudioLink(String mainAudioLink) {
+		this.mainAudioLink = mainAudioLink;
+	}
+
 }

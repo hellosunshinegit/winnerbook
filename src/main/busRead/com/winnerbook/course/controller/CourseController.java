@@ -159,11 +159,11 @@ public class CourseController extends BaseController{
 	
 	//修改状态
 	@RequestMapping("updateCourseStatus.html")
-	public String updateCourseStatus(@RequestParam String courseId,@RequestParam String coursStatus){
+	public String updateCourseStatus(@RequestParam String courseId,@RequestParam String coursStatus,String pageIndex){
 		Course course = courseService.findById(courseId);
 		course.setCourseStatus(coursStatus);
 		courseService.update(course);
-		return "redirect:/courseController/courseList.html";
+		return "redirect:/courseController/courseList.html?pageIndex="+pageIndex;
 	}
 	
 	//开始学习

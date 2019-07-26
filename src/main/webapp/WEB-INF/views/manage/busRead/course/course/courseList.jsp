@@ -29,7 +29,7 @@
 			}else{
 				coursStatus = "2";
 			}
-			window.location.href="${basePath }courseController/updateCourseStatus.html?courseId="+courseId+"&coursStatus="+coursStatus;
+			window.location.href="${basePath }courseController/updateCourseStatus.html?courseId="+courseId+"&coursStatus="+coursStatus+"&pageIndex=${pageDTO.pageIndex}";
 		}
 		
 		function updateCourseRes(courseId,courseReleaseId,courseReleaseStatus){

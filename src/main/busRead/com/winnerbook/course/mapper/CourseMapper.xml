@@ -30,6 +30,7 @@
     <result column="main_video_time" jdbcType="VARCHAR" property="mainVideoTime" />
     <result column="main_audio_url" property="mainAudioUrl" jdbcType="VARCHAR" />
     <result column="main_audio_filename" jdbcType="VARCHAR" property="mainAudioFilename" />
+    <result column="main_audio_link" jdbcType="VARCHAR" property="mainAudioLink" />
     <result column="course_type" property="courseType" jdbcType="VARCHAR" />
     <result column="course_status" property="courseStatus" jdbcType="VARCHAR" />
     <result column="course_click_num" property="courseClickNum" jdbcType="INTEGER" />
@@ -44,7 +45,7 @@
     course_id, course_type_name, title, wb_title,wb_img,course_desc, main_guest, main_guest_post, main_guest_introduce, 
     main_guest_img, main_guest_baidu_know,dialog_guest, dialog_guest_post, presenter, content,book_list_id,recommend_book, recommend_book_img, 
     recommend_book_introduce, recommend_reason, recommend_reason_img, recording_date, 
-    main_video_url, main_video_filename,main_video_link, main_video_time ,main_audio_url, main_audio_filename, course_type, 
+    main_video_url, main_video_filename,main_video_link, main_video_time ,main_audio_url, main_audio_filename,main_audio_link, course_type, 
     course_status, create_date, create_user_id, create_user_name,course_sort,(select count(*) from wb_send_info where main_type='course' and main_id=course_id) wbCount
   </sql>
   
@@ -98,7 +99,7 @@
       recommend_book_img, recommend_book_introduce, 
       recommend_reason, recommend_reason_img, recording_date, 
       main_video_url, main_video_filename, main_video_link ,main_video_time,main_audio_url, 
-      main_audio_filename, course_type, course_status, 
+      main_audio_filename, main_audio_link,course_type, course_status, 
       create_date, create_user_id, create_user_name, 
       content,course_sort)
     values (#{courseTypeName,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR},  #{wbTitle,jdbcType=VARCHAR}, #{wbImg,jdbcType=VARCHAR}, 
@@ -109,7 +110,7 @@
       #{recommendReason,jdbcType=VARCHAR}, #{recommendReasonImg,jdbcType=VARCHAR}, #{recordingDate,jdbcType=VARCHAR}, 
       #{mainVideoUrl,jdbcType=VARCHAR}, #{mainVideoFilename,jdbcType=VARCHAR}, #{mainVideoLink,jdbcType=VARCHAR},#{mainVideoTime,jdbcType=VARCHAR},
       #{mainAudioUrl,jdbcType=VARCHAR}, 
-      #{mainAudioFilename,jdbcType=VARCHAR}, #{courseType,jdbcType=VARCHAR}, #{courseStatus,jdbcType=VARCHAR}, 
+      #{mainAudioFilename,jdbcType=VARCHAR}, #{mainAudioLink,jdbcType=VARCHAR}, #{courseType,jdbcType=VARCHAR}, #{courseStatus,jdbcType=VARCHAR}, 
       #{createDate,jdbcType=TIMESTAMP}, #{createUserId,jdbcType=INTEGER}, #{createUserName,jdbcType=VARCHAR}, 
       #{content,jdbcType=LONGVARCHAR},#{courseSort,jdbcType=INTEGER})
   </insert>
@@ -142,6 +143,7 @@
       main_video_time = #{mainVideoTime,jdbcType=VARCHAR},
       main_audio_url = #{mainAudioUrl,jdbcType=VARCHAR},
       main_audio_filename = #{mainAudioFilename,jdbcType=VARCHAR},
+      main_audio_link = #{mainAudioLink,jdbcType=VARCHAR},
       course_type = #{courseType,jdbcType=VARCHAR},
       course_status = #{courseStatus,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -209,7 +211,7 @@
   
   <!-- 查询admin所有的课程，已发布的 -->
   <select id="getAdminCourses" parameterType="hashmap" resultType="hashmap">
-  	select c.course_id courseId, c.title, c.wb_title wbTitle,c.course_desc  courseDesc, c.main_guest mainGuest, c.main_guest_post mainGuestPost, bl.book_img bookImg,c.course_click_num courseClickNum 
+  	select c.course_id courseId, c.title, c.wb_title wbTitle,c.course_desc  courseDesc, c.main_guest mainGuest, c.main_guest_post mainGuestPost, IFNULL(bl.book_img,c.main_guest_img) bookImg,c.course_click_num courseClickNum 
   	from bus_course  c left join bus_book_list bl on c.book_list_id=bl.book_id 
   	where c.course_status=2 and c.create_user_id = 1
   	<if test="courseTypeId!=null and courseTypeId!=''"> and FIND_IN_SET(c.course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) </if>
@@ -258,7 +260,7 @@
  	select course_id courseId, title, course_desc  courseDesc, main_guest mainGuest, main_guest_post mainGuestPost,main_guest_introduce mainGuestIntroduce,presenter,
  	l.book_content_des recommendBookIntroduce,recommend_reason recommendReason,recording_date recordingDate,book_list_id bookListId,
  	recommend_book recommendBook,main_video_url mainVideoUrl,main_video_link mainVideoLink,main_audio_url mainAudioUrl,content,main_guest_baidu_know baiduKnowLink,l.book_img bookImg,
- 	c.dialog_guest dialogGuest,(select GROUP_CONCAT(course_type_id) from bus_course_type_id where course_id=#{courseId}) courseTypeIds
+ 	c.dialog_guest dialogGuest,(select GROUP_CONCAT(course_type_id) from bus_course_type_id where course_id=#{courseId}) courseTypeIds,course_type courseType,main_audio_link mainAudioLink
   	from bus_course c left join bus_book_list l on c.book_list_id=l.book_id where course_id=#{courseId}
  </select>
  <!-- 查询附件信息 file_type=1 and   -->

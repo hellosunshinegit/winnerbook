@@ -180,7 +180,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 			Map<String,Object> map = new HashMap<>();
 			map.put("bookId", course.getBookListId());
 			BookList bookList = bookListDao.findById(map);
-			course.setRecommendBook(StringUtils.isNotBlank(bookList.getBookName())?bookList.getBookName():"");
+			if(null!=bookList){
+				course.setRecommendBook(StringUtils.isNotBlank(bookList.getBookName())?bookList.getBookName():"");
+			}
 		}
 		//设置课程类型name
 		if(StringUtils.isNotBlank(course.getCourseTypeIds())){

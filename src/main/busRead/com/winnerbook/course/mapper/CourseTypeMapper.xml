@@ -29,7 +29,7 @@
   		or FIND_IN_SET(type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=#{sessionUser.userId})))
   	</if>
 	<if test="typeName != null and typeName  != '' "> and type_name like '%${typeName}%' </if>
-	order by type_sort desc,type_id desc 
+	order by type_label_id desc,type_sort desc,type_id desc
 	<if test="limit != null and limit  != '' ">
 		limit ${start},${limit}
 	</if>
