@@ -34,6 +34,7 @@ import com.winnerbook.course.dto.BookList;
 import com.winnerbook.course.dto.Course;
 import com.winnerbook.course.dto.CourseClickInfo;
 import com.winnerbook.course.dto.CourseFile;
+import com.winnerbook.course.dto.CourseRelease;
 import com.winnerbook.course.dto.CourseType;
 import com.winnerbook.course.dto.CourseTypeId;
 import com.winnerbook.course.dto.StudentRecord;
@@ -497,4 +498,68 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 		map.put("courseAdminCount", courseCount);
 		return map;
 	}
+
+	@Override
+	public Map<String, Object> getMainGuestsName(Map<String, Object> parameter) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> mainGuestsName = courseDao.getMainGuestsByName(parameter);
+		int mainGuesNametCount = courseDao.getMainGuestsByNameCount(parameter);
+		map.put("mainGuestsList", mainGuestsName);
+		map.put("mainGuestsCount", mainGuesNametCount);
+		return map;
+	}
+
+	@Override
+	public List<Map<String, Object>> getCourseReleases() {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("sessionUserId", getSessionUser().getBelongBusUserId());
+		return courseDao.getCourseReleases(map);
+	}
+
+	@Override
+	public int deleteCourseReleases() {
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("sessionUserId", getSessionUser().getBelongBusUserId());
+		return courseDao.deleteCourseReleases(map);
+	}
+
+	@Override
+	public Map<String, Object> release() {
+		Map<String, Object> mapResult = new HashMap<>();
+		String busId = getSessionUser().getBelongBusUserId();
+		List<Map<String, Object>> courseIds  = getCourseReleases();
+		if(null==courseIds || courseIds.size()==0){
+			mapResult.put("statue", "-1");
+			mapResult.put("msg", "没有需要推送的课程");
+			return mapResult;
+		}
+		//查询是否已经全部推送，不需要重复推送
+		/*HashMap<String, Object> map_release = new HashMap<>();
+		map_release.put("sessonUserId", getSessionUser().getBelongBusUserId());
+		List<Map<String, Object>> lists = courseDao.getCourseRelease(map_release);
+		if(courseIds.size()==lists.size()){
+			mapResult.put("statue", "-1");
+			mapResult.put("msg", "课程已经全部推送，不需要重复操作");
+			return mapResult;
+		}*/
+		
+		//先删除，在推送
+		deleteCourseReleases();
+		List<CourseRelease> insertCourseRelease = new ArrayList<>();
+		for(Map<String, Object> courseId:courseIds){
+			CourseRelease courseRelease = new CourseRelease();
+			courseRelease.setCourseId(null!=courseId.get("course_id")?Integer.parseInt(courseId.get("course_id")+""):0);
+			courseRelease.setUserId(Integer.parseInt(busId));
+			courseRelease.setStatus("1");
+			courseRelease.setCreateDate(new Date());
+			courseRelease.setCreateUserId(Integer.parseInt(getSessionUser().getUserId()+""));
+			courseRelease.setCreateUserName(getSessionUser().getUserUnitName());
+			insertCourseRelease.add(courseRelease);
+		}
+		courseDao.insertBathCourseRelease(insertCourseRelease);
+		mapResult.put("statue", "0");
+		mapResult.put("msg", "成功推送"+insertCourseRelease.size()+"条");
+		return mapResult;
+	}
+
 }

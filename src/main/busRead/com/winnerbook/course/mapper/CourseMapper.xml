@@ -166,6 +166,14 @@
   	(#{courseId},#{userId},#{status},#{createDate},#{createUserId},#{createUserName})
   </insert>
   
+  <!-- 批量发布 -->
+  <insert id="insertBathCourseRelease" parameterType="list">
+  	insert into bus_course_release(course_id,user_id,status,create_date,create_user_id,create_user_name) values
+  	<foreach collection="list" item="item" separator=",">
+	  	(#{item.courseId},#{item.userId},#{item.status},#{item.createDate},#{item.createUserId},#{item.createUserName})
+  	</foreach>
+  </insert>
+  
   <!-- 查询书籍是否有对应的课程，如果有，则存储 -->
   <select id="getCourseByBookListId" parameterType="hashmap" resultType="hashmap">
   	select course_id courseId,title from bus_course where book_list_id=#{bookListId}
@@ -190,6 +198,16 @@
   		(#{item.courseId},#{item.courseTypeId},#{item.createDate})
   	</foreach>
   </insert>
+  
+  <!-- 查询需要全部推送的课程 -->
+  <select id="getCourseReleases" parameterType="hashmap" resultType="hashmap">
+  	select course_id from bus_course where FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where FIND_IN_SET(course_type_id,(select GROUP_CONCAT(course_type_id) from uc_user_bus_course_type where user_id=#{sessionUserId})))) and course_status=2
+  </select>
+  
+  <!-- 取消所有发布，针对企业已经买了课程，但是类型调整了，导致的课程不对应的问题 -->
+  <delete id="deleteCourseReleases" parameterType="hashmap">
+  	delete from bus_course_release where user_id=#{sessionUserId}
+  </delete>
   
   <!-- web端查询课程 -->
   <select id="getCourses" parameterType="hashmap" resultType="hashmap">
@@ -223,19 +241,41 @@
   	<if test="courseTypeId!=null and courseTypeId!=''"> and FIND_IN_SET(course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) </if>
   </select>
   
-  <!-- 查询主讲人 -->
-  <select id="getMainGuests" parameterType="hashmap" resultType="hashmap">
-  	select course_id courseId,main_guest mainGuest,main_guest_post mainGuestPost,main_guest_introduce mainGuestIntroduce,main_guest_img mainGuesImg,main_guest_baidu_know mainGuestBaiduKnow,recommend_book recommendBook from bus_course where course_status=2
-  	<if test="busId != null and busId  != '' "> and create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1) </if>
-  	and course_status=2
+  <!-- 领读大咖修改，一个页面只显示一个相同的大咖名称 20190726  -->
+  <select id="getMainGuests"  parameterType="hashmap" resultType="hashmap">
+  	select course_id courseId,main_guest mainGuest,count(main_guest) mainGuestCount,main_guest_post mainGuestPost,main_guest_introduce mainGuestIntroduce,main_guest_img mainGuesImg,main_guest_baidu_know mainGuestBaiduKnow,recommend_book recommendBook,course_type courseType  
+  	from bus_course 
+  	where course_status=2
+  	<if test="busId != null and busId  != '' "> and (create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1)) </if>
+  	GROUP BY main_guest
   	order by course_sort desc,course_id desc
     <if test="start != null "> limit ${start},${limit} </if>
   </select>
-   <select id="getMainGuestsCount" parameterType="hashmap" resultType="java.lang.Integer">
-  	select count(*)
+  
+  <select id="getMainGuestsCount" parameterType="hashmap" resultType="java.lang.Integer">
+  select count(total) from (
+  	select count(*) total
   	from bus_course
   	where course_status=2
-    <if test="busId != null and busId  != '' "> and create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1) </if>
+    <if test="busId != null and busId  != '' "> and (create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1)) </if>
+    GROUP BY main_guest) a
+  </select>
+  
+  <!-- 查询领读大咖  根据大咖名称去查询他下的课程  包括大咖一起读和商学院-->
+  <select id="getMainGuestsByName" parameterType="hashmap" resultType="hashmap">
+  	select course_id courseId,main_guest mainGuest,main_guest_post mainGuestPost,main_guest_introduce mainGuestIntroduce,main_guest_img mainGuesImg,main_guest_baidu_know mainGuestBaiduKnow,recommend_book recommendBook,course_type courseType  
+  	from bus_course 
+  	where course_status=2
+  	<if test="busId != null and busId  != '' "> and (create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1)) </if>
+  	and main_guest=#{mainGuest}
+  	order by course_sort desc,course_id desc
+    <if test="start != null "> limit ${start},${limit} </if>
+  </select>
+   <select id="getMainGuestsByNameCount" parameterType="hashmap" resultType="java.lang.Integer">
+  	select count(*)
+  	from bus_course
+  	where course_status=2 and main_guest=#{mainGuest}
+    <if test="busId != null and busId  != '' "> and (create_user_id = #{busId} or course_id in (select course_id from bus_course_release where user_id=#{busId} and status=1)) </if>
   </select>
   
   <!-- 视频清单 课程对应的小视频-->

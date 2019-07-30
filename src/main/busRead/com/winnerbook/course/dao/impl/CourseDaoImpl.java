@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.winnerbook.base.frame.dao.BaseDAO;
 import com.winnerbook.course.dao.CourseDao;
 import com.winnerbook.course.dto.Course;
+import com.winnerbook.course.dto.CourseRelease;
 import com.winnerbook.course.dto.CourseTypeId;
 
 @Repository("courseDao")
@@ -147,5 +148,32 @@ public class CourseDaoImpl  extends BaseDAO implements CourseDao{
 	public int getFreeCoursesCount(Map<String, Object> parameter) {
 		Object obj = this.sqlSession.selectOne(COURSE_MAPPER + "getFreeCoursesCount", parameter);
 		return obj == null ? 0 : Integer.parseInt(obj.toString());
+	}
+
+	@Override
+	public List<Map<String, Object>> getMainGuestsByName(
+			Map<String, Object> parameter) {
+		return this.sqlSession.selectList(COURSE_MAPPER+"getMainGuestsByName", parameter);
+	}
+
+	@Override
+	public int getMainGuestsByNameCount(Map<String, Object> parameter) {
+		Object obj = this.sqlSession.selectOne(COURSE_MAPPER + "getMainGuestsByNameCount", parameter);
+		return obj == null ? 0 : Integer.parseInt(obj.toString());
+	}
+
+	@Override
+	public List<Map<String, Object>> getCourseReleases(Map<String, Object> parameter) {
+		return this.sqlSession.selectList(COURSE_MAPPER+"getCourseReleases",parameter);
+	}
+
+	@Override
+	public int deleteCourseReleases(Map<String, Object> parameter) {
+		return this.sqlSession.delete(COURSE_MAPPER+"deleteCourseReleases",parameter);
+	}
+
+	@Override
+	public int insertBathCourseRelease(List<CourseRelease> courseReleases) {
+		return this.sqlSession.insert(COURSE_MAPPER+"insertBathCourseRelease",courseReleases);
 	}
 }

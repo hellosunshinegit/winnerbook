@@ -200,4 +200,10 @@ public class CourseController extends BaseController{
 		return "redirect:/courseController/courseList.html?pageIndex="+pageIndex;
 	}
 	
+	//批量全部推送手机
+	@RequestMapping("release.html")
+	@ResponseBody
+	public Map<String, Object> release(){
+		return courseService.release();
+	}
 }

@@ -41,6 +41,25 @@
 			window.location.href="${basePath }courseController/updateCourseChannel.html?courseId="+courseId+"&courseReleaseId="+courseReleaseId+"&courseReleaseStatus="+courseReleaseStatus+"&pageIndex=${pageDTO.pageIndex}";
 		}
 		
+		//全部推送手机
+		function releaseFun(){
+			$.ajax({
+				type:"GET",
+				async: false,
+				dataType:"json",
+			    contentType : "application/json;charset=utf-8",//必须要设置contentType，不然后台接收不到json数据格式，并且是乱码
+				url:"${basePath}courseController/release.html",
+				success:function(data){
+					console.log(data);
+					if(data.statue=="0"){
+						alert(data.msg);
+						window.location.href="${basePath }courseController/courseList.html";
+					}else{
+						alert(data.msg);
+					}
+				}
+			});
+		}
 	</script>
   </head>
   <body>
@@ -78,7 +97,11 @@
           	<dd><input type="button" class="btn btn-blue" value="添加" onclick="addFun()"></input></dd>
           </dl>
           </c:if>
-          
+           <c:if test="${sessionUser.isBusinessAdmin eq '1'}">
+           <dl>
+          	<dd><input type="button" class="btn btn-blue" value="全部推送手机" onclick="releaseFun()"></input></dd>
+           </dl>
+          </c:if>
         </div>
         
          <div class="data_list">

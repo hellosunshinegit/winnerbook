@@ -137,6 +137,23 @@ public class IndexH5Web {
 		return callback+"("+JSONObject.fromObject(result)+")";
 	}
 	
+	//导师的列表的详细表
+	@RequestMapping(value="getMainGuestsName.jhtml",produces = {"application/json;charset=utf-8"})
+	@ResponseBody
+	public String getMainGuestsName(String busId,String mainGuest,String pageIndex,@RequestParam("callback") String callback){
+		busId = ValidateWebUtils.defaultBus(busId);
+		JSONResponse result = new JSONResponse();
+		//最新课程...
+		Map<String, Object> parameter_course  = new HashMap<String, Object>();
+		parameter_course.put("mainGuest",mainGuest);
+		Map<String, Object> courseList = courseService.getMainGuestsName(PageUtil.getParam(parameter_course, busId, pageIndex));
+		
+		result.setSuccess(true);
+		result.setMsg("获取主讲人成功");
+		result.setData(courseList);
+		return callback+"("+JSONObject.fromObject(result)+")";
+	}
+	
 	//书单首页
 	@RequestMapping(value="getBooks.jhtml",produces = {"application/json;charset=utf-8"})
 	@ResponseBody
