@@ -43,7 +43,11 @@
 				alert("主视频地址或者主视频至少输入一项");
 				return false;
 			} */
-			$("#courseTypeIds").val($("#courseTypeId").val().join(","));
+			if($("#courseTypeId").val()!=null){
+				$("#courseTypeIds").val($("#courseTypeId").val().join(","));
+			}else{
+				$("#courseTypeIds").val("");
+			}
 			document.editForm.submit();
 		}
 	}
@@ -61,9 +65,9 @@
     <input type="hidden" name="courseTypeIds" id="courseTypeIds" value="${course.courseTypeIds }"/>
     <div class="form_main">
     		<dl>
-	            <dt><i>*</i>课程类型：</dt>
+	            <dt>课程类型：</dt>
 	            <dd>
-	            	<select name="courseTypeId" id="courseTypeId" class="courseIdSelect" multiple="multiple" style="width: 210px;" require="true" requireMsg="课程类型为必填项!" dataType="Require">
+	            	<select name="courseTypeId" id="courseTypeId" class="courseIdSelect" multiple="multiple" style="width: 210px;" >
 	            		<c:forEach items="${courseTypeList}" var="item">
 	            			<option value="${item.typeId }" >${item.typeName}</option>
 	            		</c:forEach>
@@ -132,7 +136,7 @@
 	            	<iframe src="${basePath}fileUploadController/uploadFileIframe.html?filePath=mainGuestImg&path=course&typeExts=1" id="file" width="800px;" height="110px;" frameborder="0" scrolling="no"></iframe>
 	            	<input type="hidden" name="mainGuestImg" id="mainGuestImg" value="${course.mainGuestImg }" maxlength="50"/>
 	            	<c:if test="${!empty(course.mainGuestImg)}">
-		            	<span><a href="${basePath}${course.mainGuestImg}" target="_blank"><img alt="" src="${basePath}${course.mainGuestImg}" width="80" height="80"></a></span>
+		            	<span><a href="${basePath}${course.mainGuestImg}" target="_blank"><img alt="" src="${basePath}${course.mainGuestImg}" width="80" ></a></span>
 	            	</c:if>
 	            </dd>
 	        </dl>

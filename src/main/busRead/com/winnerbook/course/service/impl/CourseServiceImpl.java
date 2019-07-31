@@ -199,6 +199,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 				typeName += map_type_name.get(i).get("typeName");
 			}
 			course.setCourseTypeName(typeName);
+		}else{
+			course.setCourseTypeName("");
 		}
 		
 		courseDao.update(course);
@@ -220,7 +222,10 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService{
 				courseTypeIdsArray.add(courseTypeId_pojo);
 			}
 			courseDao.insertCourseTypeId(courseTypeIdsArray);
+		}else{
+			courseDao.deleteCourseTypeId(course.getCourseId());
 		}
+		
 		
 		logRecord("3","课程信息更新，id："+course.getCourseId());
 	}
