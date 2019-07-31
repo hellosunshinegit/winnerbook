@@ -229,7 +229,7 @@
   
   <!-- 查询admin所有的课程，已发布的 -->
   <select id="getAdminCourses" parameterType="hashmap" resultType="hashmap">
-  	select c.course_id courseId, c.title, c.wb_title wbTitle,c.course_desc  courseDesc, c.main_guest mainGuest, c.main_guest_post mainGuestPost, IFNULL(bl.book_img,c.main_guest_img) bookImg,c.course_click_num courseClickNum 
+  	select c.course_id courseId, c.title, c.wb_title wbTitle,c.course_desc  courseDesc, c.course_type courseType,c.main_guest mainGuest, c.main_guest_post mainGuestPost, IFNULL(bl.book_img,c.main_guest_img) bookImg,c.course_click_num courseClickNum 
   	from bus_course  c left join bus_book_list bl on c.book_list_id=bl.book_id 
   	where c.course_status=2 and c.create_user_id = 1
   	<if test="courseTypeId!=null and courseTypeId!=''"> and FIND_IN_SET(c.course_id,(select GROUP_CONCAT(course_id) from bus_course_type_id where course_type_id=#{courseTypeId})) </if>
